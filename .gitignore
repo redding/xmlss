@@ -1,0 +1,4 @@
+pkg/*
+.bundle
+*.gem
+*.log

@@ -1,0 +1,153 @@
+= Xmlss
+
+== Description
+
+This gem allows you to generate spreadsheets in the XML Spreadsheet format.  It provides an api for constructing spreadsheet data and then uses that data to generate xml that can be interpreted by MS Excel.
+
+** Note: this gem only generates XML according to a subset of the August 2001 XML Spreadsheet spec (http://msdn.microsoft.com/en-us/library/aa140066(office.10).aspx).  It does not generate the more modern open office spreadsheet spec (xlsx).
+
+== Installation
+
+    gem install xmlss
+
+== Simple Example
+
+    require 'xmlss'
+
+    workbook = Xmlss::Workbook.new
+    workbook.worksheets       # => []
+
+    sheet1 = Xmlss::Worksheet.new({
+      :name => 'Sheet 1'
+    })
+    sheet1.table = Xmlss::Table.new
+    sheet1.table.rows         # => []
+
+    row1 = Xmlss::Row.new(1, 'some data', 54.54)
+    row1.cells.count = 3
+    row1.cells.first.data     # => 1
+
+    sheet1.table.rows << row1
+    workbook.worksheets << sheet1
+
+    workbook.to_xml           # => "..." (XML Spreadsheet xml string)
+
+== Usage
+see the examples folder for some use case examples.
+
+Be aware this library only provides the basic, raw API for constructing spreadsheets using this spec and utilities to convert those objects to string xml data representing them.  It does not provide any macro logic to aid in constructing the sheets.  If you want a more convenient API for your use case, I suggest subclassing the objects and tailoring them to your needs.
+
+The XML Spreadsheet spec and format are legacy and may have limited support depending on your version of MS Excel.  For a more modern spreadsheet generation method, I suggest looking into Office Open XML Workbook format (http://en.wikipedia.org/wiki/Office_Open_XML).
+
+== API
+
+These classes define how a spreadsheet is constructed.
+=== Xmlss::Workbook
+* *styles*: array, Xmlss:Style objects, default: []
+* *worksheets*: array, Xmlss::Worksheet objects, default: []
+
+=== Xmlss::Worksheet
+* *name*: string
+* *table*: Xmlss::Table object
+
+=== Xmlss::Table
+* *columns*: array, Xmlss::Column objects, default: []
+* *rows*: array, Xmlss::Row objects, default: []
+
+=== Xmlss::Column
+* *style_id*: string
+* *width*: numeric
+* *auto_fit_width*: bool, default: false
+* *hidden*: bool, default: false
+
+=== Xmlss::Row
+* *style_id*: string
+* *height*: numeric
+* *auto_fit_width*: bool, default: false
+* *hidden*: bool, default: false
+* *cells*: array, Xmlss::Cell objects, default: []
+
+=== Xmlss::Cell
+* *style_id*: string
+* *data*: Xmlss::Data object
+* *formula*: string
+* *href*: string
+* *merge_across*: int, default: 0
+* *merge_down*: int, default: 0
+* *tool_tip*: string
+
+=== Xmlss::Data
+* *type*: :number, :datetime, :boolean, :string, :error, required
+* *value*: needs to respond to 'to_s'
+
+
+These classes define how a spreadsheet cells are styled.
+=== Xmlss::Style
+* *id*: string, unique identifier for the style
+* *alignment*: Xmlss::Style::Alignment object
+* *borders*: array, Xmlss::Style::Border objects, default: []
+* *font*: Xmlss::Style::Font object
+* *interior*: Xmlss::Style::Interior object
+* *number_format*: Xmlss::Style::NumberFormat object
+* *protection*: Xmlss::Protection object
+
+=== Xmlss::Style::Alignment
+* *horizontal*: :left, :right', :center, default: nil
+* *vertical*: :top, :bottom, :middle, default: nil
+* *wrap_text*: bool, default: false
+
+=== Xmlss::Style::Border
+* *position*: :left, :top, :right, :bottom, required
+* *color*: hex string
+* *style*: :none, :continuous, :dash, :dot, :dash_dot, :dash_dot_dot, default: :continuous
+* *weight*: :hairline, :thin, :medium, :thick, default: :hairline
+
+=== Xmlss::Style::Font
+* *bold*: bool, default: false
+* *color*: hex string
+* *name*: string
+* *italic*: bool, default: false
+* *size*: int
+* *strike_through*: bool, default: false
+* *underline*: :none, :single, :double, :default, default: :default
+* *alignment*: :none, :subscript, :superscript, :default, default: :default
+
+=== Xmlss::Style::Interior
+* *color*: hex string
+* *pattern*: symbol (see code for options), default: :default
+* *pattern_color*: hex string
+
+=== Xmlss::Style::NumberFormat
+* *format*: :symbol (see code for options)
+
+=== Xmlss::Style::Protection
+* *protected*: bool, default: false
+
+
+== For More Info
+* Full XML Spreadsheet spec: http://msdn.microsoft.com/en-us/library/aa140066(office.10).aspx
+
+== License
+
+Copyright (c) 2011 Kelly D. Redding
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
