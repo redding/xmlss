@@ -6,7 +6,8 @@ class Xmlss::Style::ProtectionTest < Test::Unit::TestCase
   context "Xmlss::Style::Protection" do
     subject { Xmlss::Style::Protection.new }
 
-    should_have_instance_methods :protected?, :protect, :protect=
+    should_have_instance_methods :protected?
+    should_have_accessor :protect
 
     should "set it's defaults" do
       assert_equal false, subject.protected?
