@@ -23,10 +23,8 @@ module Xmlss::Style
     }.freeze
 
     class << self
-      FORMATS.each do |f, v|
-        define_method(f) do
-          FORMATS[f.to_sym]
-        end
+      def format(f)
+        FORMATS[f.to_sym]
       end
     end
 
@@ -37,8 +35,8 @@ module Xmlss::Style
     end
 
     def format=(value)
-      @format = if FORMATS.has_key?(value)
-        FORMATS[value]
+      @format = if value && FORMATS.has_key?(value.to_sym)
+        FORMATS[value.to_sym]
       elsif FORMATS.has_value?(value)
         value
       else

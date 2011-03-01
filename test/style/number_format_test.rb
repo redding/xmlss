@@ -6,7 +6,7 @@ class Xmlss::Style::NumberFormatTest < Test::Unit::TestCase
   context "Xmlss::Style::NumberFormat" do
     subject { Xmlss::Style::NumberFormat.new }
 
-    should_have_accessor :format
+    should_have_class_method :format
     {
       :general => "General",
       :general_number => "General Number",
@@ -27,11 +27,12 @@ class Xmlss::Style::NumberFormatTest < Test::Unit::TestCase
       :true_false => "True/False",
       :on_off => "On/Off"
     }.each do |format, value|
-      should_have_class_method format
       should "provide the value for the '#{format}' format" do
-        assert_equal value, Xmlss::Style::NumberFormat.send(format)
+        assert_equal value, Xmlss::Style::NumberFormat.format(format)
       end
     end
+
+    should_have_accessor :format
 
     context "that sets attributes at init" do
       subject do
@@ -45,22 +46,22 @@ class Xmlss::Style::NumberFormatTest < Test::Unit::TestCase
       end
     end
 
-    context "that sets attributes by key" do
+    context "that sets format by key" do
       before do
         subject.format = :on_off
       end
 
-      should "should returm them by value" do
+      should "should returm it by value" do
         assert_equal "On/Off", subject.format
       end
     end
 
-    context "that sets attributes by value" do
+    context "that sets format by value" do
       before do
         subject.format = "True/False"
       end
 
-      should "should returm them by value" do
+      should "should returm it by value" do
         assert_equal "True/False", subject.format
       end
     end
