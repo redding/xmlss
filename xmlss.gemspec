@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "xmlss"
   s.version     = Xmlss::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
-  s.homepage    = "http://github.com/__/xmlss"
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.authors     = ["Kelly Redding"]
+  s.email       = ["kelly@kelredd.com"]
+  s.homepage    = "http://github.com/kelredd/xmlss"
+  s.summary     = %q{Generate spreadsheet docs for MS Excel using XML Spreedsheet}
+  s.description = %q{This gem provides an api for constructing spreadsheet data and then uses that data to generate xml that can be interpreted by MS Excel.  The xml conforms to the XML Spreadsheet spec (http://msdn.microsoft.com/en-us/library/aa140066(office.10).aspx).}
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
