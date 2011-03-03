@@ -79,5 +79,4 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
     end
 
   end
-
 end

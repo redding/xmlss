@@ -95,5 +95,4 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
     end
 
   end
-
 end

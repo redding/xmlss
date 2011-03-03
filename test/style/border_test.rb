@@ -104,5 +104,4 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
     end
 
   end
-
 end

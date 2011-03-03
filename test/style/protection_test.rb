@@ -36,5 +36,4 @@ class Xmlss::Style::ProtectionTest < Test::Unit::TestCase
     end
 
   end
-
 end

@@ -86,5 +86,4 @@ class Xmlss::Style::AlignmentTest < Test::Unit::TestCase
     end
 
   end
-
 end

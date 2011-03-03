@@ -67,5 +67,4 @@ class Xmlss::Style::NumberFormatTest < Test::Unit::TestCase
     end
 
   end
-
 end
