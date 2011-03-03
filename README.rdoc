@@ -92,8 +92,8 @@ These classes define how a spreadsheet cells are styled.
 * *protection*: Xmlss::Protection object
 
 === Xmlss::Style::Alignment
-* *horizontal*: :left, :right', :center, default: nil
-* *vertical*: :top, :bottom, :middle, default: nil
+* *horizontal*: :automatic, :left, :center, :right, :default, default: :default
+* *vertical*: :automatic, :top, :center, :bottom, :default, default: :default
 * *wrap_text*: bool, default: false
 
 === Xmlss::Style::Border
