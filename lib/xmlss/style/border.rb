@@ -1,5 +1,10 @@
 module Xmlss::Style
   class Border
+    include Xmlss::Xml
+    def xml
+      { :node => :border,
+        :attributes => [:color, :position, :weight, :style] }
+    end
 
     POSITIONS = {
       :left => 0,
@@ -40,9 +45,9 @@ module Xmlss::Style
 
     def initialize(attrs={})
       self.color = attrs[:color]
-      self.position = attrs[:position] || :left
-      self.weight = attrs[:weight] || :hairline
-      self.style = attrs[:style] || :continuous
+      self.position = attrs[:position]
+      self.weight = attrs[:weight]
+      self.style = attrs[:style]
     end
 
     def position=(value)

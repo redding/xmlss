@@ -48,9 +48,9 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
 
     should "set it's defaults" do
       assert_equal nil, subject.color
-      assert_equal Xmlss::Style::Border.position(:left), subject.position
-      assert_equal Xmlss::Style::Border.weight(:hairline), subject.weight
-      assert_equal Xmlss::Style::Border.style(:continuous), subject.style
+      assert_equal nil, subject.position
+      assert_equal nil, subject.weight
+      assert_equal nil, subject.style
     end
 
     context "that sets attributes at init" do
@@ -100,6 +100,27 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
         assert_equal Xmlss::Style::Border.position(:bottom), subject.position
         assert_equal Xmlss::Style::Border.weight(:medium), subject.weight
         assert_equal Xmlss::Style::Border.style(:dash_dot), subject.style
+      end
+    end
+
+    context "for generating XML" do
+      should_have_reader :xml
+
+      context "by default" do
+        subject{ Xmlss::Style::Border.new }
+
+        should "have no element attributes" do
+          assert_equal({}, subject.send(:build_attributes))
+        end
+
+        should_have_instance_methods :build_node
+        should "build it's node" do
+          assert_nothing_raised do
+            ::Nokogiri::XML::Builder.new do |builder|
+              subject.build_node(builder)
+            end
+          end
+        end
       end
     end
 
