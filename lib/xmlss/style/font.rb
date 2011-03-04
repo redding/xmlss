@@ -1,18 +1,24 @@
 module Xmlss::Style
   class Font
+    include Xmlss::Xml
+    def xml
+      { :node => :font,
+        :attributes => [
+          :bold, :color, :name, :italic, :size,
+          :strike_through, :underline, :alignment
+        ] }
+    end
 
     UNDERLINES = {
       :none => 0,
       :single => 1,
-      :double => 2,
-      :default => 3
+      :double => 2
     }.freeze
 
     ALIGNMENTS = {
       :none => 0,
       :subscript => 1,
-      :superscript => 2,
-      :default => 3
+      :superscript => 2
     }.freeze
 
     class << self
@@ -34,8 +40,8 @@ module Xmlss::Style
       self.italic = attrs[:italic] || false
       self.size = attrs[:size]
       self.strike_through = attrs[:strike_through] || false
-      self.underline = attrs[:underline] || :default
-      self.alignment = attrs[:alignment] || :default
+      self.underline = attrs[:underline]
+      self.alignment = attrs[:alignment]
     end
 
     def bold?; !!self.bold; end

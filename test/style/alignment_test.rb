@@ -85,24 +85,8 @@ class Xmlss::Style::AlignmentTest < Test::Unit::TestCase
 
     context "for generating XML" do
       should_have_reader :xml
-
-      context "by default" do
-        subject{ Xmlss::Style::Alignment.new }
-
-        should "have no element attributes" do
-          assert_equal({}, subject.send(:build_attributes))
-        end
-
-        should_have_instance_methods :build_node
-        should "build it's node" do
-          assert_nothing_raised do
-            ::Nokogiri::XML::Builder.new do |builder|
-              subject.build_node(builder)
-            end
-          end
-        end
-
-      end
+      should_build_node
+      should_build_no_attributes_by_default(Xmlss::Style::Alignment)
     end
 
   end

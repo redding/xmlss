@@ -10,8 +10,7 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
     {
       :none => 0,
       :single => 1,
-      :double => 2,
-      :default => 3
+      :double => 2
     }.each do |underline, value|
       should "provide the value for the '#{underline}' underline" do
         assert_equal value, Xmlss::Style::Font.underline(underline)
@@ -22,8 +21,7 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
     {
       :none => 0,
       :subscript => 1,
-      :superscript => 2,
-      :default => 3
+      :superscript => 2
     }.each do |alignment, value|
       should "provide the value for the '#{alignment}' alignment" do
         assert_equal value, Xmlss::Style::Font.alignment(alignment)
@@ -92,6 +90,12 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
         assert_equal Xmlss::Style::Font.underline(:double), subject.underline
         assert_equal Xmlss::Style::Font.alignment(:subscript), subject.alignment
       end
+    end
+
+    context "for generating XML" do
+      should_have_reader :xml
+      should_build_node
+      should_build_no_attributes_by_default(Xmlss::Style::Font)
     end
 
   end
