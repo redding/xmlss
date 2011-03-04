@@ -11,8 +11,7 @@ class Xmlss::Style::AlignmentTest < Test::Unit::TestCase
       :automatic => 0,
       :left => 1,
       :center => 2,
-      :right => 3,
-      :default => 4
+      :right => 3
     }.each do |horizontal, value|
       should "provide the value for the '#{horizontal}' horizontal" do
         assert_equal value, Xmlss::Style::Alignment.horizontal(horizontal)
@@ -24,8 +23,7 @@ class Xmlss::Style::AlignmentTest < Test::Unit::TestCase
       :automatic => 0,
       :top => 1,
       :center => 2,
-      :bottom => 3,
-      :default => 4
+      :bottom => 3
     }.each do |vertical, value|
       should "provide the value for the '#{vertical}' vertical" do
         assert_equal value, Xmlss::Style::Alignment.vertical(vertical)
@@ -37,8 +35,8 @@ class Xmlss::Style::AlignmentTest < Test::Unit::TestCase
 
     should "set it's defaults" do
       assert_equal false, subject.wrap_text
-      assert_equal Xmlss::Style::Alignment.horizontal(:default), subject.horizontal
-      assert_equal Xmlss::Style::Alignment.vertical(:default), subject.vertical
+      assert_equal nil, subject.horizontal
+      assert_equal nil, subject.vertical
     end
 
     context "that sets attributes at init" do
@@ -82,6 +80,28 @@ class Xmlss::Style::AlignmentTest < Test::Unit::TestCase
       should "should returm it by value" do
         assert_equal Xmlss::Style::Alignment.horizontal(:right), subject.horizontal
         assert_equal Xmlss::Style::Alignment.vertical(:center), subject.vertical
+      end
+    end
+
+    context "for generating XML" do
+      should_have_reader :xml
+
+      context "by default" do
+        subject{ Xmlss::Style::Alignment.new }
+
+        should "have no element attributes" do
+          assert_equal({}, subject.send(:build_attributes))
+        end
+
+        should_have_instance_methods :build_node
+        should "build it's node" do
+          assert_nothing_raised do
+            ::Nokogiri::XML::Builder.new do |builder|
+              subject.build_node(builder)
+            end
+          end
+        end
+
       end
     end
 
