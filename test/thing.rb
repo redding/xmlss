@@ -1,6 +1,6 @@
 class Thing
-  include Xmlss::Helpers
+  include Xmlss::Xml
 
-  attr_accessor :one, :two, :three
+  attr_accessor :one, :two, :three, :xml
 
 end

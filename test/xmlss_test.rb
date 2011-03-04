@@ -12,9 +12,12 @@ class XmlssTest < Test::Unit::TestCase
     end
 
     context "helpers" do
-      subject { Thing.new }
+      should "be provided" do
+        assert_respond_to Xmlss, :classify
+        assert_respond_to Xmlss, :xmlify
+      end
 
-      should "classify underscored string" do
+      should "classify underscored strings" do
         assert_nothing_raised do
           subject.send(:classify, 'poo')
         end
@@ -31,21 +34,51 @@ class XmlssTest < Test::Unit::TestCase
         assert_equal nil, subject.send(:xmlify, "")
         assert_equal "poo", subject.send(:xmlify, 'poo')
       end
+    end
 
-      should "generate xml attributes based on it's attributes" do
-        subject.one = true
-        subject.two = "two"
-        subject.three = ""
+    context "Xml" do
+      subject { Thing.new }
 
-        assert_respond_to subject, :element_attributes
-        attrs = subject.element_attributes :one, :two, :three
+      should "bark if you use xml generation without configuring" do
+        assert_raises ArgumentError do
+          ::Nokogiri::XML::Builder.new do |builder|
+            subject.build_node(builder)
+          end
+        end
+      end
 
-        assert_kind_of ::Hash, attrs
-        assert attrs.has_key?("#{Xmlss::SHEET_NS}:One")
-        assert_equal 1, attrs["#{Xmlss::SHEET_NS}:One"]
-        assert attrs.has_key?("#{Xmlss::SHEET_NS}:Two")
-        assert_equal 'two', attrs["#{Xmlss::SHEET_NS}:Two"]
-        assert !attrs.has_key?("#{Xmlss::SHEET_NS}:Three")
+      context "with config" do
+        before do
+          subject.xml = {
+            :node => :thing,
+            :attributes => [:one, :two, :three]
+          }
+          subject.one = true
+          subject.two = "two"
+          subject.three = ""
+        end
+
+        should "build it's node" do
+          assert_nothing_raised do
+            ::Nokogiri::XML::Builder.new do |builder|
+              subject.build_node(builder)
+            end
+          end
+        end
+
+        should "generate build attributes based on it's own attributes" do
+          assert_nothing_raised do
+            subject.send :build_attributes
+          end
+          attrs = subject.send :build_attributes
+
+          assert_kind_of ::Hash, attrs
+          assert attrs.has_key?("#{Xmlss::SHEET_NS}:One")
+          assert_equal 1, attrs["#{Xmlss::SHEET_NS}:One"]
+          assert attrs.has_key?("#{Xmlss::SHEET_NS}:Two")
+          assert_equal 'two', attrs["#{Xmlss::SHEET_NS}:Two"]
+          assert !attrs.has_key?("#{Xmlss::SHEET_NS}:Three")
+        end
       end
     end
 
