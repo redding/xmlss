@@ -1,5 +1,10 @@
 module Xmlss::Style
   class Interior
+    include Xmlss::Xml
+    def xml
+      { :node => :interior,
+        :attributes => [:color, :pattern, :pattern_color] }
+    end
 
     PATTERNS = {
       :one => 0,
@@ -20,8 +25,7 @@ module Xmlss::Style
       :thin_horz_stripe => 15,
       :thin_vert_stripe => 16,
       :thin_diag_strip => 17,
-      :thin_horz_cross => 18,
-      :default => 19
+      :thin_horz_cross => 18
     }.freeze
 
     class << self
@@ -34,7 +38,7 @@ module Xmlss::Style
 
     def initialize(attrs={})
       self.color = attrs[:color]
-      self.pattern = attrs[:pattern] || self.class.pattern(:default)
+      self.pattern = attrs[:pattern]
       self.pattern_color = attrs[:pattern_color]
     end
 

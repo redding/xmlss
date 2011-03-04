@@ -66,5 +66,11 @@ class Xmlss::Style::NumberFormatTest < Test::Unit::TestCase
       end
     end
 
+    context "for generating XML" do
+      should_have_reader :xml
+      should_build_node
+      should_build_no_attributes_by_default(Xmlss::Style::Alignment)
+    end
+
   end
 end

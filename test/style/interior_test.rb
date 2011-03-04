@@ -26,8 +26,7 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
       :thin_horz_stripe => 15,
       :thin_vert_stripe => 16,
       :thin_diag_strip => 17,
-      :thin_horz_cross => 18,
-      :default => 19
+      :thin_horz_cross => 18
     }.each do |pattern, value|
       should "provide the value for the '#{pattern}' pattern" do
         assert_equal value, Xmlss::Style::Interior.pattern(pattern)
@@ -38,7 +37,7 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
 
     should "set it's defaults" do
       assert_equal nil, subject.color
-      assert_equal Xmlss::Style::Interior.pattern(:default), subject.pattern
+      assert_equal nil, subject.pattern
       assert_equal nil, subject.pattern_color
     end
 
@@ -60,11 +59,11 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
 
     context "that sets pattern by key" do
       before do
-        subject.pattern = :default
+        subject.pattern = :solid
       end
 
       should "should returm them by value" do
-        assert_equal 19, subject.pattern
+        assert_equal 1, subject.pattern
       end
     end
 
@@ -76,6 +75,12 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
       should "should returm them by value" do
         assert_equal 1, subject.pattern
       end
+    end
+
+    context "for generating XML" do
+      should_have_reader :xml
+      should_build_node
+      should_build_no_attributes_by_default(Xmlss::Style::Alignment)
     end
 
   end

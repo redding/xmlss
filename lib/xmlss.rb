@@ -57,7 +57,7 @@ module Xmlss
     end
 
     def build_attributes
-      xml[:attributes].inject({}) do |xattrs, a|
+      (xml[:attributes] || []).inject({}) do |xattrs, a|
         xattrs.merge(if !(xv = Xmlss.xmlify(self.send(a))).nil?
           {"#{Xmlss::SHEET_NS}:#{Xmlss.classify(a)}" => xv}
         else

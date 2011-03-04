@@ -1,5 +1,10 @@
 module Xmlss::Style
   class NumberFormat
+    include Xmlss::Xml
+    def xml
+      { :node => :number_format,
+        :attributes => [:format] }
+    end
 
     FORMATS = {
       :general => "General",
