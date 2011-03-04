@@ -7,17 +7,31 @@ require 'xmlss/style/protection'
 
 module Xmlss::Style
   class Base
-    include Xmlss::Helpers
+    include Xmlss::Xml
+    def xml
+      { :node => :style,
+        :attributes => [:i_d],
+        :children => [
+          :alignment, :borders, :font, :interior, :number_format, :protection
+        ]}
+    end
 
-    attr_reader :id
-    attr_accessor :borders
+    attr_reader :id, :borders
+    alias_method :i_d, :id
     attr_writer :alignment, :font, :interior, :number_format, :protection
 
     def initialize(id, &block)
       raise ArgumentError, "please choose an id for the style" if id.nil?
       @id = id.to_s
-      self.borders = []
+      self.borders = Xmlss::ItemSet.new(:borders)
       instance_eval(&block) if block
+    end
+
+    def borders=(value)
+      if !value.kind_of? Xmlss::ItemSet
+        raise ArgumentError, "must set borders to an Xmlss::ItemSet value"
+      end
+      @borders = value
     end
 
     def border(opts = nil)
@@ -42,7 +56,7 @@ module Xmlss::Style
     end
 
     def klass(method_name)
-      Xmlss::Style.const_get(classify(method_name))
+      Xmlss::Style.const_get(Xmlss.classify(method_name))
     end
   end
 end

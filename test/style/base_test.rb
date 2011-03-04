@@ -5,7 +5,7 @@ class Xmlss::Style::BaseTest < Test::Unit::TestCase
   context "Xmlss::Style::Base" do
     subject { Xmlss::Style::Base.new(:test) }
 
-    should_have_reader :id, :border
+    should_have_reader :id, :i_d, :border
     should_have_accessors :borders, :alignment, :font
     should_have_accessors :interior, :number_format, :protection
 
@@ -59,10 +59,17 @@ class Xmlss::Style::BaseTest < Test::Unit::TestCase
       end
 
       should "should create Border objects and add them to its borders" do
+        puts subject.to_xml
         assert_equal 2, subject.borders.size
         assert_kind_of Xmlss::Style::Border, subject.borders.first
         assert_equal Xmlss::Style::Border.position(:left), subject.borders.first.position
         assert_equal Xmlss::Style::Border.position(:right), subject.borders.last.position
+      end
+
+      should "error if manually setting borders to non ItemSet collection" do
+        assert_raises ArgumentError do
+          subject.borders = []
+        end
       end
     end
 
@@ -108,6 +115,12 @@ class Xmlss::Style::BaseTest < Test::Unit::TestCase
         assert_kind_of Xmlss::Style::Protection, subject.protection
         assert subject.protection.protected?
       end
+    end
+
+    context "for generating XML" do
+      should_have_reader :xml
+      should_build_node
+      should_build_no_attributes_by_default(Xmlss::Style::Alignment)
     end
 
   end

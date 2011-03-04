@@ -97,7 +97,7 @@ These classes define how a spreadsheet cells are styled.
 * *wrap_text*: bool, default: false
 
 === Xmlss::Style::Border
-* *position*: :left, :top, :right, :bottom, default: :left
+* *position*: :left, :top, :right, :bottom
 * *color*: hex string
 * *style*: :none, :continuous, :dash, :dot, :dash_dot, :dash_dot_dot, default: :continuous
 * *weight*: :hairline, :thin, :medium, :thick, default: :hairline
@@ -109,8 +109,8 @@ These classes define how a spreadsheet cells are styled.
 * *italic*: bool, default: false
 * *size*: int
 * *strike_through*: bool, default: false
-* *underline*: :none, :single, :double, :default, default: :default
-* *alignment*: :none, :subscript, :superscript, :default, default: :default
+* *underline*: :none, :single, :double
+* *alignment*: :none, :subscript, :superscript
 
 === Xmlss::Style::Interior
 * *color*: hex string
