@@ -6,6 +6,9 @@ module Xmlss::Style
         :attributes => [:color, :pattern, :pattern_color] }
     end
 
+    # include Xmlss::Enum
+    # enum :pattern,
+
     PATTERNS = {
       :one => 0,
       :solid => 1,
