@@ -7,6 +7,7 @@ require 'xmlss/style/protection'
 
 module Xmlss::Style
   class Base
+    include Xmlss::Helpers
 
     attr_reader :id
     attr_accessor :borders
@@ -41,12 +42,7 @@ module Xmlss::Style
     end
 
     def klass(method_name)
-      Xmlss::Style.
-        const_get(method_name.
-          to_s.downcase.
-          split("_").collect{|part| part.capitalize}.
-          join('')
-        )
+      Xmlss::Style.const_get(classify(method_name))
     end
   end
 end
