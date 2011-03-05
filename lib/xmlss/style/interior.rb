@@ -6,7 +6,8 @@ module Xmlss::Style
         :attributes => [:color, :pattern, :pattern_color] }
     end
 
-    PATTERNS = {
+    include Xmlss::Enum
+    enum :pattern, {
       :one => 0,
       :solid => 1,
       :gray75 => 2,
@@ -26,30 +27,14 @@ module Xmlss::Style
       :thin_vert_stripe => 16,
       :thin_diag_strip => 17,
       :thin_horz_cross => 18
-    }.freeze
+    }
 
-    class << self
-      def pattern(p)
-        PATTERNS[p.to_sym]
-      end
-    end
-
-    attr_accessor :color, :pattern, :pattern_color
+    attr_accessor :color, :pattern_color
 
     def initialize(attrs={})
       self.color = attrs[:color]
       self.pattern = attrs[:pattern]
       self.pattern_color = attrs[:pattern_color]
-    end
-
-    def pattern=(value)
-      @pattern = if value && PATTERNS.has_key?(value.to_sym)
-        PATTERNS[value.to_sym]
-      elsif PATTERNS.has_value?(value)
-        value
-      else
-        nil
-      end
     end
 
   end

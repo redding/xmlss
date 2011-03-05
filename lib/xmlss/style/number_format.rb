@@ -6,7 +6,8 @@ module Xmlss::Style
         :attributes => [:format] }
     end
 
-    FORMATS = {
+    include Xmlss::Enum
+    enum :format, {
       :general => "General",
       :general_number => "General Number",
       :general_date => "General Date",
@@ -25,28 +26,10 @@ module Xmlss::Style
       :yes_no => "Yes/No",
       :true_false => "True/False",
       :on_off => "On/Off"
-    }.freeze
-
-    class << self
-      def format(f)
-        FORMATS[f.to_sym]
-      end
-    end
-
-    attr_accessor :format
+    }
 
     def initialize(attrs={})
       self.format = attrs[:format]
-    end
-
-    def format=(value)
-      @format = if value && FORMATS.has_key?(value.to_sym)
-        FORMATS[value.to_sym]
-      elsif FORMATS.has_value?(value)
-        value
-      else
-        nil
-      end
     end
 
   end
