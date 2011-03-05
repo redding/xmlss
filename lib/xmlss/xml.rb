@@ -25,8 +25,12 @@ module Xmlss
         raise ArgumentError, "no xml config provided"
       end
       if xml[:node] && !xml[:node].to_s.empty?
-        builder.send(Xmlss.classify(xml[:node]), build_attributes) do
-          build_children(builder)
+        if xml[:value] && (v = self.send(xml[:value]).to_s)
+          builder.send(Xmlss.classify(xml[:node]), v, build_attributes)
+        else
+          builder.send(Xmlss.classify(xml[:node]), build_attributes) do
+            build_children(builder)
+          end
         end
       else
         build_children(builder)
