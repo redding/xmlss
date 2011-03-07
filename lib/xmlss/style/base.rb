@@ -1,3 +1,4 @@
+require 'xmlss/item_set'
 require 'xmlss/style/alignment'
 require 'xmlss/style/border'
 require 'xmlss/style/font'

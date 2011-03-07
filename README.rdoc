@@ -63,12 +63,11 @@ These classes define how a spreadsheet is constructed.
 === Xmlss::Row
 * *style_id*: string
 * *height*: numeric
-* *auto_fit_width*: bool, default: false
+* *auto_fit_height*: bool, default: false
 * *hidden*: bool, default: false
 * *cells*: array, Xmlss::Cell objects, default: []
 
 === Xmlss::Cell
-* *index*: string
 * *style_id*: string
 * *data*: Xmlss::Data object
 * *formula*: string

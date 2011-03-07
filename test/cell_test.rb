@@ -7,23 +7,23 @@ module Xmlss
     context "Xmlss::Cell" do
       subject { Cell.new }
 
-      should_have_accessor :index, :style_id
+      should_have_accessor :data
       should_have_accessor :formula, :href, :merge_across, :merge_down
-      should_have_accessor :comment, :data
-      should_have_reader :h_ref, :style_i_d
+      should_have_reader :h_ref
+
+      should_have_style(Cell)
 
       should "set it's defaults" do
-        [:index, :style_id, :data, :comment, :formula, :href].each do |a|
+        [:data, :formula, :href].each do |a|
           assert_equal nil, subject.send(a)
         end
         assert_equal nil, subject.merge_across
         assert_equal nil, subject.merge_down
       end
 
-      should "provide aliases for style_id and :href" do
-        c = Cell.new({:style_id => :poo, :href => "http://www.google.com"})
-        assert_equal :poo, c.style_id
-        assert_equal :poo, c.style_i_d
+      should "provide alias for :href" do
+        c = Cell.new({:href => "http://www.google.com"})
+        assert_equal "http://www.google.com", c.href
         assert_equal "http://www.google.com", c.h_ref
       end
 
