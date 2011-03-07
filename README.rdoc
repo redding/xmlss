@@ -68,6 +68,7 @@ These classes define how a spreadsheet is constructed.
 * *cells*: array, Xmlss::Cell objects, default: []
 
 === Xmlss::Cell
+* *index*: string
 * *style_id*: string
 * *data*: Xmlss::Data object
 * *formula*: string
