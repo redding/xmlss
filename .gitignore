@@ -2,3 +2,5 @@ pkg/*
 .bundle
 *.gem
 *.log
+*.xml
+

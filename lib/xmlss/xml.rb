@@ -10,7 +10,7 @@ module Xmlss
 
     def xml_builder
       ::Nokogiri::XML::Builder.new do |builder|
-        yield if block_given?
+        yield(builder) if block_given?
       end
     end
 
@@ -37,8 +37,8 @@ module Xmlss
           {"#{Xmlss::SHEET_NS}:#{Xmlss.classify(a)}" => xv}
         else
           {}
-        end).merge(attrs)
-      end
+        end)
+      end.merge(attrs)
     end
     private :build_attributes
 
