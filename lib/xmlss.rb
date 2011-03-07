@@ -27,3 +27,4 @@ end
 require 'xmlss/xml'
 require 'xmlss/enum'
 require 'xmlss/style/base'
+

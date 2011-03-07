@@ -23,15 +23,6 @@ module Xmlss
       self.cells = Xmlss::ItemSet.new(:cells)
     end
 
-    [:merge_across, :merge_down].each do |meth|
-      define_method("#{meth}=") do |value|
-        if value && !value.kind_of?(::Fixnum)
-          raise ArgumentError, "must specify #{meth} as a Fixnum"
-        end
-        instance_variable_set("@#{meth}", value <= 0 ? nil : value)
-      end
-    end
-
     def height=(value)
       if value && !value.kind_of?(::Numeric)
         raise ArgumentError, "must specify height as a Numeric"
