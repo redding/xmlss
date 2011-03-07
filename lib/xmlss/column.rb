@@ -3,7 +3,7 @@ module Xmlss
 
     include Xmlss::Xml
     def xml
-      { :node => :row,
+      { :node => :column,
         :attributes => [:style_i_d, :width, :auto_fit_width, :hidden] }
     end
 

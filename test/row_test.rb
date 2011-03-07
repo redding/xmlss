@@ -42,7 +42,6 @@ module Xmlss
         before { subject.cells << Cell.new }
 
         should "should build a data object" do
-          puts subject.to_xml
           assert_equal 1, subject.cells.size
           assert_kind_of Cell, subject.cells.first
         end
