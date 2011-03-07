@@ -97,12 +97,12 @@ class Xmlss::Style::BaseTest < Test::Unit::TestCase
 
     context "that sets number format" do
       subject do
-        Xmlss::Style::Base.new(:number_format) { number_format(:format => :general) }
+        Xmlss::Style::Base.new(:number_format) { number_format(:format => "General") }
       end
 
       should "should create a NumberFormat object" do
         assert_kind_of Xmlss::Style::NumberFormat, subject.number_format
-        assert_equal Xmlss::Style::NumberFormat.format(:general), subject.number_format.format
+        assert_equal "General", subject.number_format.format
       end
     end
 

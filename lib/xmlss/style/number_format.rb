@@ -6,30 +6,14 @@ module Xmlss::Style
         :attributes => [:format] }
     end
 
-    include Xmlss::Enum
-    enum :format, {
-      :general => "General",
-      :general_number => "General Number",
-      :general_date => "General Date",
-      :long_date => "Long Date",
-      :medium_date => "Medium Date",
-      :short_date => "Short Date",
-      :long_time => "Long Time",
-      :medium_time => "Medium Time",
-      :short_time => "Short Time",
-      :currency => "Currency",
-      :euro_currency => "Euro Currency",
-      :fixed => "Fixed",
-      :standard => "Standard",
-      :percent => "Percent",
-      :scientific => "Scientific",
-      :yes_no => "Yes/No",
-      :true_false => "True/False",
-      :on_off => "On/Off"
-    }
+    attr_accessor :format
 
     def initialize(attrs={})
       self.format = attrs[:format]
+    end
+
+    def format=(value)
+      @format = (value && value.respond_to?(:to_s) ? value.to_s : nil)
     end
 
   end
