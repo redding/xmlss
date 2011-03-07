@@ -31,7 +31,7 @@ module Xmlss
         if value && !value.kind_of?(::Fixnum)
           raise ArgumentError, "must specify #{meth} as a Fixnum"
         end
-        instance_variable_set("@#{meth}", value)
+        instance_variable_set("@#{meth}", value <= 0 ? nil : value)
       end
     end
 

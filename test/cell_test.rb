@@ -16,8 +16,8 @@ module Xmlss
         [:index, :style_id, :data, :comment, :formula, :href].each do |a|
           assert_equal nil, subject.send(a)
         end
-        assert_equal 0, subject.merge_across
-        assert_equal 0, subject.merge_down
+        assert_equal nil, subject.merge_across
+        assert_equal nil, subject.merge_down
       end
 
       should "provide aliases for style_id and :href" do
@@ -39,6 +39,14 @@ module Xmlss
         end
         assert_nothing_raised do
           Cell.new({:merge_down => 3})
+        end
+      end
+
+      should "nil out merge values that are <= 0" do
+        [:merge_across, :merge_down].each do |a|
+          assert_equal nil, Cell.new({a => -1}).send(a)
+          assert_equal nil, Cell.new({a => 0}).send(a)
+          assert_equal 1, Cell.new({a => 1}).send(a)
         end
       end
 
