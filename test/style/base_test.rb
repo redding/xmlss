@@ -59,7 +59,6 @@ class Xmlss::Style::BaseTest < Test::Unit::TestCase
       end
 
       should "should create Border objects and add them to its borders" do
-        puts subject.to_xml
         assert_equal 2, subject.borders.size
         assert_kind_of Xmlss::Style::Border, subject.borders.first
         assert_equal Xmlss::Style::Border.position(:left), subject.borders.first.position

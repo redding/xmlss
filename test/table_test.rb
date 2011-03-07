@@ -28,7 +28,6 @@ module Xmlss
         end
 
         should "should build a table object" do
-          puts subject.to_xml
           assert_equal 1, subject.columns.size
           assert_kind_of Column, subject.columns.first
           assert_equal 1, subject.rows.size

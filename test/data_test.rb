@@ -20,7 +20,6 @@ module Xmlss
         end
 
         should "should ignore the value type" do
-          puts subject.to_xml
           assert_equal Data.type(:string), subject.type
         end
       end

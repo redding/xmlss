@@ -8,27 +8,21 @@ module Xmlss
 
   module Xml
 
-    # TODO: move to the main workbook model eventually...
-    def to_xml
+    def xml_builder
       ::Nokogiri::XML::Builder.new do |builder|
-        builder.root({
-          Xmlss::XML_NS => Xmlss::NS_URI,
-          "#{Xmlss::XML_NS}:#{Xmlss::SHEET_NS}" => Xmlss::NS_URI
-        }) do
-          build_node(builder)
-        end
-      end.to_xml
+        yield if block_given?
+      end
     end
 
-    def build_node(builder)
+    def build_node(builder, attrs={})
       unless xml && xml.kind_of?(::Hash)
         raise ArgumentError, "no xml config provided"
       end
       if xml[:node] && !xml[:node].to_s.empty?
         if xml[:value] && (v = self.send(xml[:value]).to_s)
-          builder.send(Xmlss.classify(xml[:node]), v, build_attributes)
+          builder.send(Xmlss.classify(xml[:node]), v, build_attributes(attrs))
         else
-          builder.send(Xmlss.classify(xml[:node]), build_attributes) do
+          builder.send(Xmlss.classify(xml[:node]), build_attributes(attrs)) do
             build_children(builder)
           end
         end
@@ -37,13 +31,13 @@ module Xmlss
       end
     end
 
-    def build_attributes
+    def build_attributes(attrs={})
       (xml[:attributes] || []).inject({}) do |xattrs, a|
         xattrs.merge(if !(xv = Xmlss.xmlify(self.send(a))).nil?
           {"#{Xmlss::SHEET_NS}:#{Xmlss.classify(a)}" => xv}
         else
           {}
-        end)
+        end).merge(attrs)
       end
     end
     private :build_attributes
