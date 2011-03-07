@@ -29,7 +29,5 @@ module Xmlss
       end.to_xml
     end
 
-
-
   end
 end
