@@ -8,16 +8,16 @@ module Xmlss::Style
 
     include Xmlss::Enum
     enum :horizontal, {
-      :automatic => 0,
-      :left => 1,
-      :center => 2,
-      :right => 3
+      :automatic => "Automatic",
+      :left => "Left",
+      :center => "Center",
+      :right => "Right"
     }
     enum :vertical, {
-      :automatic => 0,
-      :top => 1,
-      :center => 2,
-      :bottom => 3
+      :automatic => "Automatic",
+      :top => "Top",
+      :center => "Center",
+      :bottom => "Bottom"
     }
 
     attr_accessor :wrap_text

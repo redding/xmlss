@@ -8,10 +8,10 @@ class Xmlss::Style::AlignmentTest < Test::Unit::TestCase
 
     should_have_class_method :horizontal
     {
-      :automatic => 0,
-      :left => 1,
-      :center => 2,
-      :right => 3
+      :automatic => "Automatic",
+      :left => "Left",
+      :center => "Center",
+      :right => "Right"
     }.each do |horizontal, value|
       should "provide the value for the '#{horizontal}' horizontal" do
         assert_equal value, Xmlss::Style::Alignment.horizontal(horizontal)
@@ -20,10 +20,10 @@ class Xmlss::Style::AlignmentTest < Test::Unit::TestCase
 
     should_have_class_method :vertical
     {
-      :automatic => 0,
-      :top => 1,
-      :center => 2,
-      :bottom => 3
+      :automatic => "Automatic",
+      :top => "Top",
+      :center => "Center",
+      :bottom => "Bottom"
     }.each do |vertical, value|
       should "provide the value for the '#{vertical}' vertical" do
         assert_equal value, Xmlss::Style::Alignment.vertical(vertical)
