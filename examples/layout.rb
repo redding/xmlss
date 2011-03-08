@@ -3,10 +3,6 @@ require 'examples/example_workbook'
 class Layout < ExampleWorkbook
   def name; "layout"; end
   def build
-    first_sheet
-  end
-
-  def first_sheet
     wksht = Xmlss::Worksheet.new('first')
     4.times do
       wksht.table.columns << Xmlss::Column.new
@@ -80,9 +76,6 @@ class Layout < ExampleWorkbook
     })
 
     self.worksheets << wksht
-  end
-
-  def second_sheet
   end
 end
 Layout.new.to_file
