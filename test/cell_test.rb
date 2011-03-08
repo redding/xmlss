@@ -2,12 +2,12 @@ require "test/helper"
 require 'xmlss/cell'
 
 module Xmlss
-  class DataTest < Test::Unit::TestCase
+  class CellTest < Test::Unit::TestCase
 
     context "Xmlss::Cell" do
       subject { Cell.new }
 
-      should_have_accessor :data
+      should_have_accessor :index, :data
       should_have_accessor :formula, :href, :merge_across, :merge_down
       should_have_reader :h_ref
 
@@ -27,6 +27,18 @@ module Xmlss
         assert_equal "http://www.google.com", c.h_ref
       end
 
+      should "bark when setting non Fixnum indices" do
+        assert_raises ArgumentError do
+          Cell.new({:index => "do it"})
+        end
+        assert_raises ArgumentError do
+          Cell.new({:index => 2.5})
+        end
+        assert_nothing_raised do
+          Cell.new({:index => 2})
+        end
+      end
+
       should "bark when setting non Fixnum merge attrs" do
         assert_raises ArgumentError do
           Cell.new({:merge_across => "do it"})
@@ -42,8 +54,8 @@ module Xmlss
         end
       end
 
-      should "nil out merge values that are <= 0" do
-        [:merge_across, :merge_down].each do |a|
+      should "nil out merge/index values that are <= 0" do
+        [:index, :merge_across, :merge_down].each do |a|
           assert_equal nil, Cell.new({a => -1}).send(a)
           assert_equal nil, Cell.new({a => 0}).send(a)
           assert_equal 1, Cell.new({a => 1}).send(a)
