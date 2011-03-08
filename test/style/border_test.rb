@@ -8,10 +8,12 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
 
     should_have_class_method :position
     {
-      :left => 0,
-      :top => 1,
-      :right => 2,
-      :bottom => 3
+      :left => "Left",
+      :top => "Top",
+      :right => "Right",
+      :bottom => "Bottom",
+      :diagonal_left => "DiagonalLeft",
+      :diagonal_right => "DiagonalRight"
     }.each do |position, value|
       should "provide the value for the '#{position}' position" do
         assert_equal value, Xmlss::Style::Border.position(position)
@@ -30,27 +32,27 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
       end
     end
 
-    should_have_class_method :style
+    should_have_class_method :line_style
     {
-      :none => 0,
-      :continuous => 1,
-      :dash => 2,
-      :dot => 3,
-      :dash_dot => 4,
-      :dask_dot_dot => 5
+      :none => "None",
+      :continuous => "Continuous",
+      :dash => "Dash",
+      :dot => "Dot",
+      :dash_dot => "DashDot",
+      :dash_dot_dot => "DashDotDot"
     }.each do |style, value|
-      should "provide the value for the '#{style}' style" do
-        assert_equal value, Xmlss::Style::Border.style(style)
+      should "provide the value for the '#{style}' line_style" do
+        assert_equal value, Xmlss::Style::Border.line_style(style)
       end
     end
 
-    should_have_accessors :color, :position, :weight, :style
+    should_have_accessors :color, :position, :weight, :line_style
 
     should "set it's defaults" do
       assert_equal nil, subject.color
       assert_equal nil, subject.position
       assert_equal nil, subject.weight
-      assert_equal nil, subject.style
+      assert_equal nil, subject.line_style
     end
 
     context "that sets attributes at init" do
@@ -59,19 +61,19 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
           :color => '#FF0000',
           :position => :top,
           :weight => :thick,
-          :style => :dot
+          :line_style => :dot
         }
         @border = Xmlss::Style::Border.new(@attrs)
       end
       subject{ @border }
 
       should "should set them correctly" do
-        @attrs.reject{|a, v| [:position, :weight, :style].include?(a)}.each do |a,v|
+        @attrs.reject{|a, v| [:position, :weight, :line_style].include?(a)}.each do |a,v|
           assert_equal v, subject.send(a)
         end
         assert_equal Xmlss::Style::Border.position(:top), subject.position
         assert_equal Xmlss::Style::Border.weight(:thick), subject.weight
-        assert_equal Xmlss::Style::Border.style(:dot), subject.style
+        assert_equal Xmlss::Style::Border.line_style(:dot), subject.line_style
       end
     end
 
@@ -79,13 +81,13 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
       before do
         subject.position = :bottom
         subject.weight = :medium
-        subject.style = :dash_dot
+        subject.line_style = :dash_dot
       end
 
       should "should returm it by value" do
         assert_equal Xmlss::Style::Border.position(:bottom), subject.position
         assert_equal Xmlss::Style::Border.weight(:medium), subject.weight
-        assert_equal Xmlss::Style::Border.style(:dash_dot), subject.style
+        assert_equal Xmlss::Style::Border.line_style(:dash_dot), subject.line_style
       end
     end
 
@@ -93,13 +95,13 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
       before do
         subject.position = Xmlss::Style::Border.position(:bottom)
         subject.weight = Xmlss::Style::Border.weight(:medium)
-        subject.style = Xmlss::Style::Border.style(:dash_dot)
+        subject.line_style = Xmlss::Style::Border.line_style(:dash_dot)
       end
 
       should "should returm it by value" do
         assert_equal Xmlss::Style::Border.position(:bottom), subject.position
         assert_equal Xmlss::Style::Border.weight(:medium), subject.weight
-        assert_equal Xmlss::Style::Border.style(:dash_dot), subject.style
+        assert_equal Xmlss::Style::Border.line_style(:dash_dot), subject.line_style
       end
     end
 

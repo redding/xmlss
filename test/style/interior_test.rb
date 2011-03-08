@@ -8,25 +8,25 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
 
     should_have_class_method :pattern
     {
-      :one => 0,
-      :solid => 1,
-      :gray75 => 2,
-      :gray50 => 3,
-      :gray25 => 4,
-      :gray125 => 5,
-      :gray0625 => 6,
-      :horz_stripe => 7,
-      :vert_stripe => 8,
-      :diag_stripe => 9,
-      :diag_cross => 10,
-      :reverseDiagStripe => 11,
-      :thin_reverse_diag_stripe => 12,
-      :thick_diag_cross => 13,
-      :thin_diag_cross => 14,
-      :thin_horz_stripe => 15,
-      :thin_vert_stripe => 16,
-      :thin_diag_strip => 17,
-      :thin_horz_cross => 18
+      :none => "None",
+      :solid => "Solid",
+      :gray75 => "Gray75",
+      :gray50 => "Gray50",
+      :gray25 => "Gray25",
+      :gray125 => "Gray125",
+      :gray0625 => "Gray0625",
+      :horz_stripe => "HorzStripe",
+      :vert_stripe => "VertStripe",
+      :reverse_diag_stripe => "ReverseDiagStripe",
+      :diag_stripe => "DiagStripe",
+      :diag_cross => "DiagCross",
+      :thick_diag_cross => "ThickDiagCross",
+      :thin_horz_stripe => "ThinHorzStripe",
+      :thin_vert_stripe => "ThinVertStripe",
+      :thin_reverse_diag_stripe => "ThinReverseDiagStripe",
+      :thin_diag_stripe => "ThineDiagStripe",
+      :thin_horz_cross => "ThinHorzCross",
+      :thin_diag_cross => "ThinDiagCross"
     }.each do |pattern, value|
       should "provide the value for the '#{pattern}' pattern" do
         assert_equal value, Xmlss::Style::Interior.pattern(pattern)
@@ -52,7 +52,7 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
 
       should "should set them correctly" do
         assert_equal "#000000", subject.color
-        assert_equal 1, subject.pattern
+        assert_equal "Solid", subject.pattern
         assert_equal "#FF0000", subject.pattern_color
       end
     end
@@ -63,17 +63,17 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
       end
 
       should "should returm them by value" do
-        assert_equal 1, subject.pattern
+        assert_equal "Solid", subject.pattern
       end
     end
 
     context "that sets attributes by value" do
       before do
-        subject.pattern = 1
+        subject.pattern = "Solid"
       end
 
       should "should returm them by value" do
-        assert_equal 1, subject.pattern
+        assert_equal "Solid", subject.pattern
       end
     end
 

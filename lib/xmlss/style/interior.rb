@@ -8,25 +8,25 @@ module Xmlss::Style
 
     include Xmlss::Enum
     enum :pattern, {
-      :one => 0,
-      :solid => 1,
-      :gray75 => 2,
-      :gray50 => 3,
-      :gray25 => 4,
-      :gray125 => 5,
-      :gray0625 => 6,
-      :horz_stripe => 7,
-      :vert_stripe => 8,
-      :diag_stripe => 9,
-      :diag_cross => 10,
-      :reverseDiagStripe => 11,
-      :thin_reverse_diag_stripe => 12,
-      :thick_diag_cross => 13,
-      :thin_diag_cross => 14,
-      :thin_horz_stripe => 15,
-      :thin_vert_stripe => 16,
-      :thin_diag_strip => 17,
-      :thin_horz_cross => 18
+      :none => "None",
+      :solid => "Solid",
+      :gray75 => "Gray75",
+      :gray50 => "Gray50",
+      :gray25 => "Gray25",
+      :gray125 => "Gray125",
+      :gray0625 => "Gray0625",
+      :horz_stripe => "HorzStripe",
+      :vert_stripe => "VertStripe",
+      :reverse_diag_stripe => "ReverseDiagStripe",
+      :diag_stripe => "DiagStripe",
+      :diag_cross => "DiagCross",
+      :thick_diag_cross => "ThickDiagCross",
+      :thin_horz_stripe => "ThinHorzStripe",
+      :thin_vert_stripe => "ThinVertStripe",
+      :thin_reverse_diag_stripe => "ThinReverseDiagStripe",
+      :thin_diag_stripe => "ThineDiagStripe",
+      :thin_horz_cross => "ThinHorzCross",
+      :thin_diag_cross => "ThinDiagCross"
     }
 
     attr_accessor :color, :pattern_color

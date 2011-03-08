@@ -3,15 +3,17 @@ module Xmlss::Style
     include Xmlss::Xml
     def xml
       { :node => :border,
-        :attributes => [:color, :position, :weight, :style] }
+        :attributes => [:color, :position, :weight, :line_style] }
     end
 
     include Xmlss::Enum
     enum :position, {
-      :left => 0,
-      :top => 1,
-      :right => 2,
-      :bottom => 3
+      :left => "Left",
+      :top => "Top",
+      :right => "Right",
+      :bottom => "Bottom",
+      :diagonal_left => "DiagonalLeft",
+      :diagonal_right => "DiagonalRight"
     }
     enum :weight, {
       :hairline => 0,
@@ -19,13 +21,13 @@ module Xmlss::Style
       :medium => 2,
       :thick => 3
     }
-    enum :style, {
-      :none => 0,
-      :continuous => 1,
-      :dash => 2,
-      :dot => 3,
-      :dash_dot => 4,
-      :dask_dot_dot => 5
+    enum :line_style, {
+      :none => "None",
+      :continuous => "Continuous",
+      :dash => "Dash",
+      :dot => "Dot",
+      :dash_dot => "DashDot",
+      :dash_dot_dot => "DashDotDot"
     }
 
     attr_accessor :color
@@ -34,7 +36,7 @@ module Xmlss::Style
       self.color = attrs[:color]
       self.position = attrs[:position]
       self.weight = attrs[:weight]
-      self.style = attrs[:style]
+      self.line_style = attrs[:line_style]
     end
 
   end

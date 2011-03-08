@@ -4,7 +4,7 @@ module Xmlss::Style
     def xml
       { :node => :font,
         :attributes => [
-          :bold, :color, :name, :italic, :size,
+          :bold, :color, :italic, :size,
           :strike_through, :underline, :alignment
         ] }
     end
@@ -21,12 +21,11 @@ module Xmlss::Style
       :superscript => 2
     }
 
-    attr_accessor :bold, :color, :name, :italic, :size, :strike_through
+    attr_accessor :bold, :color, :italic, :size, :strike_through
 
     def initialize(attrs={})
       self.bold = attrs[:bold] || false
       self.color = attrs[:color]
-      self.name = attrs[:name]
       self.italic = attrs[:italic] || false
       self.size = attrs[:size]
       self.strike_through = attrs[:strike_through] || false

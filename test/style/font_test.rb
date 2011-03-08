@@ -28,14 +28,13 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
       end
     end
 
-    should_have_accessors :bold, :color, :name, :italic, :size, :strike_through
+    should_have_accessors :bold, :color, :italic, :size, :strike_through
     should_have_accessors :underline, :alignment
     should_have_instance_methods :bold?, :italic?, :strike_through?
 
     should "set it's defaults" do
       assert_equal false, subject.bold
       assert_equal nil, subject.color
-      assert_equal nil, subject.name
       assert_equal false, subject.italic
       assert_equal nil, subject.size
       assert_equal false, subject.strike_through
@@ -48,7 +47,6 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
         @attrs = {
           :bold => true,
           :color => '#FF0000',
-          :name => "Verdana",
           :italic => true,
           :size => 10,
           :strike_through => true,
