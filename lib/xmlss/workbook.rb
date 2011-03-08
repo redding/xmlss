@@ -26,7 +26,7 @@ module Xmlss
           Xmlss::XML_NS => Xmlss::NS_URI,
           "#{Xmlss::XML_NS}:#{Xmlss::SHEET_NS}" => Xmlss::NS_URI
         })
-      end.to_xml
+      end.to_xml.gsub(/#{Xmlss::Data::LB.gsub(/&/, "&amp;")}/, Xmlss::Data::LB)
     end
 
   end

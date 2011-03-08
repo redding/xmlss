@@ -9,7 +9,7 @@ module Xmlss
   module Xml
 
     def xml_builder
-      ::Nokogiri::XML::Builder.new do |builder|
+      ::Nokogiri::XML::Builder.new(:encoding => 'UTF-8') do |builder|
         yield(builder) if block_given?
       end
     end

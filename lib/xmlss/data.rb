@@ -1,11 +1,15 @@
+require 'date'
+
 module Xmlss
   class Data
+
+    LB = "&#13;"
 
     include Xmlss::Xml
     def xml
       { :node => :data,
         :attributes => [:type],
-        :value => :value }
+        :value => :xml_value }
     end
 
     include Xmlss::Enum
@@ -31,6 +35,17 @@ module Xmlss
       @value = v
     end
 
+    def xml_value
+      case value
+      when ::Date, ::Time, ::DateTime
+        value.strftime("%Y-%m-%dT%H:%M:%S")
+      when ::String, ::Symbol
+        value.to_s.gsub(/(\r|\n)+/, LB)
+      else
+        value.to_s
+      end
+    end
+
     private
 
     def value_type(v)
@@ -39,7 +54,7 @@ module Xmlss
         :number
       when ::Date, ::Time
         :date_time
-      when true, false
+      when ::TrueClass, ::FalseClass
         :boolean
       when ::String, ::Symbol
         :string
