@@ -18,11 +18,11 @@ module Xmlss
 
       should "filter name chars" do
         # worksheet name cannot contain: /, \, ?, *, [, ]
-        assert_equal "test", Worksheet.new("test/").name
-        assert_equal "test", Worksheet.new("tes\\t").name
-        assert_equal "test", Worksheet.new("te?st").name
-        assert_equal "test", Worksheet.new("t*est").name
-        assert_equal "test", Worksheet.new("[te]st").name
+        assert_equal "test test", Worksheet.new("test/ test").name
+        assert_equal "test test", Worksheet.new("tes\\t test").name
+        assert_equal "test test", Worksheet.new("te?st test?").name
+        assert_equal "test test", Worksheet.new("t*est test").name
+        assert_equal "test test", Worksheet.new("[te]st test").name
       end
 
       should "bark when no name is given" do

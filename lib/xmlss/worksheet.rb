@@ -31,7 +31,7 @@ module Xmlss
 
     def sanitized_name(value)
       # worksheet name cannot contain: /, \, ?, *, [, ]
-      value.to_s.gsub(/[\/, \\, \?, \*, \[, \]]/, '')
+      value.to_s.gsub(/[\/|\\|\?|\*|\[|\]]/, '')
     end
   end
 end
