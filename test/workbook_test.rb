@@ -15,6 +15,40 @@ module Xmlss
         assert_equal [], subject.worksheets
       end
 
+      context "when initializing with attrs" do
+        subject do
+          styles = [
+            Xmlss::Style::Base.new('title') do
+              alignment({:horizontal => :left})
+              font({:size => 14, :bold => true})
+            end,
+
+            Xmlss::Style::Base.new('header') do
+              alignment({:horizontal => :left})
+              font({:bold => true})
+              [:top, :right, :bottom, :left].each do |p|
+                border({:position => :p})
+              end
+            end
+          ]
+          Workbook.new({
+            :worksheets => [Worksheet.new('sheet1')],
+            :styles => styles
+          })
+        end
+
+        should "build the attrs appropriately" do
+          [:worksheets, :styles].each do |thing|
+            assert_kind_of ItemSet, subject.send(thing)
+          end
+          assert_kind_of Worksheet, subject.worksheets.first
+          assert_equal 1, subject.worksheets.size
+
+          assert_kind_of Style::Base, subject.styles.first
+          assert_equal 2, subject.styles.size
+        end
+      end
+
       context "for generating XML" do
         should_have_reader :xml
         should_build_node

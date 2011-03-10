@@ -15,9 +15,9 @@ module Xmlss
 
     attr_accessor :styles, :worksheets
 
-    def initialize
-      self.styles = Xmlss::ItemSet.new(:styles)
-      self.worksheets = Xmlss::ItemSet.new
+    def initialize(attrs={})
+      self.styles = Xmlss::ItemSet.new(:styles, attrs[:styles] || [])
+      self.worksheets = Xmlss::ItemSet.new(nil, attrs[:worksheets] || [])
     end
 
     def to_xml
