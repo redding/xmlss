@@ -18,6 +18,15 @@ module Xmlss
         assert_equal [], subject.cells
       end
 
+      should "allow defining a cells at init" do
+        row = Row.new({
+          :cells => [Cell.new]
+        })
+
+        assert_equal 1, row.cells.size
+        assert_kind_of Cell, row.cells.first
+      end
+
       should "bark when setting non Numeric height" do
         assert_raises ArgumentError do
           Row.new({:height => "do it"})

@@ -20,7 +20,7 @@ module Xmlss
       self.height = attrs[:height]
       self.auto_fit_height = attrs[:auto_fit_height] || false
       self.hidden = attrs[:hidden] || false
-      self.cells = Xmlss::ItemSet.new()
+      self.cells = Xmlss::ItemSet.new(nil, attrs[:cells] || [])
     end
 
     def height=(value)

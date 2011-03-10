@@ -26,8 +26,6 @@ module Xmlss
         assert_kind_of Row, tbl.rows.first
       end
 
-
-
       context "for generating XML" do
         should_have_reader :xml
         should_build_node
