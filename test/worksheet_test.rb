@@ -25,6 +25,17 @@ module Xmlss
         assert_equal "test test", Worksheet.new("[te]st test").name
       end
 
+      should "allow defining a table at init" do
+        wksht = Worksheet.new('table', {
+          :table => Table.new({
+            :columns => [Column.new]
+          })
+        })
+
+        assert_equal 1, wksht.table.columns.size
+        assert_kind_of Column, wksht.table.columns.first
+      end
+
       should "bark when no name is given" do
         assert_raises ArgumentError do
           Worksheet.new(nil)

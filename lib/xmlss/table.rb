@@ -14,8 +14,8 @@ module Xmlss
     attr_accessor :columns, :rows
 
     def initialize(attrs={})
-      self.columns = Xmlss::ItemSet.new
-      self.rows = Xmlss::ItemSet.new
+      self.columns = Xmlss::ItemSet.new(nil, attrs[:columns] || [])
+      self.rows = Xmlss::ItemSet.new(nil, attrs[:rows] || [])
     end
 
   end

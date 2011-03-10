@@ -12,12 +12,12 @@ module Xmlss
 
     attr_accessor :name, :table
 
-    def initialize(name)
+    def initialize(name, attrs={})
       if name.nil? || name.empty?
         raise ArgumentError, "'#{name.inspect}' is not a good name for a worksheet"
       end
       self.name = sanitized_name(name)
-      self.table = Table.new
+      self.table = attrs[:table] || Table.new
     end
 
     def table=(value)

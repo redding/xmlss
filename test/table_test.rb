@@ -14,6 +14,20 @@ module Xmlss
         assert_equal [], subject.rows
       end
 
+      should "allow defining a rows/columns at init" do
+        tbl = Table.new({
+          :columns => [Column.new],
+          :rows => [Row.new]
+        })
+
+        assert_equal 1, tbl.columns.size
+        assert_kind_of Column, tbl.columns.first
+        assert_equal 1, tbl.rows.size
+        assert_kind_of Row, tbl.rows.first
+      end
+
+
+
       context "for generating XML" do
         should_have_reader :xml
         should_build_node
