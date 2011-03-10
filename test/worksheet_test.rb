@@ -16,6 +16,15 @@ module Xmlss
         assert_equal [], subject.table.rows
       end
 
+      should "filter name chars" do
+        # worksheet name cannot contain: /, \, ?, *, [, ]
+        assert_equal "test", Worksheet.new("test/").name
+        assert_equal "test", Worksheet.new("tes\\t").name
+        assert_equal "test", Worksheet.new("te?st").name
+        assert_equal "test", Worksheet.new("t*est").name
+        assert_equal "test", Worksheet.new("[te]st").name
+      end
+
       should "bark when no name is given" do
         assert_raises ArgumentError do
           Worksheet.new(nil)

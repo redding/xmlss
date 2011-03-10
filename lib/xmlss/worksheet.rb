@@ -16,7 +16,7 @@ module Xmlss
       if name.nil? || name.empty?
         raise ArgumentError, "'#{name.inspect}' is not a good name for a worksheet"
       end
-      self.name = name
+      self.name = sanitized_name(name)
       self.table = Table.new
     end
 
@@ -27,5 +27,11 @@ module Xmlss
       @table = value
     end
 
+    private
+
+    def sanitized_name(value)
+      # worksheet name cannot contain: /, \, ?, *, [, ]
+      value.to_s.gsub(/[\/, \\, \?, \*, \[, \]]/, '')
+    end
   end
 end
