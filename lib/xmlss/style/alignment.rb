@@ -3,7 +3,7 @@ module Xmlss::Style
     include Xmlss::Xml
     def xml
       { :node => :alignment,
-        :attributes => [:horizontal, :vertical, :wrap_text] }
+        :attributes => [:horizontal, :vertical, :wrap_text, :rotate] }
     end
 
     include Xmlss::Enum
