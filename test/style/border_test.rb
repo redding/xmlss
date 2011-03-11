@@ -51,8 +51,8 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
     should "set it's defaults" do
       assert_equal nil, subject.color
       assert_equal nil, subject.position
-      assert_equal nil, subject.weight
-      assert_equal nil, subject.line_style
+      assert_equal Xmlss::Style::Border.weight(:thin), subject.weight
+      assert_equal Xmlss::Style::Border.line_style(:continuous), subject.line_style
     end
 
     context "that sets attributes at init" do
@@ -108,7 +108,6 @@ class Xmlss::Style::BorderTest < Test::Unit::TestCase
     context "for generating XML" do
       should_have_reader :xml
       should_build_node
-      should_build_no_attributes_by_default(Xmlss::Style::Border)
     end
 
   end

@@ -35,8 +35,8 @@ module Xmlss::Style
     def initialize(attrs={})
       self.color = attrs[:color]
       self.position = attrs[:position]
-      self.weight = attrs[:weight]
-      self.line_style = attrs[:line_style]
+      self.weight = attrs[:weight] || :thin
+      self.line_style = attrs[:line_style] || :continuous
     end
 
   end
