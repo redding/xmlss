@@ -70,14 +70,12 @@ These classes define how a spreadsheet is constructed.
 === Xmlss::Cell
 * *style_id*: string
 * *data*: Xmlss::Data object
-* *formula*: string
 * *href*: string
 * *merge_across*: int, default: 0
 * *merge_down*: int, default: 0
-* *tool_tip*: string
 
 === Xmlss::Data
-* *type*: :number, :datetime, :boolean, :string, :error, required
+* *type*: :number, :date_time, :boolean, :string, :error, required
 * *value*: needs to respond to 'to_s'
 
 
@@ -119,7 +117,7 @@ These classes define how a spreadsheet cells are styled.
 * *pattern_color*: hex string
 
 === Xmlss::Style::NumberFormat
-* *format*: :symbol (see code for options)
+* *format*: :symbol (there are MANY different options for this, I suggest saving a spreadsheet in the XML format and seeing what Excel uses)
 
 === Xmlss::Style::Protection
 * *protected*: bool, default: false
