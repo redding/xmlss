@@ -15,6 +15,9 @@ module Xmlss
           define_method(name) do |key|
             class_variable_get("@@#{name}")[key]
           end
+          define_method(name.to_s+'_set') do
+            class_variable_get("@@#{name}").keys
+          end
         end
 
         # set a class variable to store the enum map (used by above reader)

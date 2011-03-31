@@ -22,10 +22,14 @@ module Xmlss
           })
         end
 
-        should_have_class_method :stuff
+        should_have_class_method :stuff, :stuff_set
         should "provide class level access to the enum" do
-          assert Thing.send(:class_variable_get, "@@stuff")
-          assert_equal 3, Thing.send(:class_variable_get, "@@stuff").size
+          stuffs = Thing.send(:class_variable_get, "@@stuff")
+          assert stuffs
+          assert_kind_of ::Hash, stuffs
+          assert !stuffs.empty?
+          assert_equal 3, stuffs.size
+          assert_equal stuffs.keys, Thing.stuff_set
           assert_equal "eh", Thing.stuff(:a)
         end
 
