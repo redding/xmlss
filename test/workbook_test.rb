@@ -17,7 +17,14 @@ module Xmlss
 
       context "when initializing with attrs" do
         subject do
-          styles = [
+          # specifying attrs at init time
+          Workbook.new({
+            :worksheets => [Worksheet.new('sheet1')]
+          })
+        end
+        before do
+          # writing attrs at run time
+          subject.styles = [
             Xmlss::Style::Base.new('title') do
               alignment({:horizontal => :left})
               font({:size => 14, :bold => true})
@@ -31,10 +38,6 @@ module Xmlss
               end
             end
           ]
-          Workbook.new({
-            :worksheets => [Worksheet.new('sheet1')],
-            :styles => styles
-          })
         end
 
         should "build the attrs appropriately" do
