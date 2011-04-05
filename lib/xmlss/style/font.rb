@@ -9,7 +9,7 @@ module Xmlss::Style
         ] }
     end
 
-    include Xmlss::Enum
+    include Enumeration
     enum :underline, {
       :none => 0,
       :single => 1,

@@ -6,7 +6,7 @@ module Xmlss::Style
         :attributes => [:color, :position, :weight, :line_style] }
     end
 
-    include Xmlss::Enum
+    include Enumeration
     enum :position, {
       :left => "Left",
       :top => "Top",

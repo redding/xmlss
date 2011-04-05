@@ -6,7 +6,7 @@ module Xmlss::Style
         :attributes => [:color, :pattern, :pattern_color] }
     end
 
-    include Xmlss::Enum
+    include Enumeration
     enum :pattern, {
       :none => "None",
       :solid => "Solid",

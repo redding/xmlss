@@ -6,7 +6,7 @@ module Xmlss::Style
         :attributes => [:horizontal, :vertical, :wrap_text, :rotate] }
     end
 
-    include Xmlss::Enum
+    include Enumeration
     enum :horizontal, {
       :automatic => "Automatic",
       :left => "Left",

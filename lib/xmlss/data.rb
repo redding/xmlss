@@ -12,7 +12,7 @@ module Xmlss
         :value => :xml_value }
     end
 
-    include Xmlss::Enum
+    include Enumeration
     enum :type, {
       :number => "Number",
       :date_time => "DateTime",

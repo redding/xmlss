@@ -24,8 +24,8 @@ module Xmlss
   end
 end
 
+require 'enumeration'
 require 'xmlss/xml'
-require 'xmlss/enum'
 require 'xmlss/style/base'
 require 'xmlss/workbook'
 
