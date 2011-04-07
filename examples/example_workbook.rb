@@ -4,7 +4,7 @@ require 'test/env'
 class ExampleWorkbook < Xmlss::Workbook
   def initialize
     super
-    puts "Builing #{self.name}.xml..."
+    puts "Building #{self.name}.xml..."
     build
   end
 
