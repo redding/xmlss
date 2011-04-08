@@ -5,23 +5,24 @@ module Xmlss::Style
       { :node => :font,
         :attributes => [
           :bold, :color, :italic, :size,
-          :strike_through, :underline, :alignment
+          :strike_through, :underline, :vertical_align
         ] }
     end
 
     include Enumeration
     enum :underline, {
-      :none => 0,
-      :single => 1,
-      :double => 2
+      :single => 'Single',
+      :double => 'Double',
+      :single_accounting => 'SingleAccounting',
+      :double_accounting => 'DoubleAccounting'
     }
     enum :alignment, {
-      :none => 0,
-      :subscript => 1,
-      :superscript => 2
+      :subscript => 'Subscript',
+      :superscript => 'Superscript'
     }
+    alias_method :vertical_align, :alignment
 
-    attr_accessor :bold, :color, :italic, :size, :strike_through
+    attr_accessor :bold, :color, :italic, :size, :strike_through, :shadow
 
     def initialize(attrs={})
       self.bold = attrs[:bold] || false
@@ -29,6 +30,7 @@ module Xmlss::Style
       self.italic = attrs[:italic] || false
       self.size = attrs[:size]
       self.strike_through = attrs[:strike_through] || false
+      self.shadow = attrs[:shadow] || false
       self.underline = attrs[:underline]
       self.alignment = attrs[:alignment]
     end
@@ -36,6 +38,7 @@ module Xmlss::Style
     def bold?; !!self.bold; end
     def italic?; !!self.italic; end
     def strike_through?; !!self.strike_through; end
+    def shadow?; !!self.shadow; end
 
   end
 end

@@ -8,9 +8,10 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
 
     should_have_class_method :underline
     {
-      :none => 0,
-      :single => 1,
-      :double => 2
+      :single => 'Single',
+      :double => 'Double',
+      :single_accounting => 'SingleAccounting',
+      :double_accounting => 'DoubleAccounting'
     }.each do |underline, value|
       should "provide the value for the '#{underline}' underline" do
         assert_equal value, Xmlss::Style::Font.underline(underline)
@@ -19,18 +20,18 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
 
     should_have_class_method :alignment
     {
-      :none => 0,
-      :subscript => 1,
-      :superscript => 2
+      :subscript => 'Subscript',
+      :superscript => 'Superscript'
     }.each do |alignment, value|
       should "provide the value for the '#{alignment}' alignment" do
         assert_equal value, Xmlss::Style::Font.alignment(alignment)
       end
     end
 
-    should_have_accessors :bold, :color, :italic, :size, :strike_through
+    should_have_accessors :bold, :color, :italic, :size, :strike_through, :shadow
     should_have_accessors :underline, :alignment
-    should_have_instance_methods :bold?, :italic?, :strike_through?
+    should_have_instance_methods :bold?, :italic?, :strike_through?, :shadow?
+    should_have_reader :vertical_align
 
     should "set it's defaults" do
       assert_equal false, subject.bold
@@ -38,8 +39,9 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
       assert_equal false, subject.italic
       assert_equal nil, subject.size
       assert_equal false, subject.strike_through
-      assert_equal Xmlss::Style::Font.underline(:default), subject.underline
-      assert_equal Xmlss::Style::Font.alignment(:default), subject.alignment
+      assert_equal false, subject.shadow
+      assert_equal nil, subject.underline
+      assert_equal nil, subject.alignment
     end
 
     context "that sets attributes at init" do
