@@ -4,7 +4,7 @@ module Xmlss::Style
     def xml
       { :node => :font,
         :attributes => [
-          :bold, :color, :italic, :size,
+          :bold, :color, :italic, :size, :shadow,
           :strike_through, :underline, :vertical_align
         ] }
     end
