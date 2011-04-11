@@ -108,8 +108,9 @@ These classes define how a spreadsheet cells are styled.
 * *italic*: bool, default: false
 * *size*: int
 * *strike_through*: bool, default: false
-* *underline*: :none, :single, :double
-* *alignment*: :none, :subscript, :superscript
+* *shadow*: bool, default: false
+* *underline*: :single, :double, :single_accounting, :double_accounting
+* *alignment*: :subscript, :superscript
 
 === Xmlss::Style::Interior
 * *color*: hex string
