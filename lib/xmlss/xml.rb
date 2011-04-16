@@ -31,6 +31,11 @@ module Xmlss
       end
     end
 
+    def xml_save_with(*options)
+      ::Nokogiri::XML::Node::SaveOptions::AS_XML |
+      (options.include?(:format) ? ::Nokogiri::XML::Node::SaveOptions::FORMAT : 0)
+    end
+
     def build_attributes(attrs={})
       (xml[:attributes] || []).inject({}) do |xattrs, a|
         xattrs.merge(if !(xv = Xmlss.xmlify(self.send(a))).nil?

@@ -82,4 +82,4 @@ class Styles < ExampleWorkbook
     self.worksheets << wksht
   end
 end
-Styles.new.to_file
+Styles.new.to_file(:format)

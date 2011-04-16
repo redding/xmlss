@@ -25,7 +25,8 @@ module Xmlss
         before do
           subject.xml = {
             :node => :thing,
-            :attributes => [:one, :two, :three]
+            :attributes => [:one, :two, :three],
+            :children => [:child_nodes]
           }
           subject.one = true
           subject.two = "two"
@@ -38,6 +39,24 @@ module Xmlss
               subject.build_node(builder)
             end
           end
+        end
+
+        should "build with no whitespace formatting by default" do
+          assert_equal(
+            "<?xml version=\"1.0\"?>\n<Thing ss:One=\"1\" ss:Two=\"two\"><Nodes/></Thing>\n",
+            ::Nokogiri::XML::Builder.new do |builder|
+              subject.build_node(builder)
+            end.to_xml({:save_with => subject.xml_save_with})
+          )
+        end
+
+        should "build with whitespace formatting if specified" do
+          assert_equal(
+            "<?xml version=\"1.0\"?>\n<Thing ss:One=\"1\" ss:Two=\"two\">\n  <Nodes/>\n</Thing>\n",
+            ::Nokogiri::XML::Builder.new do |builder|
+              subject.build_node(builder)
+            end.to_xml({:save_with => subject.xml_save_with(:format)})
+          )
         end
 
         should "generate build attributes based on it's own attributes" do

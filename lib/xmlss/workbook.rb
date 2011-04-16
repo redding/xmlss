@@ -36,13 +36,15 @@ module Xmlss
       end
     end
 
-    def to_xml
+    def to_xml(*options)
       xml_builder do |builder|
         build_node(builder, {
           Xmlss::XML_NS => Xmlss::NS_URI,
           "#{Xmlss::XML_NS}:#{Xmlss::SHEET_NS}" => Xmlss::NS_URI
         })
-      end.to_xml.gsub(/#{Xmlss::Data::LB.gsub(/&/, "&amp;")}/, Xmlss::Data::LB)
+      end.
+        to_xml({:save_with => xml_save_with(*options)}).
+        gsub(/#{Xmlss::Data::LB.gsub(/&/, "&amp;")}/, Xmlss::Data::LB)
     end
 
   end

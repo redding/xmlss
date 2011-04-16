@@ -8,10 +8,10 @@ class ExampleWorkbook < Xmlss::Workbook
     build
   end
 
-  def to_file
+  def to_file(*options)
     # write this workbooks xml data to a file
     File.open("examples/#{self.name}.xml", "w") do |file|
-      file.write self.to_xml
+      file.write self.to_xml(*options)
     end
     puts "... ready - open in Excel or whatever..."
   end

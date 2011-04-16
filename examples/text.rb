@@ -33,4 +33,4 @@ with line breaks
 
   end
 end
-Text.new.to_file
+Text.new.to_file(:format)

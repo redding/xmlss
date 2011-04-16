@@ -27,4 +27,4 @@ class Simple < ExampleWorkbook
 
   end
 end
-Simple.new.to_file
+Simple.new.to_file(:format)
