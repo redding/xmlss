@@ -18,12 +18,9 @@ class Assert::Context
     end
 
     def should_build_no_attributes_by_default(klass)
-      context "by default" do
-        subject{ klass.new }
-
-        should "have no element attributes" do
-          assert_equal({}, subject.send(:build_attributes))
-        end
+      should "have no element attributes" do
+        xmlthing = klass.new
+        assert_equal({}, xmlthing.send(:build_attributes))
       end
     end
 
@@ -40,8 +37,6 @@ class Assert::Context
         assert_equal :poo, c.style_id
         assert_equal :poo, c.style_i_d
       end
-
-
     end
 
   end
