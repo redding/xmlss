@@ -20,8 +20,8 @@ module Xmlss
       assert_equal "line#{Data::LB}break", Data.new("line\nbreak").xml_value
       assert_equal "return#{Data::LB}break", Data.new("return\rbreak").xml_value
       assert_equal "returnline#{Data::LB}break", Data.new("returnline\r\nbreak").xml_value
-      assert_equal "2011-03-01T00:00:00", Data.new(DateTime.parse('03/01/2011')).xml_value
-      assert_equal "2011-03-01T00:00:00", Data.new(Date.parse('03/01/2011')).xml_value
+      assert_equal "2011-03-01T00:00:00", Data.new(DateTime.parse('2011/03/01')).xml_value
+      assert_equal "2011-03-01T00:00:00", Data.new(Date.parse('2011/03/01')).xml_value
       time = Time.now
       assert_equal time.strftime("%Y-%m-%dT%H:%M:%S"), Data.new(time).xml_value
     end
