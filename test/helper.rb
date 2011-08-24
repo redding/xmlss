@@ -1,8 +1,7 @@
-require 'rubygems'
-require 'test_belt'
-require 'test/env'
+# this file is automatically required in when you require 'assert' in your tests
+# put test helpers here
 
-class Test::Unit::TestCase
+class Assert::Context
 
   class << self
 
