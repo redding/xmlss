@@ -1,12 +1,15 @@
-require "test/helper"
+require "assert"
 require 'xmlss/style/interior'
 
-class Xmlss::Style::InteriorTest < Test::Unit::TestCase
+module Xmlss::Style
 
-  context "Xmlss::Style::Interior" do
-    subject { Xmlss::Style::Interior.new }
+  class InteriorTest < Assert::Context
+    desc "Xmlss::Style::Interior"
+    before { @i = Interior.new }
+    subject { @i }
 
-    should_have_class_method :pattern
+    should have_class_method :pattern
+
     {
       :none => "None",
       :solid => "Solid",
@@ -33,7 +36,7 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
       end
     end
 
-    should_have_accessor :color, :pattern, :pattern_color
+    should have_accessor :color, :pattern, :pattern_color
 
     should "set it's defaults" do
       assert_equal nil, subject.color
@@ -41,47 +44,35 @@ class Xmlss::Style::InteriorTest < Test::Unit::TestCase
       assert_equal nil, subject.pattern_color
     end
 
-    context "that sets attributes at init" do
-      subject do
-        Xmlss::Style::Interior.new({
-          :color => "#000000",
-          :pattern => :solid,
-          :pattern_color => "#FF0000"
-        })
-      end
-
-      should "should set them correctly" do
-        assert_equal "#000000", subject.color
-        assert_equal "Solid", subject.pattern
-        assert_equal "#FF0000", subject.pattern_color
-      end
+    should "set attributes at init" do
+      i = Interior.new({
+        :color => "#000000",
+        :pattern => :solid,
+        :pattern_color => "#FF0000"
+      })
+      assert_equal "#000000", i.color
+      assert_equal "Solid", i.pattern
+      assert_equal "#FF0000", i.pattern_color
     end
 
-    context "that sets pattern by key" do
-      before do
-        subject.pattern = :solid
-      end
-
-      should "should returm them by value" do
-        assert_equal "Solid", subject.pattern
-      end
+    should "set attrs by key" do
+      subject.pattern = :solid
+      assert_equal "Solid", subject.pattern
     end
 
-    context "that sets attributes by value" do
-      before do
-        subject.pattern = "Solid"
-      end
-
-      should "should returm them by value" do
-        assert_equal "Solid", subject.pattern
-      end
-    end
-
-    context "for generating XML" do
-      should_have_reader :xml
-      should_build_node
-      should_build_no_attributes_by_default(Xmlss::Style::Alignment)
+    should "set attrs by value" do
+      subject.pattern = "Solid"
+      assert_equal "Solid", subject.pattern
     end
 
   end
+
+  class InteriorXmlTest < InteriorTest
+    desc "for generating XML"
+
+    should have_reader :xml
+    should_build_node
+    should_build_no_attributes_by_default(Xmlss::Style::Alignment)
+  end
+
 end

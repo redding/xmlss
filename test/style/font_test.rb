@@ -1,12 +1,14 @@
-require "test/helper"
+require "assert"
 require 'xmlss/style/font'
 
-class Xmlss::Style::FontTest < Test::Unit::TestCase
+module Xmlss::Style
+  class FontTest < Assert::Context
+    desc "Xmlss::Style::Font"
+    before { @f = Font.new }
+    subject { @f }
 
-  context "Xmlss::Style::Font" do
-    subject { Xmlss::Style::Font.new }
+    should have_class_method :underline
 
-    should_have_class_method :underline
     {
       :single => 'Single',
       :double => 'Double',
@@ -18,7 +20,8 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
       end
     end
 
-    should_have_class_method :alignment
+    should have_class_method :alignment
+
     {
       :subscript => 'Subscript',
       :superscript => 'Superscript'
@@ -28,10 +31,10 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
       end
     end
 
-    should_have_accessors :bold, :color, :italic, :size, :strike_through, :shadow
-    should_have_accessors :underline, :alignment
-    should_have_instance_methods :bold?, :italic?, :strike_through?, :shadow?
-    should_have_reader :vertical_align
+    should have_accessors :bold, :color, :italic, :size, :strike_through, :shadow
+    should have_accessors :underline, :alignment
+    should have_instance_methods :bold?, :italic?, :strike_through?, :shadow?
+    should have_reader :vertical_align
 
     should "set it's defaults" do
       assert_equal false, subject.bold
@@ -44,59 +47,49 @@ class Xmlss::Style::FontTest < Test::Unit::TestCase
       assert_equal nil, subject.alignment
     end
 
-    context "that sets attributes at init" do
-      before do
-        @attrs = {
-          :bold => true,
-          :color => '#FF0000',
-          :italic => true,
-          :size => 10,
-          :strike_through => true,
-          :underline => :single,
-          :alignment => :superscript
-        }
-        @font = Xmlss::Style::Font.new(@attrs)
-      end
-      subject{ @font }
+    should "set attrs at init" do
+      attrs = {
+        :bold => true,
+        :color => '#FF0000',
+        :italic => true,
+        :size => 10,
+        :strike_through => true,
+        :underline => :single,
+        :alignment => :superscript
+      }
+      font = Font.new(attrs)
 
-      should "should set them correctly" do
-        @attrs.reject{|a, v| [:underline, :alignment].include?(a)}.each do |a,v|
-          assert_equal v, subject.send(a)
-        end
-        assert_equal Xmlss::Style::Font.underline(:single), subject.underline
-        assert_equal Xmlss::Style::Font.alignment(:superscript), subject.alignment
+      attrs.reject{|a, v| [:underline, :alignment].include?(a)}.each do |a,v|
+        assert_equal v, font.send(a)
       end
+      assert_equal Font.underline(:single), font.underline
+      assert_equal Font.alignment(:superscript), font.alignment
     end
 
-    context "that sets underline and alignment by key" do
-      before do
-        subject.underline = :double
-        subject.alignment = :subscript
-      end
+    should "set attrs by key" do
+      subject.underline = :double
+      subject.alignment = :subscript
 
-      should "should returm it by value" do
-        assert_equal Xmlss::Style::Font.underline(:double), subject.underline
-        assert_equal Xmlss::Style::Font.alignment(:subscript), subject.alignment
-      end
+      assert_equal Font.underline(:double), subject.underline
+      assert_equal Font.alignment(:subscript), subject.alignment
     end
 
-    context "that sets underline and alignment by value" do
-      before do
-        subject.underline = Xmlss::Style::Font.underline(:double)
-        subject.alignment = Xmlss::Style::Font.alignment(:subscript)
-      end
+    should "set attrs by value" do
+      subject.underline = Xmlss::Style::Font.underline(:double)
+      subject.alignment = Xmlss::Style::Font.alignment(:subscript)
 
-      should "should returm it by value" do
-        assert_equal Xmlss::Style::Font.underline(:double), subject.underline
-        assert_equal Xmlss::Style::Font.alignment(:subscript), subject.alignment
-      end
-    end
-
-    context "for generating XML" do
-      should_have_reader :xml
-      should_build_node
-      should_build_no_attributes_by_default(Xmlss::Style::Font)
+      assert_equal Xmlss::Style::Font.underline(:double), subject.underline
+      assert_equal Xmlss::Style::Font.alignment(:subscript), subject.alignment
     end
 
   end
+
+  class FontXmlTest < FontTest
+    desc "for generating XML"
+
+    should have_reader :xml
+    should_build_node
+    should_build_no_attributes_by_default(Xmlss::Style::Font)
+  end
+
 end

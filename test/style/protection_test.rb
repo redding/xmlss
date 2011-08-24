@@ -1,45 +1,41 @@
-require "test/helper"
+require "assert"
 require 'xmlss/style/protection'
 
-class Xmlss::Style::ProtectionTest < Test::Unit::TestCase
+module Xmlss::Style
 
-  context "Xmlss::Style::Protection" do
-    subject { Xmlss::Style::Protection.new }
+  class ProtectionTest < Assert::Context
+    desc "Xmlss::Style::Protection"
+    before { @sp = Xmlss::Style::Protection.new }
+    subject { @sp }
 
-    should_have_instance_methods :protected?
-    should_have_accessor :protect
+    should have_instance_methods :protected?
+    should have_accessor :protect
 
     should "set it's defaults" do
       assert_equal false, subject.protected?
     end
 
-    context "that sets attributes at init" do
-      subject do
-        Xmlss::Style::Protection.new({
-          :protect => true
-        })
-      end
-
-      should "should set them correctly" do
-        assert subject.protected?
-      end
+    should "set attrs at init time" do
+      sp = Xmlss::Style::Protection.new({
+        :protect => true
+      })
+      assert sp.protected?
     end
 
-    context "that sets attributes after init" do
-      before do
-        subject.protect = true
-      end
-
-      should "should set them correctly" do
-        assert subject.protected?
-      end
-    end
-
-    context "for generating XML" do
-      should_have_reader :xml
-      should_build_node
-      should_build_no_attributes_by_default(Xmlss::Style::Alignment)
+    should "set attrs after init time" do
+      subject.protect = true
+      assert subject.protected?
     end
 
   end
+
+  class ProtectionXmlTest < ProtectionTest
+    desc "for generating XML"
+
+    should have_reader :xml
+    should_build_node
+    should_build_no_attributes_by_default(Xmlss::Style::Alignment)
+
+  end
+
 end
