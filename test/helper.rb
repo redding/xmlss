@@ -1,12 +1,13 @@
 # this file is automatically required in when you require 'assert' in your tests
 # put test helpers here
+require 'xmlss'
 
 class Assert::Context
 
   class << self
 
     def should_build_node
-      should_have_instance_methods :build_node
+      should have_instance_methods :build_node
       should "build it's node" do
         assert_nothing_raised do
           ::Nokogiri::XML::Builder.new do |builder|
@@ -27,8 +28,8 @@ class Assert::Context
     end
 
     def should_have_style(klass)
-      should_have_accessor :style_id
-      should_have_reader :style_i_d
+      should have_accessor :style_id
+      should have_reader :style_i_d
 
       should "set the style default" do
         assert_equal nil, subject.style_id
