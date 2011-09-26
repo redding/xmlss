@@ -3,7 +3,7 @@ require 'date'
 module Xmlss
   class Data
 
-    LB = "&#13;"
+    LB = "&#13;&#10;"
 
     include Xmlss::Xml
     def xml
