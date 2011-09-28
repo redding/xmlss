@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    xmlss (0.2.2)
+    xmlss (0.3.0)
       enumeration (~> 1.2)
       nokogiri (~> 1.4.0)
 
