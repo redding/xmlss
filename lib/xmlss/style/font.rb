@@ -5,7 +5,8 @@ module Xmlss::Style
       { :node => :font,
         :attributes => [
           :bold, :color, :italic, :size, :shadow,
-          :strike_through, :underline, :vertical_align
+          :strike_through, :underline, :vertical_align,
+          :font_name
         ] }
     end
 
@@ -22,7 +23,8 @@ module Xmlss::Style
     }
     alias_method :vertical_align, :alignment
 
-    attr_accessor :bold, :color, :italic, :size, :strike_through, :shadow
+    attr_accessor :bold, :color, :italic, :size, :strike_through, :shadow, :name
+    alias :font_name :name
 
     def initialize(attrs={})
       self.bold = attrs[:bold] || false
@@ -33,6 +35,7 @@ module Xmlss::Style
       self.shadow = attrs[:shadow] || false
       self.underline = attrs[:underline]
       self.alignment = attrs[:alignment]
+      self.name = attrs[:name]
     end
 
     def bold?; !!self.bold; end
