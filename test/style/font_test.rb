@@ -32,7 +32,7 @@ module Xmlss::Style
     end
 
     should have_accessors :bold, :color, :italic, :size, :strike_through, :shadow
-    should have_accessors :underline, :alignment
+    should have_accessors :underline, :alignment, :name
     should have_instance_methods :bold?, :italic?, :strike_through?, :shadow?
     should have_reader :vertical_align
 
@@ -45,6 +45,7 @@ module Xmlss::Style
       assert_equal false, subject.shadow
       assert_equal nil, subject.underline
       assert_equal nil, subject.alignment
+      assert_equal nil, subject.name
     end
 
     should "set attrs at init" do
@@ -55,7 +56,8 @@ module Xmlss::Style
         :size => 10,
         :strike_through => true,
         :underline => :single,
-        :alignment => :superscript
+        :alignment => :superscript,
+        :name => 'Verdana'
       }
       font = Font.new(attrs)
 
