@@ -15,9 +15,7 @@ module Xmlss
 
     should "bark if you use xml generation without configuring" do
       assert_raises ArgumentError do
-        ::Nokogiri::XML::Builder.new do |builder|
-          subject.build_node(builder)
-        end
+        subject.build_xml
       end
     end
 
@@ -36,29 +34,23 @@ module Xmlss
       subject.three = ""
     end
 
-    should "build it's node" do
+    should "build it's xml" do
       assert_nothing_raised do
-        ::Nokogiri::XML::Builder.new do |builder|
-          subject.build_node(builder)
-        end
+        subject.build_xml
       end
     end
 
     should "build with no whitespace formatting by default" do
       assert_equal(
-        "<?xml version=\"1.0\"?>\n<Thing ss:One=\"1\" ss:Two=\"two\"><Nodes/></Thing>\n",
-        ::Nokogiri::XML::Builder.new do |builder|
-          subject.build_node(builder)
-        end.to_xml({:save_with => subject.xml_save_with})
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Thing ss:One=\"1\" ss:Two=\"two\"><Nodes /></Thing>",
+        subject.build_xml
       )
     end
 
     should "build with whitespace formatting if specified" do
       assert_equal(
-        "<?xml version=\"1.0\"?>\n<Thing ss:One=\"1\" ss:Two=\"two\">\n  <Nodes/>\n</Thing>\n",
-        ::Nokogiri::XML::Builder.new do |builder|
-          subject.build_node(builder)
-        end.to_xml({:save_with => subject.xml_save_with(:format)})
+        "\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Thing ss:One=\"1\" ss:Two=\"two\">\n  <Nodes />\n</Thing>",
+        subject.build_xml(:pp => 2)
       )
     end
 

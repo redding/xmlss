@@ -1,4 +1,4 @@
-require 'nokogiri'
+require 'undies'
 
 # common methods used for generating XML
 module Xmlss
@@ -8,49 +8,56 @@ module Xmlss
 
   module Xml
 
-    def xml_builder
-      ::Nokogiri::XML::Builder.new(:encoding => 'UTF-8') do |builder|
-        yield(builder) if block_given?
-      end
+    def build_xml(opts={})
+      out = ""
+      outstream = StringIO.new(out)
+      output = Undies::Output.new(outstream, opts)
+      source = Undies::Source.new(Proc.new do
+        __ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+
+        # self is the template this source is rendered in
+        item.build_node(self)
+      end)
+
+      Undies::Template.new(source, {:item => self}, output)
+      out.gsub(/#{Xmlss::Data::LB.gsub(/&/, "&amp;")}/, Xmlss::Data::LB)
     end
 
-    def build_node(builder, attrs={})
+    def build_node(template)
       unless xml && xml.kind_of?(::Hash)
         raise ArgumentError, "no xml config provided"
       end
+
       if xml[:node] && !xml[:node].to_s.empty?
-        if xml[:value] && (v = self.send(xml[:value]).to_s)
-          builder.send(Xmlss.classify(xml[:node]), v, build_attributes(attrs))
-        else
-          builder.send(Xmlss.classify(xml[:node]), build_attributes(attrs)) do
-            build_children(builder)
-          end
+        node_name  = Xmlss.classify(xml[:node])
+        node_attrs = build_attributes
+        node_proc = if xml[:value] && (v = self.send(xml[:value]).to_s)
+          Proc.new { template.send "__", v }
+        elsif xml[:children] && !xml[:children].empty?
+          Proc.new { build_children(template, xml[:children]) }
         end
+
+        template.send("_#{node_name}", node_attrs, &node_proc)
       else
-        build_children(builder)
+        build_children(template, xml[:children])
       end
     end
 
-    def xml_save_with(*options)
-      ::Nokogiri::XML::Node::SaveOptions::AS_XML |
-      (options.include?(:format) ? ::Nokogiri::XML::Node::SaveOptions::FORMAT : 0)
-    end
-
-    def build_attributes(attrs={})
+    def build_attributes
       (xml[:attributes] || []).inject({}) do |xattrs, a|
         xattrs.merge(if !(xv = Xmlss.xmlify(self.send(a))).nil?
           {"#{Xmlss::SHEET_NS}:#{Xmlss.classify(a)}" => xv}
         else
           {}
         end)
-      end.merge(attrs)
+      end
     end
     private :build_attributes
 
-    def build_children(builder)
-      (xml[:children] || []).each do |c|
+    def build_children(template, children)
+      (children || []).each do |c|
         if (child = c.kind_of?(::Symbol) ? self.send(c) : c)
-          child.build_node(builder) if child.respond_to?(:build_node)
+          child.build_node(template) if child.respond_to?(:build_node)
         end
       end
     end

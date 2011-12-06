@@ -20,7 +20,7 @@ module Xmlss
     desc "for generating XML"
 
     should have_reader :xml
-    should_build_node
+    should_build_xml
     should_build_no_attributes_by_default(ItemSet)
   end
 

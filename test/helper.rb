@@ -10,14 +10,10 @@ class Assert::Context
 
   class << self
 
-    def should_build_node
-      should have_instance_methods :build_node
-      should "build it's node" do
-        assert_nothing_raised do
-          ::Nokogiri::XML::Builder.new do |builder|
-            subject.build_node(builder)
-          end
-        end
+    def should_build_xml
+      should have_instance_methods :build_xml
+      should "build it's xml" do
+        assert_nothing_raised { subject.build_xml }
       end
     end
 

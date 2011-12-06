@@ -31,7 +31,7 @@ module Xmlss
   class TableXmlTest < TableTest
     desc "for generating XML"
     should have_reader :xml
-    should_build_node
+    should_build_xml
 
   end
 
