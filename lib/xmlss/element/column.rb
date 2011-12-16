@@ -1,11 +1,6 @@
-module Xmlss
+module Xmlss; end
+module Xmlss::Element
   class Column
-
-    include Xmlss::Xml
-    def xml
-      { :node => :column,
-        :attributes => [:style_i_d, :width, :auto_fit_width, :hidden] }
-    end
 
     attr_accessor :style_id, :width, :auto_fit_width, :hidden
     alias_method :style_i_d, :style_id

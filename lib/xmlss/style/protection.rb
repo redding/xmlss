@@ -1,10 +1,7 @@
+require 'xmlss/style/base'
+
 module Xmlss::Style
   class Protection
-    include Xmlss::Xml
-    def xml
-      { :node => :protection,
-        :attributes => [:protect] }
-    end
 
     attr_accessor :protect
 

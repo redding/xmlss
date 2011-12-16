@@ -1,12 +1,10 @@
+require 'xmlss/style/base'
+
 module Xmlss::Style
   class Border
-    include Xmlss::Xml
-    def xml
-      { :node => :border,
-        :attributes => [:color, :position, :weight, :line_style] }
-    end
 
     include Enumeration
+
     enum :position, {
       :left => "Left",
       :top => "Top",
@@ -15,12 +13,14 @@ module Xmlss::Style
       :diagonal_left => "DiagonalLeft",
       :diagonal_right => "DiagonalRight"
     }
+
     enum :weight, {
       :hairline => 0,
       :thin => 1,
       :medium => 2,
       :thick => 3
     }
+
     enum :line_style, {
       :none => "None",
       :continuous => "Continuous",

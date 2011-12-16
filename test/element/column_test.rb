@@ -1,12 +1,14 @@
 require "assert"
-require 'xmlss/column'
 
-module Xmlss
+require 'xmlss/element/column'
+
+module Xmlss::Element
   class ColumnTest < Assert::Context
     desc "Xmlss::Column"
-    subject { Column.new }
+    before { @c = Column.new }
+    subject { @c }
 
-    should_have_style(Column)
+    should be_styled
     should have_accessor :width, :auto_fit_width, :hidden
 
     should "set it's defaults" do
@@ -33,14 +35,6 @@ module Xmlss
       assert_equal 0, Column.new({:width => 0}).width
       assert_equal 1.2, Column.new({:width => 1.2}).width
     end
-
-  end
-
-  class ColumnXmlTest < ColumnTest
-    desc "for generating XML"
-
-    should have_reader :xml
-    should_build_xml
 
   end
 

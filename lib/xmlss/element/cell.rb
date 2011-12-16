@@ -1,28 +1,18 @@
-require 'xmlss/data'
-
-module Xmlss
+module Xmlss; end
+module Xmlss::Element
   class Cell
 
-    include Xmlss::Xml
-    def xml
-      { :node => :cell,
-        :attributes => [:index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down],
-        :children => [:data] }
-    end
-
-    attr_accessor :style_id, :formula, :href, :merge_across, :merge_down
-    attr_accessor :index, :data
+    attr_accessor :index, :style_id, :formula, :href, :merge_across, :merge_down
     alias_method :style_i_d, :style_id
     alias_method :h_ref, :href
 
-    def initialize(attrs={})
+    def initialize(attrs={}, &build)
       self.index = attrs[:index]
       self.style_id = attrs[:style_id]
       self.formula = attrs[:formula]
       self.href = attrs[:href]
       self.merge_across = attrs[:merge_across] || 0
       self.merge_down = attrs[:merge_down] || 0
-      self.data = attrs[:data]
     end
 
     [:index, :merge_across, :merge_down].each do |meth|

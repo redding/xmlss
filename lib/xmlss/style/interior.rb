@@ -1,10 +1,7 @@
+require 'xmlss/style/base'
+
 module Xmlss::Style
   class Interior
-    include Xmlss::Xml
-    def xml
-      { :node => :interior,
-        :attributes => [:color, :pattern, :pattern_color] }
-    end
 
     include Enumeration
     enum :pattern, {
