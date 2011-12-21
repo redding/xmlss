@@ -2,4 +2,4 @@ pkg/*
 .bundle
 *.gem
 *.log
-
+bench/*.xml
