@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  <Styles>
+    <Style ss:ID="general_text">
+      <Alignment ss:Horizontal="Left" ss:Vertical="Top" ss:WrapText="1" />
+      <NumberFormat ss:Format="@" />
+    </Style>
+  </Styles>
+  
+  <Worksheet ss:Name="text">
+    <Table>
+      <Column />
+      <Row>
+        <Cell ss:StyleID="general_text">
+          <Data ss:Type="String">&#13;&#10;A blob of text&#13;&#10;with line breaks&#13;&#10;  and leading space</Data>
+        </Cell>
+      </Row>
+    </Table>
+  </Worksheet>
+</Workbook>
