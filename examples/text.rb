@@ -7,7 +7,7 @@ ExampleWorkbook.new("text") do
   style 'general_text' do
     alignment(:horizontal => :left, :vertical => :top, :wrap_text => true)
     # set format to text explicitly
-    number_format(:format => "@")
+    number_format("@")
   end
 
   worksheet('text') do

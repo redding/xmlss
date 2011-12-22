@@ -98,11 +98,11 @@ interior(opts={}):
 * opts[:pattern]: enum (see code for options), default: :default
 * opts[:pattern_color]: string, hex value ('#00FF00')
 
-number_format(opts={}):  # TODO: just pass value directly
-* opts[:format]: there are MANY different options for this, I suggest saving a spreadsheet in the XML format and seeing what Excel uses
+number_format(value):
+* value: there are MANY different options for this, I suggest saving a spreadsheet in the XML format and seeing what Excel uses
 
-protection(opts={}):  # TODO: just pass value directly
-* opts[:protected]: bool, default: false
+protection(value):
+* value: bool, default: false
 
 == Usage
 

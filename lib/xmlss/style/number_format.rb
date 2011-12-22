@@ -5,8 +5,8 @@ module Xmlss::Style
 
     attr_accessor :format
 
-    def initialize(attrs={})
-      self.format = attrs[:format]
+    def initialize(format=nil)
+      self.format = format
     end
 
     def format=(value)

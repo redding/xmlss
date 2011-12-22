@@ -5,8 +5,8 @@ module Xmlss::Style
 
     attr_accessor :protect
 
-    def initialize(attrs={})
-      self.protect = attrs[:protect] || false
+    def initialize(value=nil)
+      self.protect = value
     end
 
     def protected?; !!self.protect; end

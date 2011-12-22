@@ -17,9 +17,7 @@ module Xmlss::Style
     end
 
     should "set attrs at init time" do
-      sp = Xmlss::Style::Protection.new({
-        :protect => true
-      })
+      sp = Xmlss::Style::Protection.new(true)
       assert sp.protected?
     end
 

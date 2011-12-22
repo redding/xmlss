@@ -148,9 +148,7 @@ class Xmlss::UndiesWriter
     end
 
     should "write number format markup" do
-      subject.number_format(Xmlss::Style::NumberFormat.new({
-        :format => "General"
-      }))
+      subject.number_format(Xmlss::Style::NumberFormat.new("General"))
       subject.flush
 
       assert_equal(
@@ -160,9 +158,7 @@ class Xmlss::UndiesWriter
     end
 
     should "write protection markup" do
-      subject.protection(Xmlss::Style::Protection.new({
-        :protect => true
-      }))
+      subject.protection(Xmlss::Style::Protection.new(true))
       subject.flush
 
       assert_equal(
@@ -184,8 +180,8 @@ class Xmlss::UndiesWriter
         }
         subject.font(Xmlss::Style::Font.new({:bold => true}))
         subject.interior(Xmlss::Style::Interior.new({:color => "#000000"}))
-        subject.number_format(Xmlss::Style::NumberFormat.new({:format => "General"}))
-        subject.protection(Xmlss::Style::Protection.new({:protect => true}))
+        subject.number_format(Xmlss::Style::NumberFormat.new("General"))
+        subject.protection(Xmlss::Style::Protection.new(true))
       }
       subject.flush
 
@@ -281,7 +277,7 @@ class Xmlss::UndiesWriter
       }
 
       subject.style(Xmlss::Style::Base.new(:some_numformat)) {
-        subject.number_format(Xmlss::Style::NumberFormat.new({:format => "General"}))
+        subject.number_format(Xmlss::Style::NumberFormat.new("General"))
       }
 
       subject.worksheet(Xmlss::Element::Worksheet.new('test')) {
@@ -307,7 +303,7 @@ class Xmlss::UndiesWriter
       }
 
       writer.style(Xmlss::Style::Base.new(:some_numformat)) {
-        writer.number_format(Xmlss::Style::NumberFormat.new({:format => "General"}))
+        writer.number_format(Xmlss::Style::NumberFormat.new("General"))
       }
 
       writer.worksheet(Xmlss::Element::Worksheet.new('test')) {

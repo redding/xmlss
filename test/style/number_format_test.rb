@@ -14,9 +14,7 @@ module Xmlss::Style
     should have_accessor :format
 
     should "set attributes at init" do
-      nf = NumberFormat.new({
-        :format => "General"
-      })
+      nf = NumberFormat.new("General")
       assert_equal "General", nf.format
     end
 
