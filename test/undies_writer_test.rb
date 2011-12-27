@@ -19,6 +19,10 @@ class Xmlss::UndiesWriter
     should have_instance_methods :font, :interior, :number_format, :protection
     should have_instance_methods :worksheet, :column, :row, :data
 
+    should "return itself when flushed" do
+      assert_equal subject, subject.flush
+    end
+
   end
 
   class HelpersTests < BasicTests

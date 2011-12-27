@@ -67,6 +67,7 @@ module Xmlss
     def flush
       Undies::Template.flush(@worksheets_t)
       Undies::Template.flush(@styles_t)
+      self
     end
 
     # return the full workbook markup, combining the buffers to xmlss spec
