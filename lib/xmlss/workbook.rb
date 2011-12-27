@@ -36,33 +36,47 @@ module Xmlss
     # Workbook elements API
 
     def worksheet(*args, &block)
-      @__xmlss_undies_writer.worksheet(Element::Worksheet.new(*args), &block)
+      Element::Worksheet.new(*args).tap do |elem|
+        @__xmlss_undies_writer.worksheet(elem, &block)
+      end
     end
 
     def column(*args, &block)
-      @__xmlss_undies_writer.column(Element::Column.new(*args), &block)
+      Element::Column.new(*args).tap do |elem|
+        @__xmlss_undies_writer.column(elem, &block)
+      end
     end
 
     def row(*args, &block)
-      @__xmlss_undies_writer.row(Element::Row.new(*args), &block)
+      Element::Row.new(*args).tap do |elem|
+        @__xmlss_undies_writer.row(elem, &block)
+      end
     end
 
     def cell(*args, &block)
-      @__xmlss_undies_writer.cell(Element::Cell.new(*args), &block)
+      Element::Cell.new(*args).tap do |elem|
+        @__xmlss_undies_writer.cell(elem, &block)
+      end
     end
 
     def data(*args, &block)
-      @__xmlss_undies_writer.data(Element::Data.new(*args), &block)
+      Element::Data.new(*args).tap do |elem|
+        @__xmlss_undies_writer.data(elem, &block)
+      end
     end
 
     # Workbook styles API
 
     def style(*args, &block)
-      @__xmlss_undies_writer.style(Style::Base.new(*args), &block)
+      Style::Base.new(*args).tap do |style|
+        @__xmlss_undies_writer.style(style, &block)
+      end
     end
 
     def alignment(*args, &block)
-      @__xmlss_undies_writer.alignment(Style::Alignment.new(*args), &block)
+      Style::Alignment.new(*args).tap do |style|
+        @__xmlss_undies_writer.alignment(style, &block)
+      end
     end
 
     def borders(*args, &block)
@@ -70,23 +84,33 @@ module Xmlss
     end
 
     def border(*args, &block)
-      @__xmlss_undies_writer.border(Style::Border.new(*args), &block)
+      Style::Border.new(*args).tap do |style|
+        @__xmlss_undies_writer.border(style, &block)
+      end
     end
 
     def font(*args, &block)
-      @__xmlss_undies_writer.font(Style::Font.new(*args), &block)
+      Style::Font.new(*args).tap do |style|
+        @__xmlss_undies_writer.font(style, &block)
+      end
     end
 
     def interior(*args, &block)
-      @__xmlss_undies_writer.interior(Style::Interior.new(*args), &block)
+      Style::Interior.new(*args).tap do |style|
+        @__xmlss_undies_writer.interior(style, &block)
+      end
     end
 
     def number_format(*args, &block)
-      @__xmlss_undies_writer.number_format(Style::NumberFormat.new(*args), &block)
+      Style::NumberFormat.new(*args).tap do |style|
+        @__xmlss_undies_writer.number_format(style, &block)
+      end
     end
 
     def protection(*args, &block)
-      @__xmlss_undies_writer.protection(Style::Protection.new(*args), &block)
+      Style::Protection.new(*args).tap do |style|
+        @__xmlss_undies_writer.protection(style, &block)
+      end
     end
 
   end

@@ -13,6 +13,24 @@ module Xmlss::Worbook
     should have_instance_methods :style, :alignment, :borders, :border
     should have_instance_methods :font, :interior, :number_format, :protection
 
+    should "return element objs when calling its element methods" do
+      assert_kind_of Xmlss::Element::Worksheet, subject.worksheet('test')
+      assert_kind_of Xmlss::Element::Column, subject.column
+      assert_kind_of Xmlss::Element::Row, subject.row
+      assert_kind_of Xmlss::Element::Cell, subject.cell
+      assert_kind_of Xmlss::Element::Data, subject.data('test')
+    end
+
+    should "return style objs when calling its style methods" do
+      assert_kind_of Xmlss::Style::Base, subject.style('test')
+      assert_kind_of Xmlss::Style::Alignment, subject.alignment
+      assert_kind_of Xmlss::Style::Border, subject.border
+      assert_kind_of Xmlss::Style::Font, subject.font
+      assert_kind_of Xmlss::Style::Interior, subject.interior
+      assert_kind_of Xmlss::Style::NumberFormat, subject.number_format
+      assert_kind_of Xmlss::Style::Protection, subject.protection
+    end
+
     should "return workbook markup string" do
       assert_match /<Workbook /, subject.to_s
     end
@@ -56,7 +74,7 @@ module Xmlss::Worbook
 
   end
 
-  class OptionsTests < BasicTests
+  class DataTests < BasicTests
 
     should "bork if non hash-like data is provided" do
       assert_raises NoMethodError do
