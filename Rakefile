@@ -14,7 +14,7 @@ task :run_examples do
   require 'examples/styles'
 end
 
-desc "Run the profiler on 500 rows."
+desc "Run the profiler on 1000 rows."
 task :run_profiler do
   require 'bench/profiler_runner'
 
