@@ -78,10 +78,9 @@ module Xmlss
           __ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
           _Workbook(XML_NS => NS_URI, "#{XML_NS}:#{SHEET_NS}" => NS_URI) {
             _Styles {
-              __ style_markup.to_s
-              __
+              ___ style_markup.to_s.strip
             }
-            __ element_markup.to_s
+            __ element_markup.to_s.strip
           }
         end), {
           :style_markup => @style_markup,
