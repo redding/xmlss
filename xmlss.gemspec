@@ -19,6 +19,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency("bundler", ["~> 1.0"])
   s.add_development_dependency("assert", ["~> 0.6"])
-  s.add_dependency("undies", ["~> 2.0"])
-  s.add_dependency("enumeration", ["~> 1.2"])
+  s.add_dependency("undies", ["~> 2.1"])
+  s.add_dependency("enumeration", ["~> 1.3"])
 end
