@@ -1,16 +1,10 @@
 require 'examples/example_workbook'
 
-class Layout < ExampleWorkbook
-  def name; "layout"; end
-  def build
-    wksht = Xmlss::Worksheet.new('first')
-    4.times do
-      wksht.table.columns << Xmlss::Column.new
-    end
+# $ bundle exec ruby examples/layout.rb
 
-    5.times do
-      wksht.table.rows << Xmlss::Row.new
-    end
+ExampleWorkbook.new("layout") do
+
+  worksheet('first') {
 
     #  | A | B | C | D |
     # 1| x | x | x | x |
@@ -19,63 +13,43 @@ class Layout < ExampleWorkbook
     # 4| x |   x   | x |
     # 5| x |       | x |
 
+    4.times { column }
+
     # row 1: one cell per column
-    4.times do |i|
-      wksht.table.rows[0].cells << Xmlss::Cell.new({
-        :index => i+1,
-        :data => Xmlss::Data.new("x")
-      })
-    end
+    row {
+      4.times do |i|
+        cell(:index => i+1) { data "x" }
+      end
+    }
 
     # row 2: first cell colspan=2
-    wksht.table.rows[1].cells << Xmlss::Cell.new({
-      :index => 1,
-      :data => Xmlss::Data.new("x"),
-      :merge_across => 1
-    })
-    2.times do |i|
-      wksht.table.rows[1].cells << Xmlss::Cell.new({
-        :index => i+3,
-        :data => Xmlss::Data.new("x")
-      })
-    end
+    row {
+      cell(:index => 1, :merge_across => 1) { data "x" }
+      2.times do |i|
+        cell(:index => i+3) { data "x" }
+      end
+    }
 
     # row 3,4,5: more complex merging
     # => row 3
-    wksht.table.rows[2].cells << Xmlss::Cell.new({
-      :data => Xmlss::Data.new("x"),
-      :index => 1
-    })
-    wksht.table.rows[2].cells << Xmlss::Cell.new({
-      :data => Xmlss::Data.new("x"),
-      :merge_across => 1,
-      :merge_down => 2,
-      :index => 2
-    })
-    wksht.table.rows[2].cells << Xmlss::Cell.new({
-      :data => Xmlss::Data.new("x"),
-      :index => 4
-    })
-    # => row 4
-    wksht.table.rows[3].cells << Xmlss::Cell.new({
-      :data => Xmlss::Data.new("x"),
-      :index => 1
-    })
-    wksht.table.rows[3].cells << Xmlss::Cell.new({
-      :data => Xmlss::Data.new("x"),
-      :index => 4
-    })
-    # => row 5
-    wksht.table.rows[4].cells << Xmlss::Cell.new({
-      :data => Xmlss::Data.new("x"),
-      :index => 1
-    })
-    wksht.table.rows[4].cells << Xmlss::Cell.new({
-      :data => Xmlss::Data.new("x"),
-      :index => 4
-    })
+    row {
+      cell(:index => 1) { data "x" }
+      cell(:index => 2, :merge_across => 1, :merge_down => 2) { data "x" }
+      cell(:index => 4) { data "x" }
+    }
 
-    self.worksheets << wksht
-  end
+    # => row 4
+    row {
+      cell(:index => 1) { data "x" }
+      cell(:index => 4) { data "x" }
+    }
+
+    # => row 5
+    row {
+      cell(:index => 1) { data "x" }
+      cell(:index => 4) { data "x" }
+    }
+
+  }
+
 end
-Layout.new.to_file

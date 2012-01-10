@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  <Styles>
+  </Styles>
+  
+  <Worksheet ss:Name="first">
+    <Table>
+      <Column />
+      <Column />
+      <Column />
+      <Column />
+      <Row>
+        <Cell ss:Index="1">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="2">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="3">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="4">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell ss:Index="1" ss:MergeAcross="1">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="3">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="4">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell ss:Index="1">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="2" ss:MergeAcross="1" ss:MergeDown="2">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="4">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell ss:Index="1">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="4">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell ss:Index="1">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+        <Cell ss:Index="4">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+      </Row>
+    </Table>
+  </Worksheet>
+</Workbook>

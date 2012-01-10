@@ -1,16 +1,11 @@
 require 'date'
+require 'enumeration'
 
-module Xmlss
+module Xmlss; end
+module Xmlss::Element
   class Data
 
     LB = "&#13;&#10;"
-
-    include Xmlss::Xml
-    def xml
-      { :node => :data,
-        :attributes => [:type],
-        :value => :xml_value }
-    end
 
     include Enumeration
     enum :type, {
@@ -36,13 +31,13 @@ module Xmlss
     end
 
     def xml_value
-      case value
+      case self.value
       when ::Date, ::Time, ::DateTime
-        value.strftime("%Y-%m-%dT%H:%M:%S")
+        self.value.strftime("%Y-%m-%dT%H:%M:%S")
       when ::String, ::Symbol
-        value.to_s.gsub(/(\r|\n)+/, LB)
+        self.value.to_s.gsub(/(\r|\n)+/, LB)
       else
-        value.to_s
+        self.value.to_s
       end
     end
 

@@ -1,19 +1,15 @@
-require 'rubygems'
-require 'test/env'
+require 'xmlss'
 
 class ExampleWorkbook < Xmlss::Workbook
-  def initialize
-    super
-    puts "Building #{self.name}.xml..."
-    build
-  end
 
-  def to_file(*options)
-    # write this workbooks xml data to a file
-    File.open("examples/#{self.name}.xml", "w") do |file|
-      file.write self.to_xml(*options)
-    end
+  def initialize(name, &build)
+    puts "Building #{name} workbook xml..."
+
+    super(:output => {:pp => 2}, &build)
+    self.to_file("./examples/#{name}.xml")
+
     puts "... ready - open in Excel or whatever..."
   end
+
 end
 

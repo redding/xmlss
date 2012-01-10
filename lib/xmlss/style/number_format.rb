@@ -1,15 +1,12 @@
+require 'xmlss/style/base'
+
 module Xmlss::Style
   class NumberFormat
-    include Xmlss::Xml
-    def xml
-      { :node => :number_format,
-        :attributes => [:format] }
-    end
 
     attr_accessor :format
 
-    def initialize(attrs={})
-      self.format = attrs[:format]
+    def initialize(format=nil)
+      self.format = format
     end
 
     def format=(value)

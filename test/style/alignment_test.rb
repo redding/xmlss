@@ -1,46 +1,38 @@
 require "assert"
+require 'enumeration/assert_macros'
+
 require 'xmlss/style/alignment'
 
 module Xmlss::Style
   class AlignmentTest < Assert::Context
+    include Enumeration::AssertMacros
+
     desc "Xmlss::Style::Alignment"
     before { @a = Alignment.new }
     subject { @a }
 
-    should have_class_method :horizontal
-
-    {
+    should have_enum :horizontal, {
       :automatic => "Automatic",
       :left => "Left",
       :center => "Center",
       :right => "Right"
-    }.each do |horizontal, value|
-      should "provide the value for the '#{horizontal}' horizontal" do
-        assert_equal value, Alignment.horizontal(horizontal)
-      end
-    end
+    }
 
-    should have_class_method :vertical
-
-    {
+    should have_enum :vertical, {
       :automatic => "Automatic",
       :top => "Top",
       :center => "Center",
       :bottom => "Bottom"
-    }.each do |vertical, value|
-      should "provide the value for the '#{vertical}' vertical" do
-        assert_equal value, Alignment.vertical(vertical)
-      end
-    end
+    }
 
-    should have_accessors :horizontal, :vertical, :wrap_text, :rotate
+    should have_accessors :wrap_text, :rotate
     should have_instance_methods :wrap_text?
 
     should "set it's defaults" do
       assert_equal false, subject.wrap_text
-      assert_equal nil, subject.horizontal
-      assert_equal nil, subject.vertical
-      assert_equal nil, subject.rotate
+      assert_equal nil,   subject.horizontal
+      assert_equal nil,   subject.vertical
+      assert_equal nil,   subject.rotate
     end
 
     should "reject invalid rotate alignments" do
@@ -55,7 +47,7 @@ module Xmlss::Style
       assert_equal nil, Alignment.new({:rotate => :poo}).rotate
     end
 
-    should "should set them correctly" do
+    should "set build with values correctly" do
       attrs = {
         :wrap_text => true,
         :horizontal => :center,
@@ -71,30 +63,6 @@ module Xmlss::Style
       assert_equal Alignment.vertical(:bottom), alignment.vertical
     end
 
-    should "set attrs by key" do
-      subject.horizontal = :left
-      subject.vertical = :top
-
-      assert_equal Alignment.horizontal(:left), subject.horizontal
-      assert_equal Alignment.vertical(:top), subject.vertical
-    end
-
-    should "set attrs by value" do
-      subject.horizontal = Alignment.horizontal(:right)
-      subject.vertical = Alignment.vertical(:center)
-
-      assert_equal Alignment.horizontal(:right), subject.horizontal
-      assert_equal Alignment.vertical(:center), subject.vertical
-    end
-
-  end
-
-  class AlignmentXmlTest < AlignmentTest
-    desc "for generating XML"
-
-    should have_reader :xml
-    should_build_node
-    should_build_no_attributes_by_default(Alignment)
   end
 
 end

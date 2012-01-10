@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+  <Styles>
+    <Style ss:ID="centered">
+      <Alignment ss:Horizontal="Center" ss:Vertical="Center" />
+    </Style>
+    <Style ss:ID="bordered">
+      <Alignment ss:WrapText="1" />
+      <Borders>
+        <Border ss:LineStyle="Continuous" ss:Position="Top" ss:Weight="0" />
+        <Border ss:LineStyle="Continuous" ss:Position="Right" ss:Weight="2" />
+        <Border ss:Color="#00FF00" ss:LineStyle="DashDot" ss:Position="Bottom" ss:Weight="3" />
+        <Border ss:LineStyle="Dot" ss:Position="Left" ss:Weight="1" />
+      </Borders>
+    </Style>
+    <Style ss:ID="fonted">
+      <Font ss:Bold="1" ss:Color="#FF0000" ss:Italic="1" ss:Size="18" ss:StrikeThrough="1" />
+    </Style>
+    <Style ss:ID="interior">
+      <Interior ss:Color="#FF0000" ss:Pattern="DiagCross" ss:PatternColor="#00FFFF" />
+      <Font ss:Color="#FFFFFF" />
+    </Style>
+  </Styles>
+  
+  <Worksheet ss:Name="styles">
+    <Table>
+      <Column />
+      <Row>
+        <Cell ss:StyleID="centered">
+          <Data ss:Type="String">x</Data>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell ss:StyleID="bordered">
+          <Data ss:Type="String">blah blah blah blah blah&#13;&#10;blah blah blah blah&#13;&#10;blah blah blah blah</Data>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell ss:StyleID="fonted">
+          <Data ss:Type="String">Cool Font Styles!!</Data>
+        </Cell>
+      </Row>
+      <Row>
+        <Cell ss:StyleID="interior">
+          <Data ss:Type="String">Weird Styles Man...</Data>
+        </Cell>
+      </Row>
+    </Table>
+  </Worksheet>
+</Workbook>

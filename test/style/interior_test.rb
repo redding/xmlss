@@ -1,16 +1,18 @@
 require "assert"
+require 'enumeration/assert_macros'
+
 require 'xmlss/style/interior'
 
 module Xmlss::Style
 
   class InteriorTest < Assert::Context
+    include Enumeration::AssertMacros
+
     desc "Xmlss::Style::Interior"
     before { @i = Interior.new }
     subject { @i }
 
-    should have_class_method :pattern
-
-    {
+    should have_enum :pattern, {
       :none => "None",
       :solid => "Solid",
       :gray75 => "Gray75",
@@ -30,13 +32,9 @@ module Xmlss::Style
       :thin_diag_stripe => "ThineDiagStripe",
       :thin_horz_cross => "ThinHorzCross",
       :thin_diag_cross => "ThinDiagCross"
-    }.each do |pattern, value|
-      should "provide the value for the '#{pattern}' pattern" do
-        assert_equal value, Xmlss::Style::Interior.pattern(pattern)
-      end
-    end
+    }
 
-    should have_accessor :color, :pattern, :pattern_color
+    should have_accessor :color, :pattern_color
 
     should "set it's defaults" do
       assert_equal nil, subject.color
@@ -55,24 +53,6 @@ module Xmlss::Style
       assert_equal "#FF0000", i.pattern_color
     end
 
-    should "set attrs by key" do
-      subject.pattern = :solid
-      assert_equal "Solid", subject.pattern
-    end
-
-    should "set attrs by value" do
-      subject.pattern = "Solid"
-      assert_equal "Solid", subject.pattern
-    end
-
-  end
-
-  class InteriorXmlTest < InteriorTest
-    desc "for generating XML"
-
-    should have_reader :xml
-    should_build_node
-    should_build_no_attributes_by_default(Xmlss::Style::Alignment)
   end
 
 end

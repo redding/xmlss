@@ -1,14 +1,7 @@
+require 'xmlss/style/base'
+
 module Xmlss::Style
   class Font
-    include Xmlss::Xml
-    def xml
-      { :node => :font,
-        :attributes => [
-          :bold, :color, :italic, :size, :shadow,
-          :strike_through, :underline, :vertical_align,
-          :font_name
-        ] }
-    end
 
     include Enumeration
     enum :underline, {

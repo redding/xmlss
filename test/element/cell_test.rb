@@ -1,23 +1,22 @@
 require "assert"
-require 'xmlss/cell'
 
-module Xmlss
+require 'xmlss/element/cell'
+
+module Xmlss::Element
   class CellTest < Assert::Context
     desc "Xmlss::Cell"
-    subject { Cell.new }
+    before { @c = Cell.new }
+    subject { @c }
 
-    should have_accessor :index, :data
-    should have_accessor :formula, :href, :merge_across, :merge_down
+    should be_styled
+    should have_accessor :index, :formula, :href, :merge_across, :merge_down
     should have_reader :h_ref
 
-    should_have_style(Cell)
-
     should "set it's defaults" do
-      [:data, :formula, :href].each do |a|
-        assert_equal nil, subject.send(a)
-      end
-      assert_equal nil, subject.merge_across
-      assert_equal nil, subject.merge_down
+      assert_nil subject.formula
+      assert_nil subject.href
+      assert_nil subject.merge_across
+      assert_nil subject.merge_down
     end
 
     should "provide alias for :href" do
@@ -60,29 +59,6 @@ module Xmlss
         assert_equal 1, Cell.new({a => 1}).send(a)
       end
     end
-
-  end
-
-  class CellDataTest < Assert::Context
-    desc "when using cell data"
-    subject do
-      Cell.new({
-        :data => Data.new(12, {:type => :number})
-      })
-    end
-
-    should "should build a data object" do
-      assert_kind_of Data, subject.data
-      assert_equal 12, subject.data.value
-    end
-
-  end
-
-  class CellDataXmlTest < CellDataTest
-    desc "for generating XML"
-
-    should have_reader :xml
-    should_build_node
 
   end
 

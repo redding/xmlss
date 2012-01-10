@@ -1,18 +1,8 @@
-require 'xmlss/item_set'
-require 'xmlss/cell'
-
-module Xmlss
+module Xmlss; end
+module Xmlss::Element
   class Row
 
-    include Xmlss::Xml
-    def xml
-      { :node => :row,
-        :attributes => [:style_i_d, :height, :auto_fit_height, :hidden],
-        :children => [:cells] }
-    end
-
     attr_accessor :style_id, :height, :auto_fit_height, :hidden
-    attr_accessor :cells
     alias_method :style_i_d, :style_id
 
     def initialize(attrs={})
@@ -20,7 +10,6 @@ module Xmlss
       self.height = attrs[:height]
       self.auto_fit_height = attrs[:auto_fit_height] || false
       self.hidden = attrs[:hidden] || false
-      self.cells = Xmlss::ItemSet.new(nil, attrs[:cells] || [])
     end
 
     def height=(value)
