@@ -1,12 +1,24 @@
 require "assert"
-require 'xmlss/data'
+require 'enumeration/assert_macros'
 
-module Xmlss
+require 'xmlss/element/data'
+
+module Xmlss::Element
   class DataTest < Assert::Context
+    include Enumeration::AssertMacros
+
     desc "Xmlss::Data"
     subject { Data.new }
 
-    should have_accessor :type, :value
+    should have_enum :type, {
+      :number => "Number",
+      :date_time => "DateTime",
+      :boolean => "Boolean",
+      :string => "String",
+      :error => "Error"
+    }
+
+    should have_accessor :value
     should have_instance_method :xml_value
 
     should "set it's defaults" do
@@ -70,13 +82,6 @@ Should
       assert_match reg, subject.xml_value
     end
 
-  end
-
-  class XmlDataTest < DataTest
-    desc "for generating XML"
-
-    should have_reader :xml
-    should_build_node
   end
 
 end

@@ -1,66 +1,111 @@
 require "assert"
 require 'xmlss/workbook'
 
-module Xmlss
-  class WorkbookTest < Assert::Context
+module Xmlss::Worbook
+
+  class BasicTests < Assert::Context
     desc "Xmlss::Workbook"
-    before { @wkbk = Workbook.new }
+    before { @wkbk = Xmlss::Workbook.new }
     subject { @wkbk }
 
-    should have_accessor :styles, :worksheets
-    should have_instance_method :to_xml
+    should have_instance_methods :to_s, :to_file
+    should have_instance_methods :worksheet, :column, :row, :cell, :data
+    should have_instance_methods :style, :alignment, :borders, :border
+    should have_instance_methods :font, :interior, :number_format, :protection
 
-    should "set it's defaults" do
-      assert_equal [], subject.styles
-      assert_equal [], subject.worksheets
+    should "return element objs when calling its element methods" do
+      assert_kind_of Xmlss::Element::Worksheet, subject.worksheet('test')
+      assert_kind_of Xmlss::Element::Column, subject.column
+      assert_kind_of Xmlss::Element::Row, subject.row
+      assert_kind_of Xmlss::Element::Cell, subject.cell
+      assert_kind_of Xmlss::Element::Data, subject.data('test')
     end
 
-  end
-
-  class WorkbookAttrsTest < Assert::Context
-    desc "when initializing with attrs"
-    subject { @wkbk }
-    before do
-      # specifying attrs at init time
-      @wkbk = Workbook.new({
-        :worksheets => [Worksheet.new('sheet1')]
-      })
-
-      # writing attrs at run time
-      @wkbk.styles = [
-        Xmlss::Style::Base.new('title') do
-          alignment({:horizontal => :left})
-          font({:size => 14, :bold => true})
-        end,
-
-        Xmlss::Style::Base.new('header') do
-          alignment({:horizontal => :left})
-          font({:bold => true})
-          [:top, :right, :bottom, :left].each do |p|
-            border({:position => :p})
-          end
-        end
-      ]
+    should "return style objs when calling its style methods" do
+      assert_kind_of Xmlss::Style::Base, subject.style('test')
+      assert_kind_of Xmlss::Style::Alignment, subject.alignment
+      assert_kind_of Xmlss::Style::Border, subject.border
+      assert_kind_of Xmlss::Style::Font, subject.font
+      assert_kind_of Xmlss::Style::Interior, subject.interior
+      assert_kind_of Xmlss::Style::NumberFormat, subject.number_format
+      assert_kind_of Xmlss::Style::Protection, subject.protection
     end
 
-    should "build the attrs appropriately" do
-      [:worksheets, :styles].each do |thing|
-        assert_kind_of ItemSet, subject.send(thing)
+    should "return workbook markup string" do
+      assert_match /<Workbook /, subject.to_s
+    end
+
+    should "write workbook markup to a file path" do
+      path = nil
+      assert_nothing_raised do
+        path = subject.to_file("./tmp/workbook_test.xls")
       end
-      assert_kind_of Worksheet, subject.worksheets.first
-      assert_equal 1, subject.worksheets.size
+      assert_kind_of ::String, path
+      assert_equal './tmp/workbook_test.xls', path
+      assert File.exists?(path)
+    end
 
-      assert_kind_of Style::Base, subject.styles.first
-      assert_equal 2, subject.styles.size
+    should "maintain the workbook's scope throughout content blocks" do
+      wkbk = Xmlss::Workbook.new do
+        style('test') {
+          alignment
+          borders {
+            border
+          }
+          font
+          interior
+          number_format
+          protection
+        }
+        worksheet('test') {
+          column
+
+          row {
+            cell { data self.object_id }
+          }
+        }
+      end
+
+      assert_equal(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"test\"><Alignment /><Borders><Border ss:LineStyle=\"Continuous\" ss:Weight=\"1\" /></Borders><Font /><Interior /><NumberFormat /><Protection /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Column /><Row><Cell><Data ss:Type=\"Number\">#{wkbk.object_id}</Data></Cell></Row></Table></Worksheet></Workbook>",
+        wkbk.to_s
+      )
     end
 
   end
 
-  class WorkbookXmlTest < WorkbookTest
-    desc "for generating XML"
+  class DataTests < BasicTests
 
-    should have_reader :xml
-    should_build_node
+    should "bork if non hash-like data is provided" do
+      assert_raises NoMethodError do
+        Xmlss::Workbook.new(:data => "some data")
+      end
+      assert_respond_to(
+        :some,
+        Xmlss::Workbook.new(:data => {:some => 'data'})
+      )
+    end
+
+    should "complain if trying to set data that conflict with public methods" do
+      assert_raises ArgumentError do
+        Xmlss::Workbook.new(:data => {:worksheet => "yay!"})
+      end
+    end
+
+    should "respond to each data key with its value" do
+      wkbk = Xmlss::Workbook.new(:data => {:some => 'data'})
+      assert_equal "data", wkbk.some
+    end
+
+    should "be able to access its data in the workbook definition" do
+      wkbk = Xmlss::Workbook.new(:data => {:name => "awesome"}) do
+        worksheet name
+      end
+      assert_equal(
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles></Styles><Worksheet ss:Name=\"awesome\"><Table /></Worksheet></Workbook>",
+        wkbk.to_s
+      )
+    end
 
   end
 

@@ -1,20 +1,16 @@
-require 'xmlss/table'
+require 'xmlss/element/column'
+require 'xmlss/element/row'
+require 'xmlss/element/cell'
+require 'xmlss/element/data'
 
-module Xmlss
+module Xmlss; end
+module Xmlss::Element
   class Worksheet
 
-    include Xmlss::Xml
-    def xml
-      { :node => :worksheet,
-        :attributes => [:name],
-        :children => [:table] }
-    end
-
-    attr_accessor :name, :table
+    attr_accessor :name
 
     def initialize(name, attrs={})
       self.name = name
-      self.table = attrs[:table] || Table.new
     end
 
     def name=(value)
@@ -22,13 +18,6 @@ module Xmlss
         raise ArgumentError, "'#{name.inspect}' is not a good name for a worksheet"
       end
       @name = sanitized_name(value.to_s)
-    end
-
-    def table=(value)
-      if value.nil? || !value.kind_of?(Table)
-        raise ArgumentError, "you must set table to an actual Table object"
-      end
-      @table = value
     end
 
     private

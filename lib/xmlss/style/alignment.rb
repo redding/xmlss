@@ -1,10 +1,7 @@
+require 'xmlss/style/base'
+
 module Xmlss::Style
   class Alignment
-    include Xmlss::Xml
-    def xml
-      { :node => :alignment,
-        :attributes => [:horizontal, :vertical, :wrap_text, :rotate] }
-    end
 
     include Enumeration
     enum :horizontal, {
@@ -33,11 +30,7 @@ module Xmlss::Style
 
     def rotate=(value)
       @rotate = if value.kind_of?(::Numeric)
-        if value <= 90 && value >= -90
-          value.round
-        else
-          nil
-        end
+        value <= 90 && value >= -90 ? value.round : nil
       else
         nil
       end

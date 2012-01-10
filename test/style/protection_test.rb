@@ -1,4 +1,5 @@
 require "assert"
+
 require 'xmlss/style/protection'
 
 module Xmlss::Style
@@ -16,9 +17,7 @@ module Xmlss::Style
     end
 
     should "set attrs at init time" do
-      sp = Xmlss::Style::Protection.new({
-        :protect => true
-      })
+      sp = Xmlss::Style::Protection.new(true)
       assert sp.protected?
     end
 
@@ -26,15 +25,6 @@ module Xmlss::Style
       subject.protect = true
       assert subject.protected?
     end
-
-  end
-
-  class ProtectionXmlTest < ProtectionTest
-    desc "for generating XML"
-
-    should have_reader :xml
-    should_build_node
-    should_build_no_attributes_by_default(Xmlss::Style::Alignment)
 
   end
 
