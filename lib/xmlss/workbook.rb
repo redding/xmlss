@@ -133,7 +133,7 @@ module Xmlss
       :name             # worksheet
     ].each do |a|
       define_method(a) do |*args|
-        self.class.writer(self).current.send(a, *args)
+        self.class.writer(self).send(a, *args)
       end
     end
 

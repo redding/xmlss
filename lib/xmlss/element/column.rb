@@ -19,5 +19,9 @@ module Xmlss::Element
       @width = value && value < 0 ? nil : value
     end
 
+    def xml_attributes
+      [:style_i_d, :width, :auto_fit_width, :hidden]
+    end
+
   end
 end

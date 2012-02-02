@@ -11,12 +11,17 @@ module Xmlss::Element
     should be_styled
     should have_accessor :index, :formula, :href, :merge_across, :merge_down
     should have_reader :h_ref
+    should have_instance_method :xml_attributes
 
     should "set it's defaults" do
       assert_nil subject.formula
       assert_nil subject.href
       assert_nil subject.merge_across
       assert_nil subject.merge_down
+    end
+
+    should "know its xml attributes" do
+      assert_equal [:index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down], subject.xml_attributes
     end
 
     should "provide alias for :href" do

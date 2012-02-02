@@ -19,11 +19,15 @@ module Xmlss::Element
     }
 
     should have_accessor :value
-    should have_instance_method :xml_value
+    should have_instance_method :xml_value, :xml_attributes
 
     should "set it's defaults" do
       assert_equal Data.type(:string), subject.type
       assert_equal "", subject.value
+    end
+
+    should "know its xml attributes" do
+      assert_equal [:type], subject.xml_attributes
     end
 
     should "generate it's xml value" do

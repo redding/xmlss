@@ -13,11 +13,17 @@ module Xmlss
     subject { @w }
 
     should have_class_methods :attributes, :classify, :coerce
-    should have_readers :style_markup, :element_markup
-    should have_instance_method :flush, :workbook
+    should have_readers :style_markup, :element_markup, :flush
+
     should have_instance_methods :style, :alignment, :borders, :border
     should have_instance_methods :font, :interior, :number_format, :protection
-    should have_instance_methods :worksheet, :column, :row, :data
+
+    should have_instance_methods :workbook, :worksheet, :column, :row, :data
+
+    should have_instance_methods :type, :index, :style_id, :formula, :href
+    should have_instance_methods :merge_across, :merge_down, :height
+    should have_instance_methods :auto_fit_height, :hidden, :width
+    should have_instance_methods :auto_fit_width, :name
 
     should "return itself when flushed" do
       assert_equal subject, subject.flush
@@ -274,16 +280,26 @@ Should
       )
     end
 
-    should "write row markup" do
-      subject.row(Xmlss::Element::Row.new({:hidden => true})) {
-        subject.cell(Xmlss::Element::Cell.new({:index => 2})) {
-          subject.data(Xmlss::Element::Data.new("some data"))
+    should "write attribute markup" do
+      subject.column(Xmlss::Element::Column.new(:width => 120)) {
+        subject.style_id 'narrowcolumn'
+      }
+      subject.row(Xmlss::Element::Row.new(:hidden => true)) {
+        subject.height 120
+        subject.style_id 'awesome'
+
+        subject.cell(Xmlss::Element::Cell.new(:index => 2)) {
+          subject.href "http://www.google.com"
+
+          subject.data(Xmlss::Element::Data.new("100")) {
+            subject.type :number
+          }
         }
       }
       subject.flush
 
       assert_equal(
-        "<Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row>",
+        "<Column ss:StyleID=\"narrowcolumn\" ss:Width=\"120\"></Column><Row ss:Height=\"120\" ss:Hidden=\"1\" ss:StyleID=\"awesome\"><Cell ss:HRef=\"http://www.google.com\" ss:Index=\"2\"><Data ss:Type=\"Number\">100</Data></Cell></Row>",
         subject.element_markup
       )
     end
@@ -334,7 +350,7 @@ Should
       subject.flush
 
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
         subject.workbook
       )
     end

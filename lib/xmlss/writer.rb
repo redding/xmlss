@@ -4,6 +4,8 @@ require 'stringio'
 module Xmlss
   class Writer
 
+    class ElementStack < ::Array; end
+
     # Xmlss uses Undies to writer stream its xml markup
 
     XML_NS   = "xmlns"
@@ -21,11 +23,15 @@ module Xmlss
     def self.attributes(thing, *attrs)
       [*attrs].flatten.inject({}) do |xattrs, a|
         xattrs.merge(if !(xv = self.coerce(thing.send(a))).nil?
-          {"#{SHEET_NS}:#{self.classify(a)}" => xv.to_s}
+          {xmlss_attribute_name(a) => xv.to_s}
         else
           {}
         end)
       end
+    end
+
+    def self.xmlss_attribute_name(attr_name)
+      "#{SHEET_NS}:#{self.classify(attr_name)}"
     end
 
     def self.classify(underscored_string)
@@ -51,6 +57,7 @@ module Xmlss
 
     def initialize(output_opts={})
       @opts = output_opts || {}
+      @element_stack = ElementStack.new
 
       # buffer style markup and create a template to write to it
       @style_markup = ""
@@ -78,12 +85,12 @@ module Xmlss
       self.flush
       "".tap do |markup|
         Undies::Template.new(Undies::Source.new(Proc.new do
-          __ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+          __ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
           _Workbook(XML_NS => NS_URI, "#{XML_NS}:#{SHEET_NS}" => NS_URI) {
             _Styles {
-              ___ style_markup.to_s.strip
+              __partial style_markup.to_s.strip
             }
-            __ element_markup.to_s.strip
+            __partial element_markup.to_s.strip
           }
         end), {
           :style_markup => @style_markup,
@@ -142,36 +149,102 @@ module Xmlss
     # workbook element markup directives
 
     def data(data, &block)
-      @worksheets_t._Data(self.class.attributes(data, :type)) {
+      build = Proc.new do
+        @element_stack.using(data, &block)
         @worksheets_t.__ Undies::Template.
           escape_html(data.xml_value).
           gsub(/(\r|\n)+/, LB)
-      }
+      end
+      xml_attrs = self.class.attributes(data, data.xml_attributes)
+      @worksheets_t._Data(xml_attrs, &build)
     end
 
     def cell(cell, &block)
-      @worksheets_t._Cell(self.class.attributes(cell, [
-        :index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down
-      ]), &block)
+      build = block ? Proc.new { @element_stack.using(cell, &block) } : nil
+      xml_attrs = self.class.attributes(cell, cell.xml_attributes)
+      @worksheets_t._Cell(xml_attrs, &build)
     end
 
     def row(row, &block)
-      @worksheets_t._Row(self.class.attributes(row, [
-        :style_i_d, :height, :auto_fit_height, :hidden
-      ]), &block)
+      build = block ? Proc.new { @element_stack.using(row, &block) } : nil
+      xml_attrs = self.class.attributes(row, row.xml_attributes)
+      @worksheets_t._Row(xml_attrs, &build)
     end
 
     def column(column, &block)
-      @worksheets_t._Column(self.class.attributes(column, [
-        :style_i_d, :width, :auto_fit_width, :hidden
-      ]))
+      build = block ? Proc.new { @element_stack.using(column, &block) } : nil
+      xml_attrs = self.class.attributes(column, column.xml_attributes)
+      @worksheets_t._Column(xml_attrs, &build)
     end
 
     def worksheet(worksheet, &block)
-      @worksheets_t._Worksheet(self.class.attributes(worksheet, :name)) {
-        @worksheets_t._Table(&block)
+      build = block ? Proc.new { @element_stack.using(worksheet, &block) } : nil
+      xml_attrs = self.class.attributes(worksheet, worksheet.xml_attributes)
+      @worksheets_t._Worksheet(xml_attrs) {
+        @worksheets_t._Table(&build)
       }
     end
 
+    # workbook element attribute directives
+
+    [ :type,            # data
+      :index,           # cell
+      :style_id,        # cell, row, :column
+      :formula,         # cell
+      :href,            # cell
+      :merge_across,    # cell
+      :merge_down,      # cell
+      :height,          # row
+      :auto_fit_height, # row
+      :hidden,          # row, column
+      :width,           # column
+      :auto_fit_width,  # column
+      :name             # worksheet
+    ].each do |a|
+      define_method(a) do |value|
+        @element_stack.current.tap do |elem|
+          elem.send("#{a}=", value)
+          xml_attrs = self.class.attributes(elem, elem.xml_attributes)
+          @worksheets_t.__attrs(xml_attrs)
+        end
+      end
+    end
+
   end
+
+  class Writer::ElementStack
+
+    # this class is just a wrapper to Array.  I want to treat this as a
+    # stack of objects for the workbook DSL to reference.  I need to push
+    # an object onto the stack, reference it using the 'current' method,
+    # and pop it off the stack when I'm done.
+
+    def initialize
+      super
+    end
+
+    def push(*args)
+      super
+    end
+
+    def pop(*args)
+      super
+    end
+
+    def current
+      self.last
+    end
+
+    def size(*args)
+      super
+    end
+
+    def using(obj, &block)
+      push(obj)
+      block.call if !block.nil?
+      pop
+    end
+
+  end
+
 end

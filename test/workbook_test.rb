@@ -75,7 +75,7 @@ module Xmlss::Worbook
       end
 
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"test\"><Alignment /><Borders><Border ss:LineStyle=\"Continuous\" ss:Weight=\"1\" /></Borders><Font /><Interior /><NumberFormat /><Protection /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Column /><Row><Cell><Data ss:Type=\"Number\">#{wkbk.object_id}</Data></Cell></Row></Table></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"test\"><Alignment /><Borders><Border ss:LineStyle=\"Continuous\" ss:Weight=\"1\" /></Borders><Font /><Interior /><NumberFormat /><Protection /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Column /><Row><Cell><Data ss:Type=\"Number\">#{wkbk.object_id}</Data></Cell></Row></Table></Worksheet></Workbook>",
         wkbk.to_s
       )
     end
@@ -110,7 +110,7 @@ module Xmlss::Worbook
         worksheet worksheet_name
       end
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles></Styles><Worksheet ss:Name=\"awesome\"><Table /></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles></Styles><Worksheet ss:Name=\"awesome\"><Table /></Worksheet></Workbook>",
         wkbk.to_s
       )
     end

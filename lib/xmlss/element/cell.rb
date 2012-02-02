@@ -24,5 +24,8 @@ module Xmlss::Element
       end
     end
 
+    def xml_attributes
+      [:index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down]
+    end
   end
 end

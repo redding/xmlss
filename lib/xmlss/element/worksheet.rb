@@ -20,6 +20,10 @@ module Xmlss::Element
       @name = sanitized_name(value.to_s)
     end
 
+    def xml_attributes
+      [:name]
+    end
+
     private
 
     def sanitized_name(name)

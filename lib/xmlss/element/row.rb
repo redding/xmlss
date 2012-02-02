@@ -19,5 +19,9 @@ module Xmlss::Element
       @height = value && value < 0 ? nil : value
     end
 
+    def xml_attributes
+      [:style_i_d, :height, :auto_fit_height, :hidden]
+    end
+
   end
 end

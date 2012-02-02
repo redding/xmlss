@@ -37,6 +37,10 @@ module Xmlss::Element
       end
     end
 
+    def xml_attributes
+      [:type]
+    end
+
     private
 
     def value_type(v)
