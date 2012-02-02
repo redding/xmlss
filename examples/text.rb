@@ -16,9 +16,9 @@ ExampleWorkbook.new("text") do
     row {
       cell(:style_id => "general_text") {
         data %{
-A blob of text
-with line breaks
-  and leading space}
+A blob of <text>
+with line breaks, /escaped/ characters
+  & "leading" 'space'}
       }
     }
   end

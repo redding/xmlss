@@ -7,6 +7,7 @@ module Xmlss
     XML_NS   = "xmlns"
     SHEET_NS = "ss"
     NS_URI   = "urn:schemas-microsoft-com:office:spreadsheet"
+    LB       = "&#13;&#10;"
 
     # The Undies writer is responsible for driving the Undies API to generate
     # the xmlss xml markup for the workbook.
@@ -140,7 +141,9 @@ module Xmlss
 
     def data(data, &block)
       @worksheets_t._Data(self.class.attributes(data, :type)) {
-        @worksheets_t.__ data.xml_value
+        @worksheets_t.__ Undies::Template.
+          escape_html(data.xml_value).
+          gsub(/(\r|\n)+/, LB)
       }
     end
 

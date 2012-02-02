@@ -6,13 +6,12 @@
       <NumberFormat ss:Format="@" />
     </Style>
   </Styles>
-  
   <Worksheet ss:Name="text">
     <Table>
       <Column />
       <Row>
         <Cell ss:StyleID="general_text">
-          <Data ss:Type="String">&#13;&#10;A blob of text&#13;&#10;with line breaks&#13;&#10;  and leading space</Data>
+          <Data ss:Type="String">&#13;&#10;A blob of &lt;text&gt;&#13;&#10;with line breaks, &#x2F;escaped&#x2F; characters&#13;&#10;  &amp; &quot;leading&quot; &#x27;space&#x27;</Data>
         </Cell>
       </Row>
     </Table>

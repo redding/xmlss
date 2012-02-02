@@ -5,8 +5,6 @@ module Xmlss; end
 module Xmlss::Element
   class Data
 
-    LB = "&#13;&#10;"
-
     include Enumeration
     enum :type, {
       :number => "Number",
@@ -34,8 +32,6 @@ module Xmlss::Element
       case self.value
       when ::Date, ::Time, ::DateTime
         self.value.strftime("%Y-%m-%dT%H:%M:%S")
-      when ::String, ::Symbol
-        self.value.to_s.gsub(/(\r|\n)+/, LB)
       else
         self.value.to_s
       end
