@@ -21,7 +21,6 @@
       <Font ss:Color="#FFFFFF" />
     </Style>
   </Styles>
-  
   <Worksheet ss:Name="styles">
     <Table>
       <Column />

@@ -15,7 +15,7 @@ ExampleWorkbook.new("simple") do
     row {
 
       # put data into the row (infer type)
-      [1, "text", 123.45, "0001267", "$45.23"].each do |data_value|
+      [1, "text", 123.45, "<>&'\"/", "$45.23"].each do |data_value|
         cell { data data_value }
       end
 

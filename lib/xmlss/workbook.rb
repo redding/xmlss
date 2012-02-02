@@ -5,13 +5,14 @@ require 'xmlss/element/worksheet'
 module Xmlss
   class Workbook
 
+    # TODO: (writer, data={}, &build)
     def initialize(opts={}, &build)
       # (don't pollute workbook scope that the build may run in)
 
       # apply :data options to workbook scope
       data = (opts || {})[:data] || {}
       if (data.keys.map(&:to_s) & self.public_methods.map(&:to_s)).size > 0
-        raise ArgumentError, "data conflicts with template public methods."
+        raise ArgumentError, "data conflicts with workbook public methods."
       end
       metaclass = class << self; self; end
       data.each {|key, value| metaclass.class_eval { define_method(key){value} }}
