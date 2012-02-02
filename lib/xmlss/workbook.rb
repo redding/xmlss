@@ -112,11 +112,30 @@ module Xmlss
 
     def data(*args, &block)
       Element::Data.new(*args).tap do |elem|
-        self.class.writer(self) .data(elem, &block)
+        self.class.writer(self).data(elem, &block)
       end
     end
 
     # Workbook element attributes API
+
+    [ :type,            # data
+      :index,           # cell
+      :style_id,        # cell, row, :column
+      :formula,         # cell
+      :href,            # cell
+      :merge_across,    # cell
+      :merge_down,      # cell
+      :height,          # row
+      :auto_fit_height, # row
+      :hidden,          # row, column
+      :width,           # column
+      :auto_fit_width,  # column
+      :name             # worksheet
+    ].each do |a|
+      define_method(a) do |*args|
+        self.class.writer(self).current.send(a, *args)
+      end
+    end
 
   end
 end

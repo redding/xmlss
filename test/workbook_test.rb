@@ -10,9 +10,16 @@ module Xmlss::Worbook
 
     should have_class_method :writer
     should have_instance_methods :to_s, :to_file
-    should have_instance_methods :worksheet, :column, :row, :cell, :data
+
     should have_instance_methods :style, :alignment, :borders, :border
     should have_instance_methods :font, :interior, :number_format, :protection
+
+    should have_instance_methods :worksheet, :column, :row, :cell, :data
+
+    should have_instance_methods :type, :index, :style_id, :formula, :href
+    should have_instance_methods :merge_across, :merge_down, :height
+    should have_instance_methods :auto_fit_height, :hidden, :width
+    should have_instance_methods :auto_fit_width, :name
 
     should "return element objs when calling its element methods" do
       assert_kind_of Xmlss::Element::Worksheet, subject.worksheet('test')
@@ -99,8 +106,8 @@ module Xmlss::Worbook
     end
 
     should "be able to access its data in the workbook definition" do
-      wkbk = Xmlss::Workbook.new(Xmlss::Writer.new, :name => "awesome") do
-        worksheet name
+      wkbk = Xmlss::Workbook.new(Xmlss::Writer.new, :worksheet_name => "awesome") do
+        worksheet worksheet_name
       end
       assert_equal(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles></Styles><Worksheet ss:Name=\"awesome\"><Table /></Worksheet></Workbook>",
