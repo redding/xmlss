@@ -8,6 +8,7 @@ module Xmlss::Worbook
     before { @wkbk = Xmlss::Workbook.new }
     subject { @wkbk }
 
+    should have_class_method :writer
     should have_instance_methods :to_s, :to_file
     should have_instance_methods :worksheet, :column, :row, :cell, :data
     should have_instance_methods :style, :alignment, :borders, :border

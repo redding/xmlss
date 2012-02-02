@@ -5,6 +5,10 @@ require 'xmlss/element/worksheet'
 module Xmlss
   class Workbook
 
+    def self.writer(workbook)
+      workbook.instance_variable_get("@__xmlss_undies_writer")
+    end
+
     # TODO: (writer, data={}, &build)
     def initialize(opts={}, &build)
       # (don't pollute workbook scope that the build may run in)
@@ -25,7 +29,7 @@ module Xmlss
     end
 
     def to_s
-      @__xmlss_undies_writer.workbook
+      self.class.writer(self).workbook
     end
 
     def to_file(path)
@@ -34,85 +38,87 @@ module Xmlss
       File.exists?(path) ? path : false
     end
 
-    # Workbook elements API
-
-    def worksheet(*args, &block)
-      Element::Worksheet.new(*args).tap do |elem|
-        @__xmlss_undies_writer.worksheet(elem, &block)
-      end
-    end
-
-    def column(*args, &block)
-      Element::Column.new(*args).tap do |elem|
-        @__xmlss_undies_writer.column(elem, &block)
-      end
-    end
-
-    def row(*args, &block)
-      Element::Row.new(*args).tap do |elem|
-        @__xmlss_undies_writer.row(elem, &block)
-      end
-    end
-
-    def cell(*args, &block)
-      Element::Cell.new(*args).tap do |elem|
-        @__xmlss_undies_writer.cell(elem, &block)
-      end
-    end
-
-    def data(*args, &block)
-      Element::Data.new(*args).tap do |elem|
-        @__xmlss_undies_writer.data(elem, &block)
-      end
-    end
-
     # Workbook styles API
 
     def style(*args, &block)
       Style::Base.new(*args).tap do |style|
-        @__xmlss_undies_writer.style(style, &block)
+        self.class.writer(self).style(style, &block)
       end
     end
 
     def alignment(*args, &block)
       Style::Alignment.new(*args).tap do |style|
-        @__xmlss_undies_writer.alignment(style, &block)
+        self.class.writer(self).alignment(style, &block)
       end
     end
 
     def borders(*args, &block)
-      @__xmlss_undies_writer.borders(&block)
+      self.class.writer(self).borders(&block)
     end
 
     def border(*args, &block)
       Style::Border.new(*args).tap do |style|
-        @__xmlss_undies_writer.border(style, &block)
+        self.class.writer(self).border(style, &block)
       end
     end
 
     def font(*args, &block)
       Style::Font.new(*args).tap do |style|
-        @__xmlss_undies_writer.font(style, &block)
+        self.class.writer(self).font(style, &block)
       end
     end
 
     def interior(*args, &block)
       Style::Interior.new(*args).tap do |style|
-        @__xmlss_undies_writer.interior(style, &block)
+        self.class.writer(self).interior(style, &block)
       end
     end
 
     def number_format(*args, &block)
       Style::NumberFormat.new(*args).tap do |style|
-        @__xmlss_undies_writer.number_format(style, &block)
+        self.class.writer(self).number_format(style, &block)
       end
     end
 
     def protection(*args, &block)
       Style::Protection.new(*args).tap do |style|
-        @__xmlss_undies_writer.protection(style, &block)
+        self.class.writer(self).protection(style, &block)
       end
     end
+
+    # Workbook elements API
+
+    def worksheet(*args, &block)
+      Element::Worksheet.new(*args).tap do |elem|
+        self.class.writer(self).worksheet(elem, &block)
+      end
+    end
+
+    def column(*args, &block)
+      Element::Column.new(*args).tap do |elem|
+        self.class.writer(self).column(elem, &block)
+      end
+    end
+
+    def row(*args, &block)
+      Element::Row.new(*args).tap do |elem|
+        self.class.writer(self).row(elem, &block)
+      end
+    end
+
+    def cell(*args, &block)
+      Element::Cell.new(*args).tap do |elem|
+        self.class.writer(self).cell(elem, &block)
+      end
+    end
+
+    def data(*args, &block)
+      Element::Data.new(*args).tap do |elem|
+        self.class.writer(self) .data(elem, &block)
+      end
+    end
+
+    # Workbook element attributes API
 
   end
 end
