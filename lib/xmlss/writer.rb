@@ -2,7 +2,9 @@ require 'undies'
 require 'stringio'
 
 module Xmlss
-  class UndiesWriter
+  class Writer
+
+    # Xmlss uses Undies to writer stream its xml markup
 
     XML_NS   = "xmlns"
     SHEET_NS = "ss"

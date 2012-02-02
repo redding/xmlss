@@ -5,7 +5,7 @@ module Xmlss::Worbook
 
   class BasicTests < Assert::Context
     desc "Xmlss::Workbook"
-    before { @wkbk = Xmlss::Workbook.new }
+    before { @wkbk = Xmlss::Workbook.new(Xmlss::Writer.new) }
     subject { @wkbk }
 
     should have_class_method :writer
@@ -47,7 +47,7 @@ module Xmlss::Worbook
     end
 
     should "maintain the workbook's scope throughout content blocks" do
-      wkbk = Xmlss::Workbook.new do
+      wkbk = Xmlss::Workbook.new(Xmlss::Writer.new) do
         style('test') {
           alignment
           borders {
@@ -79,27 +79,27 @@ module Xmlss::Worbook
 
     should "bork if non hash-like data is provided" do
       assert_raises NoMethodError do
-        Xmlss::Workbook.new(:data => "some data")
+        Xmlss::Workbook.new(Xmlss::Writer.new, "some data")
       end
       assert_respond_to(
         :some,
-        Xmlss::Workbook.new(:data => {:some => 'data'})
+        Xmlss::Workbook.new(Xmlss::Writer.new, :some => 'data')
       )
     end
 
     should "complain if trying to set data that conflict with public methods" do
       assert_raises ArgumentError do
-        Xmlss::Workbook.new(:data => {:worksheet => "yay!"})
+        Xmlss::Workbook.new(Xmlss::Writer.new, :worksheet => "yay!")
       end
     end
 
     should "respond to each data key with its value" do
-      wkbk = Xmlss::Workbook.new(:data => {:some => 'data'})
+      wkbk = Xmlss::Workbook.new(Xmlss::Writer.new, :some => 'data')
       assert_equal "data", wkbk.some
     end
 
     should "be able to access its data in the workbook definition" do
-      wkbk = Xmlss::Workbook.new(:data => {:name => "awesome"}) do
+      wkbk = Xmlss::Workbook.new(Xmlss::Writer.new, :name => "awesome") do
         worksheet name
       end
       assert_equal(

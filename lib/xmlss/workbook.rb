@@ -1,4 +1,4 @@
-require 'xmlss/undies_writer'
+require 'xmlss/writer'
 require 'xmlss/style/base'
 require 'xmlss/element/worksheet'
 
@@ -9,12 +9,10 @@ module Xmlss
       workbook.instance_variable_get("@__xmlss_undies_writer")
     end
 
-    # TODO: (writer, data={}, &build)
-    def initialize(opts={}, &build)
+    def initialize(writer, data={}, &build)
       # (don't pollute workbook scope that the build may run in)
 
       # apply :data options to workbook scope
-      data = (opts || {})[:data] || {}
       if (data.keys.map(&:to_s) & self.public_methods.map(&:to_s)).size > 0
         raise ArgumentError, "data conflicts with workbook public methods."
       end
@@ -22,7 +20,7 @@ module Xmlss
       data.each {|key, value| metaclass.class_eval { define_method(key){value} }}
 
       # setup the Undies xml writer with any :output options
-      @__xmlss_undies_writer = UndiesWriter.new((opts || {})[:output] || {})
+      @__xmlss_undies_writer = writer
 
       # run any instance workbook build given
       instance_eval(&build) if build

@@ -1,14 +1,14 @@
 require 'assert'
 
-require 'xmlss/undies_writer'
+require 'xmlss/writer'
 require 'xmlss/workbook'
 
-class Xmlss::UndiesWriter
+module Xmlss
 
   class BasicTests < Assert::Context
     desc "UndiesWriter"
     setup do
-      @w = Xmlss::UndiesWriter.new
+      @w = Writer.new
     end
     subject { @w }
 
@@ -28,21 +28,21 @@ class Xmlss::UndiesWriter
   class HelpersTests < BasicTests
 
     should "coerce certain values for xml output" do
-      assert_equal 1, Xmlss::UndiesWriter.coerce(true)
-      assert_nil Xmlss::UndiesWriter.coerce(false)
-      assert_nil Xmlss::UndiesWriter.coerce("")
-      assert_equal "hi", Xmlss::UndiesWriter.coerce("hi")
-      assert_equal 1, Xmlss::UndiesWriter.coerce(1)
+      assert_equal 1, Writer.coerce(true)
+      assert_nil Writer.coerce(false)
+      assert_nil Writer.coerce("")
+      assert_equal "hi", Writer.coerce("hi")
+      assert_equal 1, Writer.coerce(1)
     end
 
     should "classify underscored string" do
-      assert_equal "Hi", Xmlss::UndiesWriter.classify("Hi")
-      assert_equal "Hi", Xmlss::UndiesWriter.classify("hi")
-      assert_equal "Hithere", Xmlss::UndiesWriter.classify("HiThere")
-      assert_equal "Hithere", Xmlss::UndiesWriter.classify("hithere")
-      assert_equal "HiThere", Xmlss::UndiesWriter.classify("Hi_There")
-      assert_equal "HiThere", Xmlss::UndiesWriter.classify("Hi_there")
-      assert_equal "HiThere", Xmlss::UndiesWriter.classify("hi_there")
+      assert_equal "Hi", Writer.classify("Hi")
+      assert_equal "Hi", Writer.classify("hi")
+      assert_equal "Hithere", Writer.classify("HiThere")
+      assert_equal "Hithere", Writer.classify("hithere")
+      assert_equal "HiThere", Writer.classify("Hi_There")
+      assert_equal "HiThere", Writer.classify("Hi_there")
+      assert_equal "HiThere", Writer.classify("hi_there")
     end
 
     should "convert a list of attributes for xml output" do
@@ -62,7 +62,7 @@ class Xmlss::UndiesWriter
         "ss:Thing" => "1"
       }
 
-      assert_equal exp, Xmlss::UndiesWriter.attributes(thing, thing.keys)
+      assert_equal exp, Writer.attributes(thing, thing.keys)
     end
 
   end
@@ -215,28 +215,28 @@ class Xmlss::UndiesWriter
       subject.data(Xmlss::Element::Data.new("line\nbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Data ss:Type=\"String\">line#{Xmlss::UndiesWriter::LB}break</Data>", subject.element_markup
+      assert_equal "<Data ss:Type=\"String\">line#{Writer::LB}break</Data>", subject.element_markup
     end
 
     should "write data markup w/ \\r line breaks" do
       subject.data(Xmlss::Element::Data.new("line\rbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Data ss:Type=\"String\">line#{Xmlss::UndiesWriter::LB}break</Data>", subject.element_markup
+      assert_equal "<Data ss:Type=\"String\">line#{Writer::LB}break</Data>", subject.element_markup
     end
 
     should "write data markup w/ \\r\\n line breaks" do
       subject.data(Xmlss::Element::Data.new("line\r\nbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Data ss:Type=\"String\">line#{Xmlss::UndiesWriter::LB}break</Data>", subject.element_markup
+      assert_equal "<Data ss:Type=\"String\">line#{Writer::LB}break</Data>", subject.element_markup
     end
 
     should "write data markup w/ \\n\\r line breaks" do
       subject.data(Xmlss::Element::Data.new("line\n\rbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Data ss:Type=\"String\">line#{Xmlss::UndiesWriter::LB}break</Data>", subject.element_markup
+      assert_equal "<Data ss:Type=\"String\">line#{Writer::LB}break</Data>", subject.element_markup
     end
 
     should "write data markup w/ line breaks and leading space" do
@@ -247,7 +247,7 @@ Should
       subject.flush
 
       assert_equal(
-        "<Data ss:Type=\"String\">#{Xmlss::UndiesWriter::LB}Should#{Xmlss::UndiesWriter::LB}  honor#{Xmlss::UndiesWriter::LB}    this</Data>",
+        "<Data ss:Type=\"String\">#{Writer::LB}Should#{Writer::LB}  honor#{Writer::LB}    this</Data>",
         subject.element_markup
       )
     end
@@ -340,7 +340,7 @@ Should
     end
 
     should "return pretty workbook markup" do
-      writer = Xmlss::UndiesWriter.new(:pp => 2)
+      writer = Writer.new(:pp => 2)
       writer.style(Xmlss::Style::Base.new(:some_font)) {
         writer.font(Xmlss::Style::Font.new({:bold => true}))
       }
