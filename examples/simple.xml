@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
   <Styles>
+    
   </Styles>
-  
   <Worksheet ss:Name="1 row, 5 columns">
     <Table>
       <Column />
@@ -21,7 +21,7 @@
           <Data ss:Type="Number">123.45</Data>
         </Cell>
         <Cell>
-          <Data ss:Type="String">0001267</Data>
+          <Data ss:Type="String">&lt;&gt;&amp;&#x27;&quot;&#x2F;</Data>
         </Cell>
         <Cell>
           <Data ss:Type="String">$45.23</Data>

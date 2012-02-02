@@ -211,14 +211,53 @@ class Xmlss::UndiesWriter
       )
     end
 
-    should "write data markup w/ line breaks" do
+    should "write data markup w/ \\n line breaks" do
+      subject.data(Xmlss::Element::Data.new("line\nbreak", :type => :string))
+      subject.flush
+
+      assert_equal "<Data ss:Type=\"String\">line#{Xmlss::UndiesWriter::LB}break</Data>", subject.element_markup
+    end
+
+    should "write data markup w/ \\r line breaks" do
+      subject.data(Xmlss::Element::Data.new("line\rbreak", :type => :string))
+      subject.flush
+
+      assert_equal "<Data ss:Type=\"String\">line#{Xmlss::UndiesWriter::LB}break</Data>", subject.element_markup
+    end
+
+    should "write data markup w/ \\r\\n line breaks" do
+      subject.data(Xmlss::Element::Data.new("line\r\nbreak", :type => :string))
+      subject.flush
+
+      assert_equal "<Data ss:Type=\"String\">line#{Xmlss::UndiesWriter::LB}break</Data>", subject.element_markup
+    end
+
+    should "write data markup w/ \\n\\r line breaks" do
+      subject.data(Xmlss::Element::Data.new("line\n\rbreak", :type => :string))
+      subject.flush
+
+      assert_equal "<Data ss:Type=\"String\">line#{Xmlss::UndiesWriter::LB}break</Data>", subject.element_markup
+    end
+
+    should "write data markup w/ line breaks and leading space" do
       subject.data(Xmlss::Element::Data.new(%s{
-        Hello World
-      }, :type => :string))
+Should
+  honor
+    this}, :type => :string))
       subject.flush
 
       assert_equal(
-        "<Data ss:Type=\"String\">&#13;&#10;        Hello World&#13;&#10;      </Data>",
+        "<Data ss:Type=\"String\">#{Xmlss::UndiesWriter::LB}Should#{Xmlss::UndiesWriter::LB}  honor#{Xmlss::UndiesWriter::LB}    this</Data>",
+        subject.element_markup
+      )
+    end
+
+    should "write data markup w/ escaped values" do
+      subject.data(Xmlss::Element::Data.new("some\n&<>'\"/\ndata"))
+      subject.flush
+
+      assert_equal(
+        "<Data ss:Type=\"String\">some&#13;&#10;&amp;&lt;&gt;&#x27;&quot;&#x2F;&#13;&#10;data</Data>",
         subject.element_markup
       )
     end
