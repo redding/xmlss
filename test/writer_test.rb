@@ -18,9 +18,10 @@ module Xmlss
     should have_instance_methods :style, :alignment, :borders, :border
     should have_instance_methods :font, :interior, :number_format, :protection
 
-    should have_instance_methods :workbook, :worksheet, :column, :row, :data
+    should have_instance_methods :workbook, :worksheet, :column, :row, :cell
 
-    should have_instance_methods :type, :index, :style_id, :formula, :href
+    should have_instance_methods :data, :type
+    should have_instance_methods :index, :style_id, :formula, :href
     should have_instance_methods :merge_across, :merge_down, :height
     should have_instance_methods :auto_fit_height, :hidden, :width
     should have_instance_methods :auto_fit_width, :name
@@ -207,70 +208,70 @@ module Xmlss
   class WorksheetWritingTests < BasicTests
     desc "writing worksheet markup"
 
-    should "write data markup" do
-      subject.data(Xmlss::Element::Data.new("some data"))
+    should "write cell data markup" do
+      subject.cell(Xmlss::Element::Cell.new("some data"))
       subject.flush
 
       assert_equal(
-        "<Data ss:Type=\"String\">some data</Data>",
+        "<Cell><Data ss:Type=\"String\">some data</Data></Cell>",
         subject.element_markup
       )
     end
 
-    should "write data markup w/ \\n line breaks" do
-      subject.data(Xmlss::Element::Data.new("line\nbreak", :type => :string))
+    should "write cell data markup w/ \\n line breaks" do
+      subject.cell(Xmlss::Element::Cell.new("line\nbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Data ss:Type=\"String\">line#{Writer::LB}break</Data>", subject.element_markup
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.element_markup
     end
 
-    should "write data markup w/ \\r line breaks" do
-      subject.data(Xmlss::Element::Data.new("line\rbreak", :type => :string))
+    should "write cell data markup w/ \\r line breaks" do
+      subject.cell(Xmlss::Element::Cell.new("line\rbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Data ss:Type=\"String\">line#{Writer::LB}break</Data>", subject.element_markup
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.element_markup
     end
 
-    should "write data markup w/ \\r\\n line breaks" do
-      subject.data(Xmlss::Element::Data.new("line\r\nbreak", :type => :string))
+    should "write cell data markup w/ \\r\\n line breaks" do
+      subject.cell(Xmlss::Element::Cell.new("line\r\nbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Data ss:Type=\"String\">line#{Writer::LB}break</Data>", subject.element_markup
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.element_markup
     end
 
-    should "write data markup w/ \\n\\r line breaks" do
-      subject.data(Xmlss::Element::Data.new("line\n\rbreak", :type => :string))
+    should "write cell data markup w/ \\n\\r line breaks" do
+      subject.cell(Xmlss::Element::Cell.new("line\n\rbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Data ss:Type=\"String\">line#{Writer::LB}break</Data>", subject.element_markup
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.element_markup
     end
 
-    should "write data markup w/ line breaks and leading space" do
-      subject.data(Xmlss::Element::Data.new(%s{
+    should "write cell data markup w/ line breaks and leading space" do
+      subject.cell(Xmlss::Element::Cell.new(%s{
 Should
   honor
     this}, :type => :string))
       subject.flush
 
       assert_equal(
-        "<Data ss:Type=\"String\">#{Writer::LB}Should#{Writer::LB}  honor#{Writer::LB}    this</Data>",
+        "<Cell><Data ss:Type=\"String\">#{Writer::LB}Should#{Writer::LB}  honor#{Writer::LB}    this</Data></Cell>",
         subject.element_markup
       )
     end
 
-    should "write data markup w/ escaped values" do
-      subject.data(Xmlss::Element::Data.new("some\n&<>'\"/\ndata"))
+    should "write cell data markup w/ escaped values" do
+      subject.cell(Xmlss::Element::Cell.new("some\n&<>'\"/\ndata"))
       subject.flush
 
       assert_equal(
-        "<Data ss:Type=\"String\">some&#13;&#10;&amp;&lt;&gt;&#x27;&quot;&#x2F;&#13;&#10;data</Data>",
+        "<Cell><Data ss:Type=\"String\">some&#13;&#10;&amp;&lt;&gt;&#x27;&quot;&#x2F;&#13;&#10;data</Data></Cell>",
         subject.element_markup
       )
     end
 
     should "write cell markup" do
       subject.cell(Xmlss::Element::Cell.new({:index => 2})) {
-        subject.data(Xmlss::Element::Data.new("some data"))
+        subject.data "some data"
       }
       subject.flush
 
@@ -289,11 +290,10 @@ Should
         subject.style_id 'awesome'
 
         subject.cell(Xmlss::Element::Cell.new(:index => 2)) {
-          subject.href "http://www.google.com"
+          subject.data "100"
+          subject.type :number
 
-          subject.data(Xmlss::Element::Data.new("100")) {
-            subject.type :number
-          }
+          subject.href "http://www.google.com"
         }
       }
       subject.flush
@@ -315,17 +315,19 @@ Should
     end
 
     should "write worksheet markup" do
-      subject.worksheet(Xmlss::Element::Worksheet.new('test')) {
+      subject.worksheet(Xmlss::Element::Worksheet.new) {
+        subject.name "awesome"
+
         subject.row(Xmlss::Element::Row.new({:hidden => true})) {
           subject.cell(Xmlss::Element::Cell.new({:index => 2})) {
-            subject.data(Xmlss::Element::Data.new("some data"))
+            subject.data "some data"
           }
         }
       }
       subject.flush
 
       assert_equal(
-        "<Worksheet ss:Name=\"test\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet>",
+        "<Worksheet ss:Name=\"awesome\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet>",
         subject.element_markup
       )
     end
@@ -342,7 +344,7 @@ Should
       subject.worksheet(Xmlss::Element::Worksheet.new('test')) {
         subject.row(Xmlss::Element::Row.new({:hidden => true})) {
           subject.cell(Xmlss::Element::Cell.new({:index => 2})) {
-            subject.data(Xmlss::Element::Data.new("some data"))
+            subject.data "some data"
           }
         }
       }
@@ -368,7 +370,7 @@ Should
       writer.worksheet(Xmlss::Element::Worksheet.new('test')) {
         writer.row(Xmlss::Element::Row.new({:hidden => true})) {
           writer.cell(Xmlss::Element::Cell.new({:index => 2})) {
-            writer.data(Xmlss::Element::Data.new("some data"))
+            writer.data "some data"
           }
         }
       }

@@ -110,15 +110,16 @@ module Xmlss
       end
     end
 
-    def data(*args, &block)
-      Element::Data.new(*args).tap do |elem|
-        self.class.writer(self).data(elem, &block)
-      end
-    end
+    # def data(*args, &block)
+    #   Element::Data.new(*args).tap do |elem|
+    #     self.class.writer(self).data(elem, &block)
+    #   end
+    # end
 
     # Workbook element attributes API
 
-    [ :type,            # data
+    [ :data,            # cell
+      :type,            # cell
       :index,           # cell
       :style_id,        # cell, row, :column
       :formula,         # cell

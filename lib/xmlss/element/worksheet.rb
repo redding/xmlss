@@ -1,7 +1,6 @@
 require 'xmlss/element/column'
 require 'xmlss/element/row'
 require 'xmlss/element/cell'
-require 'xmlss/element/data'
 
 module Xmlss; end
 module Xmlss::Element
@@ -9,15 +8,19 @@ module Xmlss::Element
 
     attr_accessor :name
 
-    def initialize(name, attrs={})
-      self.name = name
+    def initialize(*args)
+      attrs, self.name = [
+        args.last.kind_of?(::Hash) ? args.pop : {},
+        args.last
+      ]
     end
 
     def name=(value)
-      if value.nil? || value.to_s.empty?
-        raise ArgumentError, "'#{name.inspect}' is not a good name for a worksheet"
+      @name = if !value.nil? && !value.to_s.empty?
+        sanitized_name(value.to_s)
+      else
+        ""  # TODO: make sure you don't write a worksheet with no sanitized_name
       end
-      @name = sanitized_name(value.to_s)
     end
 
     def xml_attributes

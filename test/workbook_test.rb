@@ -14,9 +14,10 @@ module Xmlss::Worbook
     should have_instance_methods :style, :alignment, :borders, :border
     should have_instance_methods :font, :interior, :number_format, :protection
 
-    should have_instance_methods :worksheet, :column, :row, :cell, :data
+    should have_instance_methods :worksheet, :column, :row, :cell
 
-    should have_instance_methods :type, :index, :style_id, :formula, :href
+    should have_instance_methods :data, :type
+    should have_instance_methods :index, :style_id, :formula, :href
     should have_instance_methods :merge_across, :merge_down, :height
     should have_instance_methods :auto_fit_height, :hidden, :width
     should have_instance_methods :auto_fit_width, :name
@@ -26,7 +27,6 @@ module Xmlss::Worbook
       assert_kind_of Xmlss::Element::Column, subject.column
       assert_kind_of Xmlss::Element::Row, subject.row
       assert_kind_of Xmlss::Element::Cell, subject.cell
-      assert_kind_of Xmlss::Element::Data, subject.data('test')
     end
 
     should "return style objs when calling its style methods" do

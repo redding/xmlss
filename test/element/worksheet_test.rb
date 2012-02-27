@@ -34,15 +34,6 @@ module Xmlss::Element
       assert_equal "t[e]st test", ws.name
     end
 
-    should "bark when no name is given" do
-      assert_raises ArgumentError do
-        Worksheet.new(nil)
-      end
-      assert_raises ArgumentError do
-        Worksheet.new("")
-      end
-    end
-
   end
 
 end

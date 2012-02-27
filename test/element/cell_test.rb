@@ -1,9 +1,13 @@
 require "assert"
+require 'enumeration/assert_macros'
 
 require 'xmlss/element/cell'
 
 module Xmlss::Element
-  class CellTest < Assert::Context
+
+  class CellTests < Assert::Context
+    include Enumeration::AssertMacros
+
     desc "Xmlss::Cell"
     before { @c = Cell.new }
     subject { @c }
@@ -13,11 +17,25 @@ module Xmlss::Element
     should have_reader :h_ref
     should have_instance_method :xml_attributes
 
+    should have_enum :type, {
+      :number => "Number",
+      :date_time => "DateTime",
+      :boolean => "Boolean",
+      :string => "String",
+      :error => "Error"
+    }
+
+    should have_accessor :data
+    should have_instance_method :data_xml_value, :data_xml_attributes
+
     should "set it's defaults" do
       assert_nil subject.formula
       assert_nil subject.href
       assert_nil subject.merge_across
       assert_nil subject.merge_down
+
+      assert_equal Cell.type(:string), subject.type
+      assert_equal "", subject.data
     end
 
     should "know its xml attributes" do
@@ -63,6 +81,46 @@ module Xmlss::Element
         assert_equal nil, Cell.new({a => 0}).send(a)
         assert_equal 1, Cell.new({a => 1}).send(a)
       end
+    end
+
+    should "know its data xml attributes" do
+      assert_equal [:type], subject.data_xml_attributes
+    end
+
+    should "generate it's data xml value" do
+      assert_equal "12", Cell.new(12).data_xml_value
+      assert_equal "string", Cell.new("string").data_xml_value
+      assert_equal "2011-03-01T00:00:00", Cell.new(DateTime.parse('2011/03/01')).data_xml_value
+      assert_equal "2011-03-01T00:00:00", Cell.new(Date.parse('2011/03/01')).data_xml_value
+      time = Time.now
+      assert_equal time.strftime("%Y-%m-%dT%H:%M:%S"), Cell.new(time).data_xml_value
+    end
+
+  end
+
+  class ExplicitDataTest < CellTests
+    desc "when using explicit data type"
+    subject do
+      Cell.new(12, {:type => :string})
+    end
+
+    should "should ignore the data value's implied type" do
+      assert_equal Cell.type(:string), subject.type
+    end
+
+  end
+
+  class NoTypeDataTest < CellTests
+    desc "when no data type is specified"
+
+    should "cast types for Number, DateTime, Boolean, String" do
+      assert_equal Cell.type(:number), Cell.new(12).type
+      assert_equal Cell.type(:number), Cell.new(123.45).type
+      assert_equal Cell.type(:date_time), Cell.new(Time.now).type
+      assert_equal Cell.type(:boolean), Cell.new(true).type
+      assert_equal Cell.type(:boolean), Cell.new(false).type
+      assert_equal Cell.type(:string), Cell.new("a string").type
+      assert_equal Cell.type(:string), Cell.new(:symbol).type
     end
 
   end

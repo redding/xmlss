@@ -148,19 +148,28 @@ module Xmlss
 
     # workbook element markup directives
 
-    def data(data, &block)
-      build = Proc.new do
-        @element_stack.using(data, &block)
-        @worksheets_t.__ Undies::Template.
-          escape_html(data.xml_value).
-          gsub(/(\r|\n)+/, LB)
-      end
-      xml_attrs = self.class.attributes(data, data.xml_attributes)
-      @worksheets_t._Data(xml_attrs, &build)
-    end
+    # def data(data, &block)
+    #   build = Proc.new do
+    #     @element_stack.using(data, &block)
+    #     @worksheets_t.__ Undies::Template.
+    #       escape_html(data.xml_value).
+    #       gsub(/(\r|\n)+/, LB)
+    #   end
+    #   xml_attrs = self.class.attributes(data, data.xml_attributes)
+    #   @worksheets_t._Data(xml_attrs, &build)
+    # end
 
     def cell(cell, &block)
-      build = block ? Proc.new { @element_stack.using(cell, &block) } : nil
+      build = Proc.new do
+        @element_stack.using(cell, &block)
+
+        data_xml_attrs = self.class.attributes(cell, cell.data_xml_attributes)
+        @worksheets_t._Data(data_xml_attrs) {
+          @worksheets_t.__ Undies::Template.
+            escape_html(cell.data_xml_value).
+            gsub(/(\r|\n)+/, LB)
+        }
+      end
       xml_attrs = self.class.attributes(cell, cell.xml_attributes)
       @worksheets_t._Cell(xml_attrs, &build)
     end
@@ -187,7 +196,8 @@ module Xmlss
 
     # workbook element attribute directives
 
-    [ :type,            # data
+    [ :data,            # cell
+      :type,            # cell
       :index,           # cell
       :style_id,        # cell, row, :column
       :formula,         # cell
