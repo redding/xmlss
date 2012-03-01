@@ -8,7 +8,7 @@ module Xmlss::Worbook
     before { @wkbk = Xmlss::Workbook.new(Xmlss::Writer.new) }
     subject { @wkbk }
 
-    should have_class_method :writer
+    should have_class_method :writer, :styles_stack, :worksheets_stack
     should have_instance_methods :to_s, :to_file
 
     should have_instance_methods :style, :alignment, :borders, :border
@@ -65,7 +65,8 @@ module Xmlss::Worbook
           number_format
           protection
         }
-        worksheet('test') {
+        worksheet {
+          name 'test'
           column
 
           row {

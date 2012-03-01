@@ -25,7 +25,9 @@ module Xmlss
     alias_method :level, :size
 
     def push(element)
-      open(current) if !empty?
+      if @written_level < level
+        open(current)
+      end
       @stack.push(element)
     end
 

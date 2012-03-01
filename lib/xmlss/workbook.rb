@@ -1,4 +1,5 @@
 require 'xmlss/writer'
+require 'xmlss/element_stack'
 require 'xmlss/style/base'
 require 'xmlss/element/worksheet'
 
@@ -6,7 +7,15 @@ module Xmlss
   class Workbook
 
     def self.writer(workbook)
-      workbook.instance_variable_get("@__xmlss_undies_writer")
+      workbook.instance_variable_get("@__xmlss_writer")
+    end
+
+    def self.styles_stack(workbook)
+      workbook.instance_variable_get("@__xmlss_styles_stack")
+    end
+
+    def self.worksheets_stack(workbook)
+      workbook.instance_variable_get("@__xmlss_worksheets_stack")
     end
 
     def initialize(writer, data={}, &build)
@@ -20,7 +29,9 @@ module Xmlss
       data.each {|key, value| metaclass.class_eval { define_method(key){value} }}
 
       # setup the Undies xml writer with any :output options
-      @__xmlss_undies_writer = writer
+      @__xmlss_writer           = writer
+      @__xmlss_styles_stack     = ElementStack.new(writer, :styles)
+      @__xmlss_worksheets_stack = ElementStack.new(writer, :worksheets)
 
       # run any instance workbook build given
       instance_eval(&build) if build
@@ -39,82 +50,54 @@ module Xmlss
     # Workbook styles API
 
     def style(*args, &block)
-      Style::Base.new(*args).tap do |style|
-        self.class.writer(self).style(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Base.new(*args), &block)
     end
 
     def alignment(*args, &block)
-      Style::Alignment.new(*args).tap do |style|
-        self.class.writer(self).alignment(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Alignment.new(*args), &block)
     end
 
     def borders(*args, &block)
-      self.class.writer(self).borders(&block)
+      self.class.styles_stack(self).using(Style::Borders.new(*args), &block)
     end
 
     def border(*args, &block)
-      Style::Border.new(*args).tap do |style|
-        self.class.writer(self).border(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Border.new(*args), &block)
     end
 
     def font(*args, &block)
-      Style::Font.new(*args).tap do |style|
-        self.class.writer(self).font(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Font.new(*args), &block)
     end
 
     def interior(*args, &block)
-      Style::Interior.new(*args).tap do |style|
-        self.class.writer(self).interior(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Interior.new(*args), &block)
     end
 
     def number_format(*args, &block)
-      Style::NumberFormat.new(*args).tap do |style|
-        self.class.writer(self).number_format(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::NumberFormat.new(*args), &block)
     end
 
     def protection(*args, &block)
-      Style::Protection.new(*args).tap do |style|
-        self.class.writer(self).protection(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Protection.new(*args), &block)
     end
 
     # Workbook elements API
 
     def worksheet(*args, &block)
-      Element::Worksheet.new(*args).tap do |elem|
-        self.class.writer(self).worksheet(elem, &block)
-      end
+      self.class.worksheets_stack(self).using(Element::Worksheet.new(*args), &block)
     end
 
     def column(*args, &block)
-      Element::Column.new(*args).tap do |elem|
-        self.class.writer(self).column(elem, &block)
-      end
+      self.class.worksheets_stack(self).using(Element::Column.new(*args), &block)
     end
 
     def row(*args, &block)
-      Element::Row.new(*args).tap do |elem|
-        self.class.writer(self).row(elem, &block)
-      end
+      self.class.worksheets_stack(self).using(Element::Row.new(*args), &block)
     end
 
     def cell(*args, &block)
-      Element::Cell.new(*args).tap do |elem|
-        self.class.writer(self).cell(elem, &block)
-      end
+      self.class.worksheets_stack(self).using(Element::Cell.new(*args), &block)
     end
-
-    # def data(*args, &block)
-    #   Element::Data.new(*args).tap do |elem|
-    #     self.class.writer(self).data(elem, &block)
-    #   end
-    # end
 
     # Workbook element attributes API
 
@@ -133,8 +116,8 @@ module Xmlss
       :auto_fit_width,  # column
       :name             # worksheet
     ].each do |a|
-      define_method(a) do |*args|
-        self.class.writer(self).send(a, *args)
+      define_method(a) do |value|
+        self.class.worksheets_stack(self).current.send("#{a}=", value)
       end
     end
 
