@@ -3,6 +3,8 @@ require 'xmlss/style/base'
 module Xmlss::Style
   class Interior
 
+    def self.writer; :interior; end
+
     include Enumeration
     enum :pattern, {
       :none => "None",

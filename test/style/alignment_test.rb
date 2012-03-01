@@ -25,8 +25,13 @@ module Xmlss::Style
       :bottom => "Bottom"
     }
 
+    should have_class_method :writer
     should have_accessors :wrap_text, :rotate
     should have_instance_methods :wrap_text?
+
+    should "know its writer" do
+      assert_equal :alignment, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_equal false, subject.wrap_text

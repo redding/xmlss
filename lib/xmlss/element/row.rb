@@ -2,6 +2,8 @@ module Xmlss; end
 module Xmlss::Element
   class Row
 
+    def self.writer; :row; end
+
     attr_accessor :style_id, :height, :auto_fit_height, :hidden
     alias_method :style_i_d, :style_id
 
@@ -17,10 +19,6 @@ module Xmlss::Element
         raise ArgumentError, "must specify height as a Numeric"
       end
       @height = value && value < 0 ? nil : value
-    end
-
-    def xml_attributes
-      [:style_i_d, :height, :auto_fit_height, :hidden]
     end
 
   end

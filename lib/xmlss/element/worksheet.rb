@@ -6,6 +6,8 @@ module Xmlss; end
 module Xmlss::Element
   class Worksheet
 
+    def self.writer; :worksheet; end
+
     attr_accessor :name
 
     def initialize(*args)
@@ -21,10 +23,6 @@ module Xmlss::Element
       else
         ""  # TODO: make sure you don't write a worksheet with no sanitized_name
       end
-    end
-
-    def xml_attributes
-      [:name]
     end
 
     private

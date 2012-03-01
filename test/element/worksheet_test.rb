@@ -8,15 +8,15 @@ module Xmlss::Element
     before { @wksht = Worksheet.new('sheet') }
     subject { @wksht }
 
+    should have_class_method :writer
     should have_accessor :name
-    should have_instance_method :xml_attributes
+
+    should "know its writer hook" do
+      assert_equal :worksheet, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_equal 'sheet', subject.name
-    end
-
-    should "know its xml attributes" do
-      assert_equal [:name], subject.xml_attributes
     end
 
     should "filter name chars" do

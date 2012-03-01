@@ -3,7 +3,8 @@ require 'enumeration'
 module Xmlss; end
 module Xmlss::Element
   class Cell
-    include Enumeration
+
+    def self.writer; :cell; end
 
     attr_accessor :index, :style_id, :formula, :href, :merge_across, :merge_down
     alias_method :style_i_d, :style_id
@@ -11,6 +12,7 @@ module Xmlss::Element
 
     attr_accessor :data
 
+    include Enumeration
     enum :type, {
       :number => "Number",
       :date_time => "DateTime",
@@ -22,7 +24,7 @@ module Xmlss::Element
     def initialize(*args, &build)
       attrs = args.last.kind_of?(::Hash) ? args.pop : {}
 
-      self.data = args.last.nil? ? "" : args.last
+      self.data = args.last.nil? ? (attrs[:data] || "") : args.last
       self.type = attrs[:type] unless attrs[:type].nil?
 
       self.index = attrs[:index]
@@ -54,14 +56,6 @@ module Xmlss::Element
         end
         instance_variable_set("@#{meth}", value && value <= 0 ? nil : value)
       end
-    end
-
-    def xml_attributes
-      [:index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down]
-    end
-
-    def data_xml_attributes
-      [:type]
     end
 
     private

@@ -5,6 +5,8 @@ require 'xmlss/workbook'
 
 module Xmlss
 
+
+
   class BasicTests < Assert::Context
     desc "UndiesWriter"
     setup do
@@ -13,18 +15,18 @@ module Xmlss
     subject { @w }
 
     should have_class_methods :attributes, :classify, :coerce
-    should have_readers :style_markup, :element_markup, :flush
+    should have_readers :styles_markup, :worksheets_markup
+    should have_instance_methods :write, :push, :pop, :flush, :workbook
 
     should have_instance_methods :style, :alignment, :borders, :border
     should have_instance_methods :font, :interior, :number_format, :protection
 
-    should have_instance_methods :workbook, :worksheet, :column, :row, :cell
+    should have_instance_methods :worksheet, :column, :row, :cell
 
-    should have_instance_methods :data, :type
-    should have_instance_methods :index, :style_id, :formula, :href
-    should have_instance_methods :merge_across, :merge_down, :height
-    should have_instance_methods :auto_fit_height, :hidden, :width
-    should have_instance_methods :auto_fit_width, :name
+    should "have empty markup by default" do
+      assert_empty subject.worksheets_markup
+      assert_empty subject.styles_markup
+    end
 
     should "return itself when flushed" do
       assert_equal subject, subject.flush
@@ -32,12 +34,14 @@ module Xmlss
 
   end
 
+
+
   class HelpersTests < BasicTests
 
     should "coerce certain values for xml output" do
       assert_equal 1, Writer.coerce(true)
-      assert_nil Writer.coerce(false)
-      assert_nil Writer.coerce("")
+      assert_nil   Writer.coerce(false)
+      assert_nil   Writer.coerce("")
       assert_equal "hi", Writer.coerce("hi")
       assert_equal 1, Writer.coerce(1)
     end
@@ -74,11 +78,12 @@ module Xmlss
 
   end
 
+
+
   class StyleWritingTests < BasicTests
-    desc "writing style markup"
 
     should "write alignment markup" do
-      subject.alignment(Xmlss::Style::Alignment.new({
+      subject.write(Xmlss::Style::Alignment.new({
         :wrap_text => true,
         :horizontal => :center,
         :vertical => :bottom,
@@ -88,12 +93,12 @@ module Xmlss
 
       assert_equal(
         "<Alignment ss:Horizontal=\"Center\" ss:Rotate=\"90\" ss:Vertical=\"Bottom\" ss:WrapText=\"1\" />",
-        subject.style_markup
+        subject.styles_markup.to_s
       )
     end
 
     should "write border markup" do
-      subject.border(Xmlss::Style::Border.new({
+      subject.write(Xmlss::Style::Border.new({
         :color => '#FF0000',
         :position => :top,
         :weight => :thick,
@@ -103,30 +108,33 @@ module Xmlss
 
       assert_equal(
         "<Border ss:Color=\"#FF0000\" ss:LineStyle=\"Dot\" ss:Position=\"Top\" ss:Weight=\"3\" />",
-        subject.style_markup
+        subject.styles_markup.to_s
       )
     end
 
     should "write border collection markup" do
-      subject.borders {
-        subject.border(Xmlss::Style::Border.new({
-          :color => '#FF0000',
-          :position => :top
-        }))
-        subject.border(Xmlss::Style::Border.new({
-          :position => :left
-        }))
-      }
+      subject.write(Xmlss::Style::Borders.new)
+      subject.push(:styles)
+
+      subject.write(Xmlss::Style::Border.new({
+        :color => '#FF0000',
+        :position => :top
+      }))
+
+      subject.write(Xmlss::Style::Border.new({
+        :position => :left
+      }))
+
       subject.flush
 
       assert_equal(
         "<Borders><Border ss:Color=\"#FF0000\" ss:LineStyle=\"Continuous\" ss:Position=\"Top\" ss:Weight=\"1\" /><Border ss:LineStyle=\"Continuous\" ss:Position=\"Left\" ss:Weight=\"1\" /></Borders>",
-        subject.style_markup
+        subject.styles_markup.to_s
       )
     end
 
     should "write font markup" do
-      subject.font(Xmlss::Style::Font.new({
+      subject.write(Xmlss::Style::Font.new({
         :bold => true,
         :color => '#FF0000',
         :italic => true,
@@ -140,12 +148,12 @@ module Xmlss
 
       assert_equal(
         "<Font ss:Bold=\"1\" ss:Color=\"#FF0000\" ss:FontName=\"Verdana\" ss:Italic=\"1\" ss:Size=\"10\" ss:StrikeThrough=\"1\" ss:Underline=\"Single\" ss:VerticalAlign=\"Superscript\" />",
-        subject.style_markup
+        subject.styles_markup.to_s
       )
     end
 
     should "write interior markup" do
-      subject.interior(Xmlss::Style::Interior.new({
+      subject.write(Xmlss::Style::Interior.new({
         :color => "#000000",
         :pattern => :solid,
         :pattern_color => "#FF0000"
@@ -154,100 +162,107 @@ module Xmlss
 
       assert_equal(
         "<Interior ss:Color=\"#000000\" ss:Pattern=\"Solid\" ss:PatternColor=\"#FF0000\" />",
-        subject.style_markup
+        subject.styles_markup.to_s
       )
     end
 
     should "write number format markup" do
-      subject.number_format(Xmlss::Style::NumberFormat.new("General"))
+      subject.write(Xmlss::Style::NumberFormat.new("General"))
       subject.flush
 
       assert_equal(
         "<NumberFormat ss:Format=\"General\" />",
-        subject.style_markup
+        subject.styles_markup.to_s
       )
     end
 
     should "write protection markup" do
-      subject.protection(Xmlss::Style::Protection.new(true))
+      subject.write(Xmlss::Style::Protection.new(true))
       subject.flush
 
       assert_equal(
         "<Protection ss:Protect=\"1\" />",
-        subject.style_markup
+        subject.styles_markup.to_s
       )
     end
 
     should "write full style markup" do
-      subject.style(Xmlss::Style::Base.new(:write_markup_test)) {
-        subject.alignment(Xmlss::Style::Alignment.new({
-          :horizontal => :left,
-          :vertical => :center,
-          :wrap_text => true
-        }))
-        subject.borders {
-          subject.border(Xmlss::Style::Border.new({:position => :left}))
-          subject.border(Xmlss::Style::Border.new({:position => :right}))
-        }
-        subject.font(Xmlss::Style::Font.new({:bold => true}))
-        subject.interior(Xmlss::Style::Interior.new({:color => "#000000"}))
-        subject.number_format(Xmlss::Style::NumberFormat.new("General"))
-        subject.protection(Xmlss::Style::Protection.new(true))
-      }
+      subject.write(Xmlss::Style::Base.new(:write_markup_test))
+      subject.push(:styles)
+
+      subject.write(Xmlss::Style::Alignment.new({
+        :horizontal => :left,
+        :vertical => :center,
+        :wrap_text => true
+      }))
+
+      subject.write(Xmlss::Style::Borders.new)
+      subject.push(:styles)
+
+      subject.write(Xmlss::Style::Border.new({:position => :left}))
+      subject.write(Xmlss::Style::Border.new({:position => :right}))
+
+      subject.pop(:styles)
+      subject.write(Xmlss::Style::Font.new({:bold => true}))
+      subject.write(Xmlss::Style::Interior.new({:color => "#000000"}))
+      subject.write(Xmlss::Style::NumberFormat.new("General"))
+      subject.write(Xmlss::Style::Protection.new(true))
+
       subject.flush
 
       assert_equal(
         "<Style ss:ID=\"write_markup_test\"><Alignment ss:Horizontal=\"Left\" ss:Vertical=\"Center\" ss:WrapText=\"1\" /><Borders><Border ss:LineStyle=\"Continuous\" ss:Position=\"Left\" ss:Weight=\"1\" /><Border ss:LineStyle=\"Continuous\" ss:Position=\"Right\" ss:Weight=\"1\" /></Borders><Font ss:Bold=\"1\" /><Interior ss:Color=\"#000000\" /><NumberFormat ss:Format=\"General\" /><Protection ss:Protect=\"1\" /></Style>",
-        subject.style_markup
+        subject.styles_markup.to_s
       )
     end
 
   end
 
 
+
   class WorksheetWritingTests < BasicTests
     desc "writing worksheet markup"
 
     should "write cell data markup" do
-      subject.cell(Xmlss::Element::Cell.new("some data"))
+      subject.write(Xmlss::Element::Cell.new("some data"))
       subject.flush
 
       assert_equal(
         "<Cell><Data ss:Type=\"String\">some data</Data></Cell>",
-        subject.element_markup
+        subject.worksheets_markup.to_s
       )
     end
 
     should "write cell data markup w/ \\n line breaks" do
-      subject.cell(Xmlss::Element::Cell.new("line\nbreak", :type => :string))
+      subject.write(Xmlss::Element::Cell.new("line\nbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.element_markup
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
     end
 
     should "write cell data markup w/ \\r line breaks" do
-      subject.cell(Xmlss::Element::Cell.new("line\rbreak", :type => :string))
+      subject.write(Xmlss::Element::Cell.new("line\rbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.element_markup
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
     end
 
     should "write cell data markup w/ \\r\\n line breaks" do
-      subject.cell(Xmlss::Element::Cell.new("line\r\nbreak", :type => :string))
+      subject.write(Xmlss::Element::Cell.new("line\r\nbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.element_markup
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
     end
 
     should "write cell data markup w/ \\n\\r line breaks" do
-      subject.cell(Xmlss::Element::Cell.new("line\n\rbreak", :type => :string))
+      subject.write(Xmlss::Element::Cell.new("line\n\rbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.element_markup
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
     end
 
     should "write cell data markup w/ line breaks and leading space" do
-      subject.cell(Xmlss::Element::Cell.new(%s{
+      subject.write(Xmlss::Element::Cell.new(%s{
 Should
   honor
     this}, :type => :string))
@@ -255,102 +270,81 @@ Should
 
       assert_equal(
         "<Cell><Data ss:Type=\"String\">#{Writer::LB}Should#{Writer::LB}  honor#{Writer::LB}    this</Data></Cell>",
-        subject.element_markup
+        subject.worksheets_markup.to_s
       )
     end
 
     should "write cell data markup w/ escaped values" do
-      subject.cell(Xmlss::Element::Cell.new("some\n&<>'\"/\ndata"))
+      subject.write(Xmlss::Element::Cell.new("some\n&<>'\"/\ndata"))
       subject.flush
 
       assert_equal(
         "<Cell><Data ss:Type=\"String\">some&#13;&#10;&amp;&lt;&gt;&#x27;&quot;&#x2F;&#13;&#10;data</Data></Cell>",
-        subject.element_markup
+        subject.worksheets_markup.to_s
       )
     end
 
-    should "write cell markup" do
-      subject.cell(Xmlss::Element::Cell.new({:index => 2})) {
-        subject.data "some data"
-      }
+    should "write worksheet element markup" do
+      subject.write(Xmlss::Element::Worksheet.new('awesome'))
+      subject.push(:worksheets)
+
+      subject.write(Xmlss::Element::Column.new({
+          :width => 120,
+          :style_id => 'narrowcolumn'
+      }))
+
+      subject.write(Xmlss::Element::Row.new({
+        :hidden => true,
+        :height => 120,
+        :style_id => 'awesome'
+      }))
+      subject.push(:worksheets)
+
+      subject.write(Xmlss::Element::Cell.new({
+        :index => 2,
+        :data  => "100",
+        :type  => :number,
+        :href  => "http://www.google.com"
+      }))
+
       subject.flush
 
       assert_equal(
-        "<Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell>",
-        subject.element_markup
+        "<Worksheet ss:Name=\"awesome\"><Table><Column ss:StyleID=\"narrowcolumn\" ss:Width=\"120\" /><Row ss:Height=\"120\" ss:Hidden=\"1\" ss:StyleID=\"awesome\"><Cell ss:HRef=\"http://www.google.com\" ss:Index=\"2\"><Data ss:Type=\"Number\">100</Data></Cell></Row></Table></Worksheet>",
+        subject.worksheets_markup.to_s
       )
     end
 
-    should "write attribute markup" do
-      subject.column(Xmlss::Element::Column.new(:width => 120)) {
-        subject.style_id 'narrowcolumn'
-      }
-      subject.row(Xmlss::Element::Row.new(:hidden => true)) {
-        subject.height 120
-        subject.style_id 'awesome'
+  end
 
-        subject.cell(Xmlss::Element::Cell.new(:index => 2)) {
-          subject.data "100"
-          subject.type :number
 
-          subject.href "http://www.google.com"
-        }
-      }
-      subject.flush
 
-      assert_equal(
-        "<Column ss:StyleID=\"narrowcolumn\" ss:Width=\"120\"></Column><Row ss:Height=\"120\" ss:Hidden=\"1\" ss:StyleID=\"awesome\"><Cell ss:HRef=\"http://www.google.com\" ss:Index=\"2\"><Data ss:Type=\"Number\">100</Data></Cell></Row>",
-        subject.element_markup
-      )
-    end
+  class WorkbookWritingTests < BasicTests
 
-    should "write column markup" do
-      subject.column(Xmlss::Element::Column.new({:hidden => true}))
-      subject.flush
+    def build_workbook(writer)
+      writer.write(Xmlss::Style::Base.new(:some_font))
+      writer.push(:styles)
+      writer.write(Xmlss::Style::Font.new({:bold => true}))
+      writer.pop(:styles)
 
-      assert_equal(
-        "<Column ss:Hidden=\"1\" />",
-        subject.element_markup
-      )
-    end
+      writer.write(Xmlss::Style::Base.new(:some_numformat))
+      writer.push(:styles)
+      writer.write(Xmlss::Style::NumberFormat.new("General"))
+      writer.pop(:styles)
 
-    should "write worksheet markup" do
-      subject.worksheet(Xmlss::Element::Worksheet.new) {
-        subject.name "awesome"
+      writer.write(Xmlss::Element::Worksheet.new('test'))
+      writer.push(:worksheets)
+      writer.write(Xmlss::Element::Row.new({:hidden => true}))
+      writer.push(:worksheets)
+      writer.write(Xmlss::Element::Cell.new("some data", {:index => 2}))
+      writer.pop(:worksheets)
+      writer.pop(:worksheets)
 
-        subject.row(Xmlss::Element::Row.new({:hidden => true})) {
-          subject.cell(Xmlss::Element::Cell.new({:index => 2})) {
-            subject.data "some data"
-          }
-        }
-      }
-      subject.flush
-
-      assert_equal(
-        "<Worksheet ss:Name=\"awesome\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet>",
-        subject.element_markup
-      )
+      writer.flush
     end
 
     should "return workbook markup" do
-      subject.style(Xmlss::Style::Base.new(:some_font)) {
-        subject.font(Xmlss::Style::Font.new({:bold => true}))
-      }
-
-      subject.style(Xmlss::Style::Base.new(:some_numformat)) {
-        subject.number_format(Xmlss::Style::NumberFormat.new("General"))
-      }
-
-      subject.worksheet(Xmlss::Element::Worksheet.new('test')) {
-        subject.row(Xmlss::Element::Row.new({:hidden => true})) {
-          subject.cell(Xmlss::Element::Cell.new({:index => 2})) {
-            subject.data "some data"
-          }
-        }
-      }
-
-      subject.flush
-
+      build_workbook(subject)
       assert_equal(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
         subject.workbook
@@ -359,24 +353,7 @@ Should
 
     should "return pretty workbook markup" do
       writer = Writer.new(:pp => 2)
-      writer.style(Xmlss::Style::Base.new(:some_font)) {
-        writer.font(Xmlss::Style::Font.new({:bold => true}))
-      }
-
-      writer.style(Xmlss::Style::Base.new(:some_numformat)) {
-        writer.number_format(Xmlss::Style::NumberFormat.new("General"))
-      }
-
-      writer.worksheet(Xmlss::Element::Worksheet.new('test')) {
-        writer.row(Xmlss::Element::Row.new({:hidden => true})) {
-          writer.cell(Xmlss::Element::Cell.new({:index => 2})) {
-            writer.data "some data"
-          }
-        }
-      }
-
-      writer.flush
-
+      build_workbook(writer)
       assert_equal(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\">\n  <Styles>\n    <Style ss:ID=\"some_font\">\n      <Font ss:Bold=\"1\" />\n    </Style>\n    <Style ss:ID=\"some_numformat\">\n      <NumberFormat ss:Format=\"General\" />\n    </Style>\n  </Styles>\n  <Worksheet ss:Name=\"test\">\n    <Table>\n      <Row ss:Hidden=\"1\">\n        <Cell ss:Index=\"2\">\n          <Data ss:Type=\"String\">some data</Data>\n        </Cell>\n      </Row>\n    </Table>\n  </Worksheet>\n</Workbook>",
         writer.workbook

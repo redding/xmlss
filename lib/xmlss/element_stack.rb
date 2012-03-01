@@ -7,12 +7,12 @@ module Xmlss
     # an object onto the stack, reference it using the 'current' method,
     # and pop it off the stack when I'm done.
 
-    attr_reader :template
+    attr_reader :markup_type
 
-    def initialize(writer, template)
+    def initialize(writer, markup_type)
       @stack = []
       @writer = writer
-      @template = template
+      @markup_type = markup_type
       @written_level = 0
     end
 
@@ -49,12 +49,12 @@ module Xmlss
 
     def open(element)
       write(element)
-      @writer.push(@template)
+      @writer.push(@markup_type)
       @written_level += 1
     end
 
     def close(element)
-      @writer.pop(@template)
+      @writer.pop(@markup_type)
       @written_level -= 1
     end
 

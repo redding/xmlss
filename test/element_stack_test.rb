@@ -25,7 +25,7 @@ module Xmlss
     end
     subject { @es }
 
-    should have_reader :template
+    should have_reader :markup_type
     should have_instance_methods :current, :size, :level, :empty?, :first, :last
     should have_instance_methods :push, :pop, :using
 
@@ -33,8 +33,8 @@ module Xmlss
       assert_empty subject
     end
 
-    should "know the writer template its driving" do
-      assert_equal 'tests', subject.template
+    should "know the writer markup_type its driving" do
+      assert_equal 'tests', subject.markup_type
     end
 
   end
@@ -82,7 +82,7 @@ module Xmlss
   class WriterTests < ElementStackTests
     should "open the current element element when a new element is pushed" do
       expected =  "|written: Xmlss::Element::Cell #{@cell1.object_id}"
-      expected += "|#{subject.template}:opened"
+      expected += "|#{subject.markup_type}:opened"
       subject.push(@cell1)
       subject.push(@cell2)
 
@@ -99,9 +99,9 @@ module Xmlss
 
     should "close an element when its popped" do
       expected =  "|written: Xmlss::Element::Cell #{@cell1.object_id}"
-      expected += "|#{subject.template}:opened"
+      expected += "|#{subject.markup_type}:opened"
       expected += "|written: Xmlss::Element::Cell #{@cell2.object_id}"
-      expected += "|#{subject.template}:closed"
+      expected += "|#{subject.markup_type}:closed"
       subject.push(@cell1)
       subject.push(@cell2)
       subject.pop

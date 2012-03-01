@@ -13,9 +13,9 @@ module Xmlss::Element
     subject { @c }
 
     should be_styled
+    should have_class_method :writer
     should have_accessor :index, :formula, :href, :merge_across, :merge_down
     should have_reader :h_ref
-    should have_instance_method :xml_attributes
 
     should have_enum :type, {
       :number => "Number",
@@ -26,7 +26,11 @@ module Xmlss::Element
     }
 
     should have_accessor :data
-    should have_instance_method :data_xml_value, :data_xml_attributes
+    should have_instance_method :data_xml_value
+
+    should "know its writer hook" do
+      assert_equal :cell, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_nil subject.formula
@@ -36,10 +40,6 @@ module Xmlss::Element
 
       assert_equal Cell.type(:string), subject.type
       assert_equal "", subject.data
-    end
-
-    should "know its xml attributes" do
-      assert_equal [:index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down], subject.xml_attributes
     end
 
     should "provide alias for :href" do
@@ -83,13 +83,9 @@ module Xmlss::Element
       end
     end
 
-    should "know its data xml attributes" do
-      assert_equal [:type], subject.data_xml_attributes
-    end
-
     should "generate it's data xml value" do
       assert_equal "12", Cell.new(12).data_xml_value
-      assert_equal "string", Cell.new("string").data_xml_value
+      assert_equal "string", Cell.new(:data => "string").data_xml_value
       assert_equal "2011-03-01T00:00:00", Cell.new(DateTime.parse('2011/03/01')).data_xml_value
       assert_equal "2011-03-01T00:00:00", Cell.new(Date.parse('2011/03/01')).data_xml_value
       time = Time.now
@@ -115,12 +111,12 @@ module Xmlss::Element
 
     should "cast types for Number, DateTime, Boolean, String" do
       assert_equal Cell.type(:number), Cell.new(12).type
-      assert_equal Cell.type(:number), Cell.new(123.45).type
+      assert_equal Cell.type(:number), Cell.new(:data => 123.45).type
       assert_equal Cell.type(:date_time), Cell.new(Time.now).type
       assert_equal Cell.type(:boolean), Cell.new(true).type
       assert_equal Cell.type(:boolean), Cell.new(false).type
       assert_equal Cell.type(:string), Cell.new("a string").type
-      assert_equal Cell.type(:string), Cell.new(:symbol).type
+      assert_equal Cell.type(:string), Cell.new(:data => :symbol).type
     end
 
   end

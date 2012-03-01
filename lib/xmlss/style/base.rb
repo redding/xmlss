@@ -12,6 +12,8 @@ require 'xmlss/style/protection'
 module Xmlss::Style
   class Base
 
+    def self.writer; :style; end
+
     attr_reader :id
     alias_method :i_d, :id
 

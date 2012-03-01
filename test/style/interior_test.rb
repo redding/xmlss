@@ -34,7 +34,12 @@ module Xmlss::Style
       :thin_diag_cross => "ThinDiagCross"
     }
 
+    should have_class_method :writer
     should have_accessor :color, :pattern_color
+
+    should "know its writer" do
+      assert_equal :interior, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_equal nil, subject.color
