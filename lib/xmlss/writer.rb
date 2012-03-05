@@ -169,6 +169,9 @@ module Xmlss
       worksheets_markup.template.__ Undies::Template.
         escape_html(cell.data_xml_value).
         gsub(/(\r|\n)+/, LB)
+
+      pop(:worksheets)
+      pop(:worksheets)
     end
 
     def row(row)
@@ -184,6 +187,9 @@ module Xmlss
     end
 
     def worksheet(worksheet)
+      # flush any previous worksheet markup
+      worksheets_markup.flush
+
       # write the worksheet markup and push
       worksheets_markup.template._Worksheet(self.class.attributes(worksheet, [
         [:name]

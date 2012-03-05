@@ -315,6 +315,44 @@ Should
       )
     end
 
+    should "write multiple cells with data in a row" do
+      subject.write(Xmlss::Element::Row.new)
+      subject.push(:worksheets)
+
+      2.times { subject.write(Xmlss::Element::Cell.new("100")) }
+      subject.pop(:worksheets)
+
+      subject.flush
+
+      assert_equal(
+        "<Row><Cell><Data ss:Type=\"String\">100</Data></Cell><Cell><Data ss:Type=\"String\">100</Data></Cell></Row>",
+        subject.worksheets_markup.to_s
+      )
+    end
+
+    should "write multiple rows with cells in a worksheet" do
+      subject.write(Xmlss::Element::Worksheet.new('two rows'))
+      subject.push(:worksheets)
+
+      subject.write(Xmlss::Element::Row.new)
+      subject.push(:worksheets)
+      subject.write(Xmlss::Element::Cell.new("row1"))
+      subject.pop(:worksheets)
+
+      subject.write(Xmlss::Element::Row.new)
+      subject.push(:worksheets)
+      subject.write(Xmlss::Element::Cell.new("row2"))
+      subject.pop(:worksheets)
+
+      subject.pop(:worksheets)
+      subject.flush
+
+      assert_equal(
+        "<Worksheet ss:Name=\"two rows\"><Table><Row><Cell><Data ss:Type=\"String\">row1</Data></Cell></Row><Row><Cell><Data ss:Type=\"String\">row2</Data></Cell></Row></Table></Worksheet>",
+        subject.worksheets_markup.to_s
+      )
+    end
+
   end
 
 
@@ -332,7 +370,15 @@ Should
       writer.write(Xmlss::Style::NumberFormat.new("General"))
       writer.pop(:styles)
 
-      writer.write(Xmlss::Element::Worksheet.new('test'))
+      writer.write(Xmlss::Element::Worksheet.new('test1'))
+      writer.push(:worksheets)
+      writer.write(Xmlss::Element::Row.new({:hidden => true}))
+      writer.push(:worksheets)
+      writer.write(Xmlss::Element::Cell.new("some data", {:index => 2}))
+      writer.pop(:worksheets)
+      writer.pop(:worksheets)
+
+      writer.write(Xmlss::Element::Worksheet.new('test2'))
       writer.push(:worksheets)
       writer.write(Xmlss::Element::Row.new({:hidden => true}))
       writer.push(:worksheets)
@@ -346,7 +392,7 @@ Should
     should "return workbook markup" do
       build_workbook(subject)
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test1\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet><Worksheet ss:Name=\"test2\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
         subject.workbook
       )
     end
@@ -355,7 +401,7 @@ Should
       writer = Writer.new(:pp => 2)
       build_workbook(writer)
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\">\n  <Styles>\n    <Style ss:ID=\"some_font\">\n      <Font ss:Bold=\"1\" />\n    </Style>\n    <Style ss:ID=\"some_numformat\">\n      <NumberFormat ss:Format=\"General\" />\n    </Style>\n  </Styles>\n  <Worksheet ss:Name=\"test\">\n    <Table>\n      <Row ss:Hidden=\"1\">\n        <Cell ss:Index=\"2\">\n          <Data ss:Type=\"String\">some data</Data>\n        </Cell>\n      </Row>\n    </Table>\n  </Worksheet>\n</Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\">\n  <Styles>\n    <Style ss:ID=\"some_font\">\n      <Font ss:Bold=\"1\" />\n    </Style>\n    <Style ss:ID=\"some_numformat\">\n      <NumberFormat ss:Format=\"General\" />\n    </Style>\n  </Styles>\n  <Worksheet ss:Name=\"test1\">\n    <Table>\n      <Row ss:Hidden=\"1\">\n        <Cell ss:Index=\"2\">\n          <Data ss:Type=\"String\">some data</Data>\n        </Cell>\n      </Row>\n    </Table>\n  </Worksheet>\n  <Worksheet ss:Name=\"test2\">\n    <Table>\n      <Row ss:Hidden=\"1\">\n        <Cell ss:Index=\"2\">\n          <Data ss:Type=\"String\">some data</Data>\n        </Cell>\n      </Row>\n    </Table>\n  </Worksheet>\n</Workbook>",
         writer.workbook
       )
     end
