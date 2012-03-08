@@ -34,6 +34,15 @@ module Xmlss::Element
       assert_equal "t[e]st test", ws.name
     end
 
+    should "complain if given a name longer than 31 chars" do
+      assert_raises ArgumentError do
+        Worksheet.new('a'*32)
+      end
+      assert_nothing_raised do
+        Worksheet.new('a'*31)
+      end
+    end
+
   end
 
 end

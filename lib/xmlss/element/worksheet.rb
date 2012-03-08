@@ -18,6 +18,9 @@ module Xmlss::Element
     end
 
     def name=(value)
+      if value.to_s.length > 31
+        raise ArgumentError, "worksheet names must be less than 32 characters long"
+      end
       @name = if !value.nil? && !value.to_s.empty?
         sanitized_name(value.to_s)
       else
