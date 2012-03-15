@@ -2,6 +2,8 @@ module Xmlss; end
 module Xmlss::Element
   class Row
 
+    def self.writer; :row; end
+
     attr_accessor :style_id, :height, :auto_fit_height, :hidden
     alias_method :style_i_d, :style_id
 

@@ -11,7 +11,12 @@ module Xmlss::Style
     before { @nf = NumberFormat.new }
     subject { @nf }
 
+    should have_class_method :writer
     should have_accessor :format
+
+    should "know its writer" do
+      assert_equal :number_format, subject.class.writer
+    end
 
     should "set attributes at init" do
       nf = NumberFormat.new("General")

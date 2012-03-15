@@ -9,8 +9,13 @@ module Xmlss::Style
     before { @sp = Xmlss::Style::Protection.new }
     subject { @sp }
 
-    should have_instance_methods :protected?
+    should have_class_method :writer
     should have_accessor :protect
+    should have_instance_methods :protected?
+
+    should "know its writer" do
+      assert_equal :protection, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_equal false, subject.protected?

@@ -4,7 +4,10 @@ require 'enumeration/assert_macros'
 require 'xmlss/style/border'
 
 module Xmlss::Style
-  class BorderTest < Assert::Context
+
+
+
+  class BorderTests < Assert::Context
     include Enumeration::AssertMacros
 
     desc "Xmlss::Style::Border"
@@ -36,8 +39,12 @@ module Xmlss::Style
       :dash_dot_dot => "DashDotDot"
     }
 
-
+    should have_class_method :writer
     should have_accessors :color
+
+    should "know its writer" do
+      assert_equal :border, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_equal nil, subject.color
@@ -84,5 +91,22 @@ module Xmlss::Style
     end
 
   end
+
+
+
+  class BordersTests < Assert::Context
+    desc "Xmlss::Style::Borders"
+    before { @bs = Xmlss::Style::Borders.new }
+    subject { @bs }
+
+    should have_class_method :writer
+
+    should "know its writer" do
+      assert_equal :borders, subject.class.writer
+    end
+
+  end
+
+
 
 end

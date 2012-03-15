@@ -3,6 +3,8 @@ require 'xmlss/style/base'
 module Xmlss::Style
   class Alignment
 
+    def self.writer; :alignment; end
+
     include Enumeration
     enum :horizontal, {
       :automatic => "Automatic",

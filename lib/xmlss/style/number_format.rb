@@ -3,6 +3,8 @@ require 'xmlss/style/base'
 module Xmlss::Style
   class NumberFormat
 
+    def self.writer; :number_format; end
+
     attr_accessor :format
 
     def initialize(format=nil)

@@ -5,20 +5,28 @@ module Xmlss::Worbook
 
   class BasicTests < Assert::Context
     desc "Xmlss::Workbook"
-    before { @wkbk = Xmlss::Workbook.new }
+    before { @wkbk = Xmlss::Workbook.new(Xmlss::Writer.new) }
     subject { @wkbk }
 
+    should have_class_method :writer, :styles_stack, :worksheets_stack
     should have_instance_methods :to_s, :to_file
-    should have_instance_methods :worksheet, :column, :row, :cell, :data
+
     should have_instance_methods :style, :alignment, :borders, :border
     should have_instance_methods :font, :interior, :number_format, :protection
+
+    should have_instance_methods :worksheet, :column, :row, :cell
+
+    should have_instance_methods :data, :type
+    should have_instance_methods :index, :style_id, :formula, :href
+    should have_instance_methods :merge_across, :merge_down, :height
+    should have_instance_methods :auto_fit_height, :hidden, :width
+    should have_instance_methods :auto_fit_width, :name
 
     should "return element objs when calling its element methods" do
       assert_kind_of Xmlss::Element::Worksheet, subject.worksheet('test')
       assert_kind_of Xmlss::Element::Column, subject.column
       assert_kind_of Xmlss::Element::Row, subject.row
       assert_kind_of Xmlss::Element::Cell, subject.cell
-      assert_kind_of Xmlss::Element::Data, subject.data('test')
     end
 
     should "return style objs when calling its style methods" do
@@ -29,6 +37,13 @@ module Xmlss::Worbook
       assert_kind_of Xmlss::Style::Interior, subject.interior
       assert_kind_of Xmlss::Style::NumberFormat, subject.number_format
       assert_kind_of Xmlss::Style::Protection, subject.protection
+    end
+
+    should "not complain if setting an attribute when there's no current element" do
+      # it should just do nothing and go on
+      assert_nothing_raised do
+        subject.index(1)
+      end
     end
 
     should "return workbook markup string" do
@@ -46,7 +61,7 @@ module Xmlss::Worbook
     end
 
     should "maintain the workbook's scope throughout content blocks" do
-      wkbk = Xmlss::Workbook.new do
+      wkbk = Xmlss::Workbook.new(Xmlss::Writer.new) do
         style('test') {
           alignment
           borders {
@@ -57,7 +72,8 @@ module Xmlss::Worbook
           number_format
           protection
         }
-        worksheet('test') {
+        worksheet {
+          name 'test'
           column
 
           row {
@@ -67,7 +83,7 @@ module Xmlss::Worbook
       end
 
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"test\"><Alignment /><Borders><Border ss:LineStyle=\"Continuous\" ss:Weight=\"1\" /></Borders><Font /><Interior /><NumberFormat /><Protection /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Column /><Row><Cell><Data ss:Type=\"Number\">#{wkbk.object_id}</Data></Cell></Row></Table></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"test\"><Alignment /><Borders><Border ss:LineStyle=\"Continuous\" ss:Weight=\"1\" /></Borders><Font /><Interior /><NumberFormat /><Protection /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Column /><Row><Cell><Data ss:Type=\"Number\">#{wkbk.object_id}</Data></Cell></Row></Table></Worksheet></Workbook>",
         wkbk.to_s
       )
     end
@@ -78,31 +94,31 @@ module Xmlss::Worbook
 
     should "bork if non hash-like data is provided" do
       assert_raises NoMethodError do
-        Xmlss::Workbook.new(:data => "some data")
+        Xmlss::Workbook.new(Xmlss::Writer.new, "some data")
       end
       assert_respond_to(
         :some,
-        Xmlss::Workbook.new(:data => {:some => 'data'})
+        Xmlss::Workbook.new(Xmlss::Writer.new, :some => 'data')
       )
     end
 
     should "complain if trying to set data that conflict with public methods" do
       assert_raises ArgumentError do
-        Xmlss::Workbook.new(:data => {:worksheet => "yay!"})
+        Xmlss::Workbook.new(Xmlss::Writer.new, :worksheet => "yay!")
       end
     end
 
     should "respond to each data key with its value" do
-      wkbk = Xmlss::Workbook.new(:data => {:some => 'data'})
+      wkbk = Xmlss::Workbook.new(Xmlss::Writer.new, :some => 'data')
       assert_equal "data", wkbk.some
     end
 
     should "be able to access its data in the workbook definition" do
-      wkbk = Xmlss::Workbook.new(:data => {:name => "awesome"}) do
-        worksheet name
+      wkbk = Xmlss::Workbook.new(Xmlss::Writer.new, :worksheet_name => "awesome") do
+        worksheet worksheet_name
       end
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles></Styles><Worksheet ss:Name=\"awesome\"><Table /></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles></Styles><Worksheet ss:Name=\"awesome\"><Table /></Worksheet></Workbook>",
         wkbk.to_s
       )
     end

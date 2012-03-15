@@ -3,6 +3,8 @@ require 'xmlss/style/base'
 module Xmlss::Style
   class Font
 
+    def self.writer; :font; end
+
     include Enumeration
     enum :underline, {
       :single => 'Single',

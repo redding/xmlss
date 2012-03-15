@@ -23,10 +23,15 @@ module Xmlss::Style
       :superscript => 'Superscript'
     }
 
+    should have_class_method :writer
     should have_reader :vertical_align
     should have_accessors :bold, :color, :italic, :size, :strike_through
     should have_accessors :shadow, :underline, :alignment, :name
     should have_instance_methods :bold?, :italic?, :strike_through?, :shadow?
+
+    should "know its writer" do
+      assert_equal :font, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_equal false, subject.bold
