@@ -117,9 +117,19 @@ module Xmlss
       :name             # worksheet
     ].each do |a|
       define_method(a) do |value|
-        self.class.worksheets_stack(self).current.send("#{a}=", value)
+        if (current_element = self.class.worksheets_stack(self).current)
+          current_element.send("#{a}=", value)
+        end
       end
     end
+
+    # overriding to make less noisy
+    def to_str(*args)
+      "#<Xmlss::Workbook:#{self.object_id} " +
+      "current_element=#{self.class.worksheets_stack(self).current.inspect}, " +
+      "current_style=#{self.class.styles_stack(self).current.inspect}>"
+    end
+    alias_method :inspect, :to_str
 
   end
 end

@@ -230,6 +230,7 @@ module Xmlss
         pop
       end
       @template.__flush
+      self
     end
 
     def empty?; @markup.empty?; end
