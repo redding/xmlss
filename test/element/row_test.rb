@@ -9,7 +9,12 @@ module Xmlss::Element
     subject { @row }
 
     should be_styled
+    should have_class_method :writer
     should have_accessors :height, :auto_fit_height, :hidden
+
+    should "know its writer hook" do
+      assert_equal :row, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_nil subject.height

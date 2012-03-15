@@ -2,6 +2,8 @@ module Xmlss; end
 module Xmlss::Element
   class Column
 
+    def self.writer; :column; end
+
     attr_accessor :style_id, :width, :auto_fit_width, :hidden
     alias_method :style_i_d, :style_id
 

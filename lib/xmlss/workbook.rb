@@ -1,16 +1,27 @@
-require 'xmlss/undies_writer'
+require 'xmlss/writer'
+require 'xmlss/element_stack'
 require 'xmlss/style/base'
 require 'xmlss/element/worksheet'
 
 module Xmlss
   class Workbook
 
-    # TODO: (writer, data={}, &build)
-    def initialize(opts={}, &build)
+    def self.writer(workbook)
+      workbook.instance_variable_get("@__xmlss_writer")
+    end
+
+    def self.styles_stack(workbook)
+      workbook.instance_variable_get("@__xmlss_styles_stack")
+    end
+
+    def self.worksheets_stack(workbook)
+      workbook.instance_variable_get("@__xmlss_worksheets_stack")
+    end
+
+    def initialize(writer, data={}, &build)
       # (don't pollute workbook scope that the build may run in)
 
       # apply :data options to workbook scope
-      data = (opts || {})[:data] || {}
       if (data.keys.map(&:to_s) & self.public_methods.map(&:to_s)).size > 0
         raise ArgumentError, "data conflicts with workbook public methods."
       end
@@ -18,14 +29,16 @@ module Xmlss
       data.each {|key, value| metaclass.class_eval { define_method(key){value} }}
 
       # setup the Undies xml writer with any :output options
-      @__xmlss_undies_writer = UndiesWriter.new((opts || {})[:output] || {})
+      @__xmlss_writer           = writer
+      @__xmlss_styles_stack     = ElementStack.new(writer, :styles)
+      @__xmlss_worksheets_stack = ElementStack.new(writer, :worksheets)
 
       # run any instance workbook build given
       instance_eval(&build) if build
     end
 
     def to_s
-      @__xmlss_undies_writer.workbook
+      self.class.writer(self).workbook
     end
 
     def to_file(path)
@@ -34,85 +47,89 @@ module Xmlss
       File.exists?(path) ? path : false
     end
 
-    # Workbook elements API
-
-    def worksheet(*args, &block)
-      Element::Worksheet.new(*args).tap do |elem|
-        @__xmlss_undies_writer.worksheet(elem, &block)
-      end
-    end
-
-    def column(*args, &block)
-      Element::Column.new(*args).tap do |elem|
-        @__xmlss_undies_writer.column(elem, &block)
-      end
-    end
-
-    def row(*args, &block)
-      Element::Row.new(*args).tap do |elem|
-        @__xmlss_undies_writer.row(elem, &block)
-      end
-    end
-
-    def cell(*args, &block)
-      Element::Cell.new(*args).tap do |elem|
-        @__xmlss_undies_writer.cell(elem, &block)
-      end
-    end
-
-    def data(*args, &block)
-      Element::Data.new(*args).tap do |elem|
-        @__xmlss_undies_writer.data(elem, &block)
-      end
-    end
-
     # Workbook styles API
 
     def style(*args, &block)
-      Style::Base.new(*args).tap do |style|
-        @__xmlss_undies_writer.style(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Base.new(*args), &block)
     end
 
     def alignment(*args, &block)
-      Style::Alignment.new(*args).tap do |style|
-        @__xmlss_undies_writer.alignment(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Alignment.new(*args), &block)
     end
 
     def borders(*args, &block)
-      @__xmlss_undies_writer.borders(&block)
+      self.class.styles_stack(self).using(Style::Borders.new(*args), &block)
     end
 
     def border(*args, &block)
-      Style::Border.new(*args).tap do |style|
-        @__xmlss_undies_writer.border(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Border.new(*args), &block)
     end
 
     def font(*args, &block)
-      Style::Font.new(*args).tap do |style|
-        @__xmlss_undies_writer.font(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Font.new(*args), &block)
     end
 
     def interior(*args, &block)
-      Style::Interior.new(*args).tap do |style|
-        @__xmlss_undies_writer.interior(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::Interior.new(*args), &block)
     end
 
     def number_format(*args, &block)
-      Style::NumberFormat.new(*args).tap do |style|
-        @__xmlss_undies_writer.number_format(style, &block)
-      end
+      self.class.styles_stack(self).using(Style::NumberFormat.new(*args), &block)
     end
 
     def protection(*args, &block)
-      Style::Protection.new(*args).tap do |style|
-        @__xmlss_undies_writer.protection(style, &block)
+      self.class.styles_stack(self).using(Style::Protection.new(*args), &block)
+    end
+
+    # Workbook elements API
+
+    def worksheet(*args, &block)
+      self.class.worksheets_stack(self).using(Element::Worksheet.new(*args), &block)
+    end
+
+    def column(*args, &block)
+      self.class.worksheets_stack(self).using(Element::Column.new(*args), &block)
+    end
+
+    def row(*args, &block)
+      self.class.worksheets_stack(self).using(Element::Row.new(*args), &block)
+    end
+
+    def cell(*args, &block)
+      self.class.worksheets_stack(self).using(Element::Cell.new(*args), &block)
+    end
+
+    # Workbook element attributes API
+
+    [ :data,            # cell
+      :type,            # cell
+      :index,           # cell
+      :style_id,        # cell, row, :column
+      :formula,         # cell
+      :href,            # cell
+      :merge_across,    # cell
+      :merge_down,      # cell
+      :height,          # row
+      :auto_fit_height, # row
+      :hidden,          # row, column
+      :width,           # column
+      :auto_fit_width,  # column
+      :name             # worksheet
+    ].each do |a|
+      define_method(a) do |value|
+        if (current_element = self.class.worksheets_stack(self).current)
+          current_element.send("#{a}=", value)
+        end
       end
     end
+
+    # overriding to make less noisy
+    def to_str(*args)
+      "#<Xmlss::Workbook:#{self.object_id} " +
+      "current_element=#{self.class.worksheets_stack(self).current.inspect}, " +
+      "current_style=#{self.class.styles_stack(self).current.inspect}>"
+    end
+    alias_method :inspect, :to_str
 
   end
 end

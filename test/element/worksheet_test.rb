@@ -8,7 +8,12 @@ module Xmlss::Element
     before { @wksht = Worksheet.new('sheet') }
     subject { @wksht }
 
+    should have_class_method :writer
     should have_accessor :name
+
+    should "know its writer hook" do
+      assert_equal :worksheet, subject.class.writer
+    end
 
     should "set it's defaults" do
       assert_equal 'sheet', subject.name
@@ -29,12 +34,12 @@ module Xmlss::Element
       assert_equal "t[e]st test", ws.name
     end
 
-    should "bark when no name is given" do
+    should "complain if given a name longer than 31 chars" do
       assert_raises ArgumentError do
-        Worksheet.new(nil)
+        Worksheet.new('a'*32)
       end
-      assert_raises ArgumentError do
-        Worksheet.new("")
+      assert_nothing_raised do
+        Worksheet.new('a'*31)
       end
     end
 

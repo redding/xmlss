@@ -1,7 +1,10 @@
 require 'xmlss/style/base'
 
 module Xmlss::Style
+
   class Border
+
+    def self.writer; :border; end
 
     include Enumeration
 
@@ -40,4 +43,11 @@ module Xmlss::Style
     end
 
   end
+
+  class Borders
+
+    def self.writer; :borders; end
+
+  end
+
 end

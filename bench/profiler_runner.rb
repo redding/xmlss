@@ -26,7 +26,7 @@ class XmlssProfilerRunner
     end
 
     @result = RubyProf.profile do
-      Xmlss::Workbook.new(:output => {:pp => 2}, &build).to_file("./bench/profiler_#{n}.xml")
+      Xmlss::Workbook.new(Xmlss::Writer.new(:pp => 2), &build).to_file("./bench/profiler_#{n}.xml")
     end
 
   end

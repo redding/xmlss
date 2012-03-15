@@ -11,7 +11,7 @@ A ruby DSL for generating spreadsheets in the XML Spreadsheet format.  It provid
 
     require 'xmlss'
 
-    workbook = Xmlss::Worksheet.new do
+    workbook = Xmlss::Workbook.new(Xmlss::Writer.new) do
 
       worksheet("5 columns, 1 row") {
         5.times do
@@ -114,7 +114,7 @@ To generate a spreadsheet, create an Xmlss::Workbook instance and build the work
 
 Xmlss evals the build proc in the scope of the workbook instance.  This means that the build has access to only the data it is given or the DSL itself.  Data is given in the form of a Hash.  The string form of the hash keys are exposed as local workbook methods that return their corresponding values.
 
-    Xmlss::Workbook.new(:data => {:sheet_name => 'A cool sheet'}) do
+    Xmlss::Workbook.new(Xmlss::Writer.new, :sheet_name => 'A cool sheet') do
       worksheet(sheet_name) {
         ...
       }
@@ -124,7 +124,7 @@ Xmlss evals the build proc in the scope of the workbook instance.  This means th
 
 Xmlss uses Undies (https://github.com/kelredd/undies) to render the XML output.  The :output Workbook option is used to create Undies::Ouput objects.  See their docs for usage details (https://github.com/kelredd/undies/blob/master/README.rdoc).
 
-    Xmlss::Workbook.new(:output => {:pp => 2}) do
+    Xmlss::Workbook.new(Xmlss::Writer.new(:pp => 2)) do
       worksheet(sheet_name) {
         ...
       }
@@ -137,7 +137,7 @@ The above examples all pass in a build proc that is eval'd in the scope of the w
 To render using this approach, create a Workbook instance passing it data and output info as above.  However, don't pass any build proc and save off the created workbook:
 
     # choosing not to use any local data or output options
-    workbook = Xmlss::Workbook.new
+    workbook = Xmlss::Workbook.new(Xmlss::Writer.new)
 
 Now just interact with the Workbook API directly.
 
