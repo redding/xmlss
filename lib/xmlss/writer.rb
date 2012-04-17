@@ -5,6 +5,7 @@ module Xmlss
   class Writer
 
     class Markup; end
+    class AttrsHash; end
 
     # Xmlss uses Undies to stream its xml markup
     # The Undies writer is responsible for driving the Undies API to generate
@@ -18,19 +19,6 @@ module Xmlss
     SHEET_NS = "ss"
     NS_URI   = "urn:schemas-microsoft-com:office:spreadsheet"
     LB       = "&#13;&#10;"
-
-    # # TODO: remove this method - have attributes do their own
-    # # coercing
-    # def self.coerce(value)
-    #   if value == true
-    #     1
-    #   elsif ["",false].include?(value)
-    #     # don't include false or empty string values
-    #     nil
-    #   else
-    #     value
-    #   end
-    # end
 
     attr_reader :styles_markup
     attr_reader :worksheets_markup
@@ -84,21 +72,23 @@ module Xmlss
     # workbook style markup directives
 
     def alignment(alignment)
-      styles_markup.inline_element("Alignment", {
-        "#{SHEET_NS}:Horizontal" => alignment.horizontal,
-        "#{SHEET_NS}:Vertical"   => alignment.vertical,
-        "#{SHEET_NS}:Rotate"     => alignment.rotate,
-        "#{SHEET_NS}:WrapText"   => alignment.wrap_text ? 1 : nil,
-      })
+      styles_markup.inline_element("Alignment", AttrsHash.new.
+        value("Horizontal", alignment.horizontal).
+        value("Vertical",   alignment.vertical).
+        value("Rotate",     alignment.rotate).
+        bool( "WrapText",   alignment.wrap_text).
+        raw
+      )
     end
 
     def border(border)
-      styles_markup.inline_element("Border", {
-        "#{SHEET_NS}:Color"     => border.color,
-        "#{SHEET_NS}:Position"  => border.position,
-        "#{SHEET_NS}:Weight"    => border.weight,
-        "#{SHEET_NS}:LineStyle" => border.line_style
-      })
+      styles_markup.inline_element("Border", AttrsHash.new.
+        value("Color",     border.color).
+        value("Position",  border.position).
+        value("Weight",    border.weight).
+        value("LineStyle", border.line_style).
+        raw
+      )
     end
 
     def borders(borders)
@@ -106,85 +96,87 @@ module Xmlss
     end
 
     def font(font)
-      styles_markup.inline_element("Font", {
-        "#{SHEET_NS}:Bold"          => font.bold ? 1 : nil,
-        "#{SHEET_NS}:Color"         => font.color,
-        "#{SHEET_NS}:Italic"        => font.italic ? 1 : nil,
-        "#{SHEET_NS}:Size"          => font.size,
-        "#{SHEET_NS}:Shadow"        => font.shadow ? 1 : nil,
-        "#{SHEET_NS}:FontName"      => font.name,
-        "#{SHEET_NS}:StrikeThrough" => font.strike_through ? 1 : nil,
-        "#{SHEET_NS}:Underline"     => font.underline,
-        "#{SHEET_NS}:VerticalAlign" => font.alignment,
-      })
+      styles_markup.inline_element("Font", AttrsHash.new.
+        bool( "Bold",          font.bold).
+        value("Color",         font.color).
+        bool( "Italic",        font.italic).
+        value("Size",          font.size).
+        bool( "Shadow",        font.shadow).
+        value("FontName",      font.name).
+        bool( "StrikeThrough", font.strike_through).
+        value("Underline",     font.underline).
+        value("VerticalAlign", font.alignment).
+        raw
+      )
     end
 
     def interior(interior)
-      styles_markup.inline_element("Interior", {
-        "#{SHEET_NS}:Color"        => interior.color,
-        "#{SHEET_NS}:Pattern"      => interior.pattern,
-        "#{SHEET_NS}:PatternColor" => interior.pattern_color
-      })
+      styles_markup.inline_element("Interior", AttrsHash.new.
+        value("Color",        interior.color).
+        value("Pattern",      interior.pattern).
+        value("PatternColor", interior.pattern_color).
+        raw
+      )
     end
 
     def number_format(number_format)
-      styles_markup.inline_element("NumberFormat", {
-        "#{SHEET_NS}:Format" => number_format.format,
-      })
+      a = AttrsHash.new.value("Format", number_format.format).raw
+      styles_markup.inline_element("NumberFormat", a)
     end
 
     def protection(protection)
-      styles_markup.inline_element("Protection", {
-        "#{SHEET_NS}:Protect" => protection.protect ? 1 : nil,
-      })
+      a = AttrsHash.new.bool("Protect", protection.protect).raw
+      styles_markup.inline_element("Protection", a)
     end
 
     def style(style)
-      styles_markup.element("Style", nil, {
-        "#{SHEET_NS}:ID" => style.id,
-      })
+      a = AttrsHash.new.value("ID", style.id).raw
+      styles_markup.element("Style", nil, a)
     end
 
     # workbook element markup directives
 
     def cell(cell)
       # write the cell markup and push
-      worksheets_markup.element("Cell", nil, {
-        "#{SHEET_NS}:Index"       => cell.index,
-        "#{SHEET_NS}:StyleID"     => cell.style_id,
-        "#{SHEET_NS}:Formula"     => cell.formula,
-        "#{SHEET_NS}:HRef"        => cell.href,
-        "#{SHEET_NS}:MergeAcross" => cell.merge_across,
-        "#{SHEET_NS}:MergeDown"   => cell.merge_down
-      })
+      worksheets_markup.element("Cell", nil, AttrsHash.new.
+        value("Index",       cell.index).
+        value("StyleID",     cell.style_id).
+        value("Formula",     cell.formula).
+        value("HRef",        cell.href).
+        value("MergeAcross", cell.merge_across).
+        value("MergeDown",   cell.merge_down).
+        raw
+      )
       push(:worksheets)
 
       # write nested data markup and push
       worksheets_markup.element(
         "Data",
         worksheets_markup.raw(cell.data_xml_value),
-        { "#{SHEET_NS}:Type" => cell.type }
+        AttrsHash.new.value("Type", cell.type).raw
       )
 
       pop(:worksheets)
     end
 
     def row(row)
-      worksheets_markup.element("Row", nil, {
-        "#{SHEET_NS}:StyleID"       => row.style_id,
-        "#{SHEET_NS}:Height"        => row.height,
-        "#{SHEET_NS}:AutoFitHeight" => row.auto_fit_height ? 1 : nil,
-        "#{SHEET_NS}:Hidden"        => row.hidden ? 1 : nil
-      })
+      worksheets_markup.element("Row", nil, AttrsHash.new.
+        value("StyleID",       row.style_id).
+        value("Height",        row.height).
+        bool( "AutoFitHeight", row.auto_fit_height).
+        bool( "Hidden",        row.hidden).
+        raw
+      )
     end
 
     def column(column)
-      worksheets_markup.inline_element("Column", {
-        "#{SHEET_NS}:StyleID"      => column.style_id,
-        "#{SHEET_NS}:Width"        => column.width,
-        "#{SHEET_NS}:AutoFitWidth" => column.auto_fit_width ? 1 : nil,
-        "#{SHEET_NS}:Hidden"       => column.hidden ? 1 : nil
-      })
+      worksheets_markup.inline_element("Column", AttrsHash.new.
+        value("StyleID",      column.style_id).
+        value("Width",        column.width).
+        bool( "AutoFitWidth", column.auto_fit_width).
+        bool( "Hidden",       column.hidden).
+        raw
+      )
     end
 
     def worksheet(worksheet)
@@ -192,9 +184,8 @@ module Xmlss
       worksheets_markup.flush
 
       # write the worksheet markup and push
-      worksheets_markup.element("Worksheet", nil, {
-        "#{SHEET_NS}:Name" => worksheet.name
-      })
+      a = AttrsHash.new.value("Name", worksheet.name).raw
+      worksheets_markup.element("Worksheet", nil, a)
       push(:worksheets)
 
       # write the table container
@@ -207,6 +198,29 @@ module Xmlss
   end
 
 
+
+  # TODO: test
+  class Writer::AttrsHash
+
+    attr_reader :raw
+
+    def initialize
+      @raw = Hash.new
+    end
+
+    def value(k, v)
+      # ignore any nil-value or empty string attrs
+      @raw["#{Xmlss::Writer::SHEET_NS}:#{k}"] = v if v && v != ''
+      self
+    end
+
+    def bool(k, v)
+      # write truthy values as '1', otherwise ignore
+      @raw["#{Xmlss::Writer::SHEET_NS}:#{k}"] = 1 if v
+      self
+    end
+
+  end
 
   class Writer::Markup
 
@@ -229,16 +243,12 @@ module Xmlss
     # TODO: test
     def element(name, data, attrs)
       # remove any nil-value attrs
-      @template.__open_element(name, data, attrs.delete_if do |k,v|
-        v.nil? || v == ''
-      end)
+      @template.__open_element(name, data, attrs)
     end
 
     # TODO: test?
     def inline_element(name, attrs)
-      @template.__closed_element(name, attrs.delete_if do |k,v|
-        v.nil? || v == ''
-      end)
+      @template.__closed_element(name, attrs)
     end
 
     def push
