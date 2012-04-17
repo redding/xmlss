@@ -12,7 +12,7 @@ module Xmlss
     def initialize(writer, markup_type)
       @stack = []
       @writer = writer
-      @markup_type = markup_type
+      @markup_type = markup_type.to_s
       @written_level = 0
     end
 

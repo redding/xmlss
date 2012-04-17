@@ -190,9 +190,6 @@ module Xmlss
 
       # write the table container
       worksheets_markup.element("Table", nil, {})
-      # TODO: do all pushing and popping within the writer
-      # don't have outside do it?
-      #push(:worksheets)
     end
 
   end
