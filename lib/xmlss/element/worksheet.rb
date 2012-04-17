@@ -24,7 +24,7 @@ module Xmlss::Element
       @name = if !value.nil? && !value.to_s.empty?
         sanitized_name(value.to_s)
       else
-        ""  # TODO: make sure you don't write a worksheet with no sanitized_name
+        ""
       end
     end
 

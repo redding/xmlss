@@ -14,7 +14,6 @@ module Xmlss
     end
     subject { @w }
 
-    should have_class_methods :attributes, :classify, :coerce
     should have_readers :styles_markup, :worksheets_markup
     should have_instance_methods :write, :push, :pop, :flush, :workbook
 
@@ -30,50 +29,6 @@ module Xmlss
 
     should "return itself when flushed" do
       assert_equal subject, subject.flush
-    end
-
-  end
-
-
-
-  class HelpersTests < BasicTests
-
-    should "coerce certain values for xml output" do
-      assert_equal 1, Writer.coerce(true)
-      assert_nil   Writer.coerce(false)
-      assert_nil   Writer.coerce("")
-      assert_equal "hi", Writer.coerce("hi")
-      assert_equal 1, Writer.coerce(1)
-    end
-
-    should "classify underscored string" do
-      assert_equal "Hi", Writer.classify("Hi")
-      assert_equal "Hi", Writer.classify("hi")
-      assert_equal "Hithere", Writer.classify("HiThere")
-      assert_equal "Hithere", Writer.classify("hithere")
-      assert_equal "HiThere", Writer.classify("Hi_There")
-      assert_equal "HiThere", Writer.classify("Hi_there")
-      assert_equal "HiThere", Writer.classify("hi_there")
-    end
-
-    should "convert a list of attributes for xml output" do
-      class Thing
-        def keys; [:thing, :other, 'some', 'hi', :hi_there]; end
-
-        def thing;    true;   end
-        def other;    false;  end
-        def some;     "";     end
-        def hi;       :there; end
-        def hi_there; "you";  end
-      end
-      thing = Thing.new
-      exp = {
-        "ss:Hi" => "there",
-        "ss:HiThere" => "you",
-        "ss:Thing" => "1"
-      }
-
-      assert_equal exp, Writer.attributes(thing, thing.keys)
     end
 
   end

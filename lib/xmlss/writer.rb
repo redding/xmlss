@@ -19,38 +19,18 @@ module Xmlss
     NS_URI   = "urn:schemas-microsoft-com:office:spreadsheet"
     LB       = "&#13;&#10;"
 
-    def self.attributes(thing, *attrs)
-      [*attrs].flatten.inject({}) do |xattrs, a|
-        xattrs.merge(if !(xv = self.coerce(thing.send(a))).nil?
-          {xmlss_attribute_name(a) => xv.to_s}
-        else
-          {}
-        end)
-      end
-    end
-
-    def self.xmlss_attribute_name(attr_name)
-      "#{SHEET_NS}:#{self.classify(attr_name)}"
-    end
-
-    def self.classify(underscored_string)
-      underscored_string.
-        to_s.downcase.
-        split("_").
-        collect{|part| part.capitalize}.
-        join('')
-    end
-
-    def self.coerce(value)
-      if value == true
-        1
-      elsif ["",false].include?(value)
-        # don't include false or empty string values
-        nil
-      else
-        value
-      end
-    end
+    # # TODO: remove this method - have attributes do their own
+    # # coercing
+    # def self.coerce(value)
+    #   if value == true
+    #     1
+    #   elsif ["",false].include?(value)
+    #     # don't include false or empty string values
+    #     nil
+    #   else
+    #     value
+    #   end
+    # end
 
     attr_reader :styles_markup
     attr_reader :worksheets_markup
@@ -104,95 +84,107 @@ module Xmlss
     # workbook style markup directives
 
     def alignment(alignment)
-      styles_markup.inline_element(
-        "Alignment",
-        self.class.attributes(alignment, :horizontal, :vertical, :wrap_text, :rotate)
-      )
+      styles_markup.inline_element("Alignment", {
+        "#{SHEET_NS}:Horizontal" => alignment.horizontal,
+        "#{SHEET_NS}:Vertical"   => alignment.vertical,
+        "#{SHEET_NS}:Rotate"     => alignment.rotate,
+        "#{SHEET_NS}:WrapText"   => alignment.wrap_text ? 1 : nil,
+      })
     end
 
     def border(border)
-      styles_markup.inline_element(
-        "Border",
-        self.class.attributes(border, :color, :position, :weight, :line_style)
-      )
+      styles_markup.inline_element("Border", {
+        "#{SHEET_NS}:Color"     => border.color,
+        "#{SHEET_NS}:Position"  => border.position,
+        "#{SHEET_NS}:Weight"    => border.weight,
+        "#{SHEET_NS}:LineStyle" => border.line_style
+      })
     end
 
     def borders(borders)
-      styles_markup.element("Borders")
+      styles_markup.element("Borders", nil, {})
     end
 
     def font(font)
-      styles_markup.inline_element(
-        "Font",
-        self.class.attributes(font, [
-          :bold, :color, :italic, :size, :shadow, :font_name,
-          :strike_through, :underline, :vertical_align
-        ])
-      )
+      styles_markup.inline_element("Font", {
+        "#{SHEET_NS}:Bold"          => font.bold ? 1 : nil,
+        "#{SHEET_NS}:Color"         => font.color,
+        "#{SHEET_NS}:Italic"        => font.italic ? 1 : nil,
+        "#{SHEET_NS}:Size"          => font.size,
+        "#{SHEET_NS}:Shadow"        => font.shadow ? 1 : nil,
+        "#{SHEET_NS}:FontName"      => font.name,
+        "#{SHEET_NS}:StrikeThrough" => font.strike_through ? 1 : nil,
+        "#{SHEET_NS}:Underline"     => font.underline,
+        "#{SHEET_NS}:VerticalAlign" => font.alignment,
+      })
     end
 
     def interior(interior)
-      styles_markup.inline_element(
-        "Interior",
-        self.class.attributes(interior, :color, :pattern, :pattern_color)
-      )
+      styles_markup.inline_element("Interior", {
+        "#{SHEET_NS}:Color"        => interior.color,
+        "#{SHEET_NS}:Pattern"      => interior.pattern,
+        "#{SHEET_NS}:PatternColor" => interior.pattern_color
+      })
     end
 
     def number_format(number_format)
-      styles_markup.inline_element(
-        "NumberFormat",
-        self.class.attributes(number_format, :format)
-      )
+      styles_markup.inline_element("NumberFormat", {
+        "#{SHEET_NS}:Format" => number_format.format,
+      })
     end
 
     def protection(protection)
-      styles_markup.inline_element(
-        "Protection",
-        self.class.attributes(protection, :protect)
-      )
+      styles_markup.inline_element("Protection", {
+        "#{SHEET_NS}:Protect" => protection.protect ? 1 : nil,
+      })
     end
 
     def style(style)
-      styles_markup.element(
-        "Style",
-        self.class.attributes(style, :i_d)
-      )
+      styles_markup.element("Style", nil, {
+        "#{SHEET_NS}:ID" => style.id,
+      })
     end
 
     # workbook element markup directives
 
     def cell(cell)
       # write the cell markup and push
-      worksheets_markup.element(
-        "Cell",
-        self.class.attributes(cell, [
-          :index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down
-        ])
-      )
+      worksheets_markup.element("Cell", nil, {
+        "#{SHEET_NS}:Index"       => cell.index,
+        "#{SHEET_NS}:StyleID"     => cell.style_id,
+        "#{SHEET_NS}:Formula"     => cell.formula,
+        "#{SHEET_NS}:HRef"        => cell.href,
+        "#{SHEET_NS}:MergeAcross" => cell.merge_across,
+        "#{SHEET_NS}:MergeDown"   => cell.merge_down
+      })
       push(:worksheets)
 
       # write nested data markup and push
       worksheets_markup.element(
         "Data",
         worksheets_markup.raw(cell.data_xml_value),
-        self.class.attributes(cell, :type)
+        { "#{SHEET_NS}:Type" => cell.type }
       )
 
       pop(:worksheets)
     end
 
     def row(row)
-      worksheets_markup.element(
-        "Row",
-        self.class.attributes(row, :style_i_d, :height, :auto_fit_height, :hidden)
-      )
+      worksheets_markup.element("Row", nil, {
+        "#{SHEET_NS}:StyleID"       => row.style_id,
+        "#{SHEET_NS}:Height"        => row.height,
+        "#{SHEET_NS}:AutoFitHeight" => row.auto_fit_height ? 1 : nil,
+        "#{SHEET_NS}:Hidden"        => row.hidden ? 1 : nil
+      })
     end
 
     def column(column)
-      worksheets_markup.inline_element(
-        "Column",
-        self.class.attributes(column, :style_i_d, :width, :auto_fit_width, :hidden)
-      )
+      worksheets_markup.inline_element("Column", {
+        "#{SHEET_NS}:StyleID"      => column.style_id,
+        "#{SHEET_NS}:Width"        => column.width,
+        "#{SHEET_NS}:AutoFitWidth" => column.auto_fit_width ? 1 : nil,
+        "#{SHEET_NS}:Hidden"       => column.hidden ? 1 : nil
+      })
     end
 
     def worksheet(worksheet)
@@ -200,15 +192,13 @@ module Xmlss
       worksheets_markup.flush
 
       # write the worksheet markup and push
-      # TODO: don't build attributes this way (too inefficient)
-      # just build hashes manually, speed test it.
-      worksheets_markup.element(
-        "Worksheet", self.class.attributes(worksheet, :name)
-      )
+      worksheets_markup.element("Worksheet", nil, {
+        "#{SHEET_NS}:Name" => worksheet.name
+      })
       push(:worksheets)
 
       # write the table container
-      worksheets_markup.element("Table")
+      worksheets_markup.element("Table", nil, {})
       # TODO: do all pushing and popping within the writer
       # don't have outside do it?
       #push(:worksheets)
@@ -229,18 +219,26 @@ module Xmlss
       @pop_count  = 0
     end
 
+    # TODO: test
     def raw(markup)
       @template.raw(
         Undies::Template.escape_html(markup).gsub(/(\r|\n)+/, Xmlss::Writer::LB)
       )
     end
 
-    def element(*args)
-      @template.__open_element(*args)
+    # TODO: test
+    def element(name, data, attrs)
+      # remove any nil-value attrs
+      @template.__open_element(name, data, attrs.delete_if do |k,v|
+        v.nil? || v == ''
+      end)
     end
 
-    def inline_element(*args)
-      @template.__closed_element(*args)
+    # TODO: test?
+    def inline_element(name, attrs)
+      @template.__closed_element(name, attrs.delete_if do |k,v|
+        v.nil? || v == ''
+      end)
     end
 
     def push
