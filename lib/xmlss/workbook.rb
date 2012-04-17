@@ -101,26 +101,60 @@ module Xmlss
 
     # Workbook element attributes API
 
-    [ :data,            # cell
-      :type,            # cell
-      :index,           # cell
-      :style_id,        # cell, row, :column
-      :formula,         # cell
-      :href,            # cell
-      :merge_across,    # cell
-      :merge_down,      # cell
-      :height,          # row
-      :auto_fit_height, # row
-      :hidden,          # row, column
-      :width,           # column
-      :auto_fit_width,  # column
-      :name             # worksheet
-    ].each do |a|
-      define_method(a) do |value|
-        if (current_element = self.class.worksheets_stack(self).current)
-          current_element.send("#{a}=", value)
-        end
-      end
+    def data(value)  # cell
+      self.class.worksheets_stack(self).current.data = value
+    end
+
+    def type(value)  # cell
+      self.class.worksheets_stack(self).current.type = value
+    end
+
+    def index(value)  # cell
+      self.class.worksheets_stack(self).current.index = value
+    end
+
+    def style_id(value)  # cell, row, column
+      self.class.worksheets_stack(self).current.style_id = value
+    end
+
+    def formula(value)  # cell
+      self.class.worksheets_stack(self).current.formula = value
+    end
+
+    def href(value)  # cell
+      self.class.worksheets_stack(self).current.href = value
+    end
+
+    def merge_across(value)  # cell
+      self.class.worksheets_stack(self).current.merge_across = value
+    end
+
+    def merge_down(value)  # cell
+      self.class.worksheets_stack(self).current.merge_down = value
+    end
+
+    def height(value)  # row
+      self.class.worksheets_stack(self).current.height = value
+    end
+
+    def auto_fit_height(value)  # row
+      self.class.worksheets_stack(self).current.auto_fit_height = value
+    end
+
+    def hidden(value)  # row, column
+      self.class.worksheets_stack(self).current.hidden = value
+    end
+
+    def width(value)  # column
+      self.class.worksheets_stack(self).current.height = value
+    end
+
+    def auto_fit_width(value)  # column
+      self.class.worksheets_stack(self).current.auto_fit_width = value
+    end
+
+    def name(value)  # worksheet
+      self.class.worksheets_stack(self).current.name = value
     end
 
     # overriding to make less noisy
