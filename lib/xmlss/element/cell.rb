@@ -7,8 +7,6 @@ module Xmlss::Element
     def self.writer; :cell; end
 
     attr_accessor :index, :style_id, :formula, :href, :merge_across, :merge_down
-    alias_method :style_i_d, :style_id
-    alias_method :h_ref, :href
 
     attr_accessor :data
 

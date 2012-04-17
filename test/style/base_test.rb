@@ -9,7 +9,7 @@ module Xmlss::Style
     subject { @bs }
 
     should have_class_method :writer
-    should have_reader :id, :i_d
+    should have_reader :id
 
     should "know its writer" do
       assert_equal :style, subject.class.writer
