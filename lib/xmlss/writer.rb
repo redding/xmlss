@@ -58,8 +58,8 @@ module Xmlss
     def initialize(output_opts={})
       @opts = output_opts || {}
 
-      @styles_markup     = Markup.new(@opts.merge(:pp_level => 2))
-      @worksheets_markup = Markup.new(@opts.merge(:pp_level => 1))
+      @styles_markup     = Markup.new(@opts.merge(:level => 2))
+      @worksheets_markup = Markup.new(@opts.merge(:level => 1))
     end
 
     def write(element)
@@ -87,103 +87,112 @@ module Xmlss
       self.flush
       "".tap do |markup|
         Undies::Template.new(Undies::Source.new(Proc.new do
-          __ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-          _Workbook(XML_NS => NS_URI, "#{XML_NS}:#{SHEET_NS}" => NS_URI) {
-            _Styles {
-              __partial styles
+          _ raw("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+          __open_element("Workbook", XML_NS => NS_URI, "#{XML_NS}:#{SHEET_NS}" => NS_URI) {
+            __open_element("Styles") {
+              __partial @styles
             }
-            __partial worksheets
+            __partial @worksheets
           }
         end), {
           :styles => styles_markup.to_s,
           :worksheets => worksheets_markup.to_s
-        }, Undies::Output.new(StringIO.new(markup), @opts))
+        }, Undies::IO.new(markup, @opts))
       end.strip
     end
 
     # workbook style markup directives
 
     def alignment(alignment)
-      styles_markup.template._Alignment(self.class.attributes(alignment, [
-        :horizontal, :vertical, :wrap_text, :rotate
-      ]))
+      styles_markup.inline_element(
+        "Alignment",
+        self.class.attributes(alignment, :horizontal, :vertical, :wrap_text, :rotate)
+      )
     end
 
     def border(border)
-      styles_markup.template._Border(self.class.attributes(border, [
-        :color, :position, :weight, :line_style
-      ]))
+      styles_markup.inline_element(
+        "Border",
+        self.class.attributes(border, :color, :position, :weight, :line_style)
+      )
     end
 
     def borders(borders)
-      styles_markup.template._Borders
+      styles_markup.element("Borders")
     end
 
     def font(font)
-      styles_markup.template._Font(self.class.attributes(font, [
-        :bold, :color, :italic, :size, :shadow, :font_name,
-        :strike_through, :underline, :vertical_align
-      ]))
+      styles_markup.inline_element(
+        "Font",
+        self.class.attributes(font, [
+          :bold, :color, :italic, :size, :shadow, :font_name,
+          :strike_through, :underline, :vertical_align
+        ])
+      )
     end
 
     def interior(interior)
-      styles_markup.template._Interior(self.class.attributes(interior, [
-        :color, :pattern, :pattern_color
-      ]))
+      styles_markup.inline_element(
+        "Interior",
+        self.class.attributes(interior, :color, :pattern, :pattern_color)
+      )
     end
 
     def number_format(number_format)
-      styles_markup.template._NumberFormat(self.class.attributes(number_format, [
-        :format
-      ]))
+      styles_markup.inline_element(
+        "NumberFormat",
+        self.class.attributes(number_format, :format)
+      )
     end
 
     def protection(protection)
-      styles_markup.template._Protection(self.class.attributes(protection, [
-        :protect
-      ]))
+      styles_markup.inline_element(
+        "Protection",
+        self.class.attributes(protection, :protect)
+      )
     end
 
     def style(style)
-      styles_markup.template._Style(self.class.attributes(style, [
-        :i_d
-      ]))
+      styles_markup.element(
+        "Style",
+        self.class.attributes(style, :i_d)
+      )
     end
 
     # workbook element markup directives
 
     def cell(cell)
       # write the cell markup and push
-      worksheets_markup.template._Cell(self.class.attributes(cell, [
-        [:index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down]
-      ]))
+      worksheets_markup.element(
+        "Cell",
+        self.class.attributes(cell, [
+          :index, :style_i_d, :formula, :h_ref, :merge_across, :merge_down
+        ])
+      )
       push(:worksheets)
 
       # write nested data markup and push
-      worksheets_markup.template._Data(self.class.attributes(cell, [
-        [:type]
-      ]))
-      push(:worksheets)
+      worksheets_markup.element(
+        "Data",
+        worksheets_markup.raw(cell.data_xml_value),
+        self.class.attributes(cell, :type)
+      )
 
-      # write data value
-      worksheets_markup.template.__ Undies::Template.
-        escape_html(cell.data_xml_value).
-        gsub(/(\r|\n)+/, LB)
-
-      pop(:worksheets)
       pop(:worksheets)
     end
 
     def row(row)
-      worksheets_markup.template._Row(self.class.attributes(row, [
-        [:style_i_d, :height, :auto_fit_height, :hidden]
-      ]))
+      worksheets_markup.element(
+        "Row",
+        self.class.attributes(row, :style_i_d, :height, :auto_fit_height, :hidden)
+      )
     end
 
     def column(column)
-      worksheets_markup.template._Column(self.class.attributes(column, [
-        [:style_i_d, :width, :auto_fit_width, :hidden]
-      ]))
+      worksheets_markup.inline_element(
+        "Column",
+        self.class.attributes(column, :style_i_d, :width, :auto_fit_width, :hidden)
+      )
     end
 
     def worksheet(worksheet)
@@ -191,13 +200,18 @@ module Xmlss
       worksheets_markup.flush
 
       # write the worksheet markup and push
-      worksheets_markup.template._Worksheet(self.class.attributes(worksheet, [
-        [:name]
-      ]))
+      # TODO: don't build attributes this way (too inefficient)
+      # just build hashes manually, speed test it.
+      worksheets_markup.element(
+        "Worksheet", self.class.attributes(worksheet, :name)
+      )
       push(:worksheets)
 
       # write the table container
-      worksheets_markup.template._Table
+      worksheets_markup.element("Table")
+      # TODO: do all pushing and popping within the writer
+      # don't have outside do it?
+      #push(:worksheets)
     end
 
   end
@@ -210,9 +224,23 @@ module Xmlss
 
     def initialize(opts={})
       @markup = ""
-      @template = Undies::Template.new(Undies::Output.new(StringIO.new(@markup), opts))
+      @template = Undies::Template.new(Undies::IO.new(@markup, opts))
       @push_count = 0
       @pop_count  = 0
+    end
+
+    def raw(markup)
+      @template.raw(
+        Undies::Template.escape_html(markup).gsub(/(\r|\n)+/, Xmlss::Writer::LB)
+      )
+    end
+
+    def element(*args)
+      @template.__open_element(*args)
+    end
+
+    def inline_element(*args)
+      @template.__closed_element(*args)
     end
 
     def push
@@ -236,7 +264,7 @@ module Xmlss
     def empty?; @markup.empty?; end
 
     def to_s
-      @markup.to_s.strip
+      @markup.to_s
     end
 
   end
