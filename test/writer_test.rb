@@ -392,7 +392,7 @@ Should
     should "return workbook markup" do
       build_workbook(subject)
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test1\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet><Worksheet ss:Name=\"test2\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test1\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet><Worksheet ss:Name=\"test2\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
         subject.workbook
       )
     end
