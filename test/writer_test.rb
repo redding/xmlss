@@ -14,7 +14,6 @@ module Xmlss
     end
     subject { @w }
 
-    should have_class_methods :attributes, :classify, :coerce
     should have_readers :styles_markup, :worksheets_markup
     should have_instance_methods :write, :push, :pop, :flush, :workbook
 
@@ -36,44 +35,35 @@ module Xmlss
 
 
 
-  class HelpersTests < BasicTests
+  class AttrsHashTests < BasicTests
+    desc "AttrsHash"
+    before do
+      @a = Writer::AttrsHash.new
+    end
+    subject { @a }
 
-    should "coerce certain values for xml output" do
-      assert_equal 1, Writer.coerce(true)
-      assert_nil   Writer.coerce(false)
-      assert_nil   Writer.coerce("")
-      assert_equal "hi", Writer.coerce("hi")
-      assert_equal 1, Writer.coerce(1)
+    should have_reader :raw
+    should have_instance_methods :value, :bool
+
+    should "by default have an empty raw hash" do
+      assert_equal({}, subject.raw)
     end
 
-    should "classify underscored string" do
-      assert_equal "Hi", Writer.classify("Hi")
-      assert_equal "Hi", Writer.classify("hi")
-      assert_equal "Hithere", Writer.classify("HiThere")
-      assert_equal "Hithere", Writer.classify("hithere")
-      assert_equal "HiThere", Writer.classify("Hi_There")
-      assert_equal "HiThere", Writer.classify("Hi_there")
-      assert_equal "HiThere", Writer.classify("hi_there")
+    should "apply values to a raw hash with the writer namespace" do
+      assert_equal({"#{Writer::SHEET_NS}:a" => 'b'}, subject.value('a', 'b').raw)
     end
 
-    should "convert a list of attributes for xml output" do
-      class Thing
-        def keys; [:thing, :other, 'some', 'hi', :hi_there]; end
+    should "ignore nil values" do
+      assert_equal({}, subject.value('a', nil).raw)
+    end
 
-        def thing;    true;   end
-        def other;    false;  end
-        def some;     "";     end
-        def hi;       :there; end
-        def hi_there; "you";  end
-      end
-      thing = Thing.new
-      exp = {
-        "ss:Hi" => "there",
-        "ss:HiThere" => "you",
-        "ss:Thing" => "1"
-      }
+    should "ignore empty string values" do
+      assert_equal({}, subject.value('a', '').raw)
+    end
 
-      assert_equal exp, Writer.attributes(thing, thing.keys)
+    should "apply booleans as '1' and otherwise ignore" do
+      assert_equal({}, subject.bool('a', false).raw)
+      assert_equal({"#{Writer::SHEET_NS}:a" => 1}, subject.bool('a', true).raw)
     end
 
   end

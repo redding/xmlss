@@ -24,7 +24,6 @@ module Xmlss::Style
     }
 
     should have_class_method :writer
-    should have_reader :vertical_align
     should have_accessors :bold, :color, :italic, :size, :strike_through
     should have_accessors :shadow, :underline, :alignment, :name
     should have_instance_methods :bold?, :italic?, :strike_through?, :shadow?
