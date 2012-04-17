@@ -5,7 +5,6 @@ module Xmlss::Element
     def self.writer; :column; end
 
     attr_accessor :style_id, :width, :auto_fit_width, :hidden
-    alias_method :style_i_d, :style_id
 
     def initialize(attrs={})
       self.style_id = attrs[:style_id]
