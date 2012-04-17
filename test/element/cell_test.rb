@@ -15,7 +15,6 @@ module Xmlss::Element
     should be_styled
     should have_class_method :writer
     should have_accessor :index, :formula, :href, :merge_across, :merge_down
-    should have_reader :h_ref
 
     should have_enum :type, {
       :number => "Number",
@@ -40,12 +39,6 @@ module Xmlss::Element
 
       assert_equal Cell.type(:string), subject.type
       assert_equal "", subject.data
-    end
-
-    should "provide alias for :href" do
-      c = Cell.new({:href => "http://www.google.com"})
-      assert_equal "http://www.google.com", c.href
-      assert_equal "http://www.google.com", c.h_ref
     end
 
     should "bark when setting non Fixnum indices" do

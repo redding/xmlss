@@ -15,7 +15,6 @@ module Xmlss::Style
     def self.writer; :style; end
 
     attr_reader :id
-    alias_method :i_d, :id
 
     def initialize(id)
       raise ArgumentError, "please choose an id for the style" if id.nil?

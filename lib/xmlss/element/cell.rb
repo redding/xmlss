@@ -7,8 +7,6 @@ module Xmlss::Element
     def self.writer; :cell; end
 
     attr_accessor :index, :style_id, :formula, :href, :merge_across, :merge_down
-    alias_method :style_i_d, :style_id
-    alias_method :h_ref, :href
 
     attr_accessor :data
 
@@ -21,18 +19,14 @@ module Xmlss::Element
       :error => "Error"
     }
 
-    def initialize(*args, &build)
+    def initialize(*args)
       attrs = args.last.kind_of?(::Hash) ? args.pop : {}
 
-      self.data = args.last.nil? ? (attrs[:data] || "") : args.last
-      self.type = attrs[:type] unless attrs[:type].nil?
+      self.data = [args.last, attrs.delete(:data), ''].reject{|v| v.nil?}.first
+      self.merge_across = attrs.delete(:merge_across) || 0
+      self.merge_down = attrs.delete(:merge_down) || 0
 
-      self.index = attrs[:index]
-      self.style_id = attrs[:style_id]
-      self.formula = attrs[:formula]
-      self.href = attrs[:href]
-      self.merge_across = attrs[:merge_across] || 0
-      self.merge_down = attrs[:merge_down] || 0
+      attrs.keys.each { |k| self.send("#{k}=", attrs[k]) }
     end
 
     def data=(v)
@@ -49,27 +43,38 @@ module Xmlss::Element
       end
     end
 
-    [:index, :merge_across, :merge_down].each do |meth|
-      define_method("#{meth}=") do |value|
-        if value && !value.kind_of?(::Fixnum)
-          raise ArgumentError, "must specify #{meth} as a Fixnum"
-        end
-        instance_variable_set("@#{meth}", value && value <= 0 ? nil : value)
+    def index=(value)
+      if value && !value.kind_of?(::Fixnum)
+        raise ArgumentError, "must specify `index` as a Fixnum"
       end
+      @index = (value && value <= 0 ? nil : value)
+    end
+
+    def merge_across=(value)
+      if value && !value.kind_of?(::Fixnum)
+        raise ArgumentError, "must specify `merge_across` as a Fixnum"
+      end
+      @merge_across = (value && value <= 0 ? nil : value)
+    end
+
+    def merge_down=(value)
+      if value && !value.kind_of?(::Fixnum)
+        raise ArgumentError, "must specify `merge_down` as a Fixnum"
+      end
+      @merge_down = (value && value <= 0 ? nil : value)
     end
 
     private
 
     def data_type(v)
-      case v
-      when ::Numeric
-        :number
-      when ::Date, ::Time
-        :date_time
-      when ::TrueClass, ::FalseClass
-        :boolean
-      when ::String, ::Symbol
+      if v.kind_of?(::String) || v.kind_of?(::Symbol)
         :string
+      elsif v.kind_of?(::Numeric)
+        :number
+      elsif v.kind_of?(::Date) || v.kind_of?(::Time)
+        :date_time
+      elsif v.kind_of?(::TrueClass) || v.kind_of?(::FalseClass)
+        :boolean
       else
         :string
       end

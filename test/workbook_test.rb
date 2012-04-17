@@ -39,13 +39,6 @@ module Xmlss::Worbook
       assert_kind_of Xmlss::Style::Protection, subject.protection
     end
 
-    should "not complain if setting an attribute when there's no current element" do
-      # it should just do nothing and go on
-      assert_nothing_raised do
-        subject.index(1)
-      end
-    end
-
     should "return workbook markup string" do
       assert_match /<Workbook /, subject.to_s
     end

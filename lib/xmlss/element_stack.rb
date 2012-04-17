@@ -12,7 +12,7 @@ module Xmlss
     def initialize(writer, markup_type)
       @stack = []
       @writer = writer
-      @markup_type = markup_type
+      @markup_type = markup_type.to_s
       @written_level = 0
     end
 
@@ -24,44 +24,38 @@ module Xmlss
     alias_method :current, :last
     alias_method :level, :size
 
-    def push(element)
-      if @written_level < level
-        open(current)
-      end
-      @stack.push(element)
-    end
-
-    def pop
-      if !empty?
-        if @written_level < level
-          @stack.pop.tap { |elem| write(elem) }
-        else
-          @stack.pop.tap { |elem| close(elem) }
-        end
-      end
-    end
-
     def using(element, &block)
       push(element)
       (block || Proc.new {}).call
       pop
     end
 
-    private
-
-    def open(element)
-      write(element)
-      @writer.push(@markup_type)
-      @written_level += 1
+    def push(element)
+      if @written_level < level
+        write(current)
+        @writer.push(@markup_type)
+        @written_level += 1
+      end
+      @stack.push(element)
     end
+
+    def pop
+      if !empty?
+        @written_level < level ? write(@stack.pop) : close(@stack.pop)
+      end
+    end
+
+    private
 
     def close(element)
       @writer.pop(@markup_type)
       @written_level -= 1
+      element
     end
 
     def write(element)
       @writer.write(element)
+      element
     end
 
   end

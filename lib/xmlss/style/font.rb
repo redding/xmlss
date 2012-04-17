@@ -16,10 +16,8 @@ module Xmlss::Style
       :subscript => 'Subscript',
       :superscript => 'Superscript'
     }
-    alias_method :vertical_align, :alignment
 
     attr_accessor :bold, :color, :italic, :size, :strike_through, :shadow, :name
-    alias :font_name :name
 
     def initialize(attrs={})
       self.bold = attrs[:bold] || false
