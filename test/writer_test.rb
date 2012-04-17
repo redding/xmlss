@@ -35,6 +35,41 @@ module Xmlss
 
 
 
+  class AttrsHashTests < BasicTests
+    desc "AttrsHash"
+    before do
+      @a = Writer::AttrsHash.new
+    end
+    subject { @a }
+
+    should have_reader :raw
+    should have_instance_methods :value, :bool
+
+    should "by default have an empty raw hash" do
+      assert_equal({}, subject.raw)
+    end
+
+    should "apply values to a raw hash with the writer namespace" do
+      assert_equal({"#{Writer::SHEET_NS}:a" => 'b'}, subject.value('a', 'b').raw)
+    end
+
+    should "ignore nil values" do
+      assert_equal({}, subject.value('a', nil).raw)
+    end
+
+    should "ignore empty string values" do
+      assert_equal({}, subject.value('a', '').raw)
+    end
+
+    should "apply booleans as '1' and otherwise ignore" do
+      assert_equal({}, subject.bool('a', false).raw)
+      assert_equal({"#{Writer::SHEET_NS}:a" => 1}, subject.bool('a', true).raw)
+    end
+
+  end
+
+
+
   class StyleWritingTests < BasicTests
 
     should "write alignment markup" do

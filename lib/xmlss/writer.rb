@@ -199,7 +199,6 @@ module Xmlss
 
 
 
-  # TODO: test
   class Writer::AttrsHash
 
     attr_reader :raw
@@ -233,20 +232,16 @@ module Xmlss
       @pop_count  = 0
     end
 
-    # TODO: test
     def raw(markup)
       @template.raw(
         Undies::Template.escape_html(markup).gsub(/(\r|\n)+/, Xmlss::Writer::LB)
       )
     end
 
-    # TODO: test
     def element(name, data, attrs)
-      # remove any nil-value attrs
       @template.__open_element(name, data, attrs)
     end
 
-    # TODO: test?
     def inline_element(name, attrs)
       @template.__closed_element(name, attrs)
     end
