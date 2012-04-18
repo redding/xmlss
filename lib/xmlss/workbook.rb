@@ -101,6 +101,13 @@ module Xmlss
 
     # Workbook element attributes API
 
+    def style_id(value)  # cell, row, column
+      # check to make sure there is a current on this one
+      if (c = self.class.worksheets_stack(self).current)
+        c.style_id = value
+      end
+    end
+
     def data(value)  # cell
       self.class.worksheets_stack(self).current.data = value
     end
@@ -111,10 +118,6 @@ module Xmlss
 
     def index(value)  # cell
       self.class.worksheets_stack(self).current.index = value
-    end
-
-    def style_id(value)  # cell, row, column
-      self.class.worksheets_stack(self).current.style_id = value
     end
 
     def formula(value)  # cell
@@ -146,7 +149,7 @@ module Xmlss
     end
 
     def width(value)  # column
-      self.class.worksheets_stack(self).current.height = value
+      self.class.worksheets_stack(self).current.width = value
     end
 
     def auto_fit_width(value)  # column
