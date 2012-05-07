@@ -106,25 +106,26 @@ protection(value):
 
 == Usage
 
-To generate a spreadsheet, create an Xmlss::Workbook instance and build the workbook using the above DSL.  Workbook takes two optional parameters:
-* opts: hash: :data, :output
-* &build: proc containing DSL directives
+To generate a spreadsheet, create an Xmlss::Workbook instance and build the workbook using the above DSL.  Workbook takes three parameters:
+* Xmlss::Writer instance
+* data hash: (optional) key value data to bind to the workbook scope
+* build block: (optional) block containing DSL directives
 
-=== Data option
+=== Writer (Undies)
 
-Xmlss evals the build proc in the scope of the workbook instance.  This means that the build has access to only the data it is given or the DSL itself.  Data is given in the form of a Hash.  The string form of the hash keys are exposed as local workbook methods that return their corresponding values.
+The Xmlss::Writer uses Undies (https://github.com/kellyredding/undies) to write the XML output.  The writer takes Undies::IO options.  See the Undies README for usage details.
 
-    Xmlss::Workbook.new(Xmlss::Writer.new, :sheet_name => 'A cool sheet') do
-      worksheet(sheet_name) {
+    Xmlss::Workbook.new(Xmlss::Writer.new(:pp => 2)) do
+      worksheet('A cool sheet') {
         ...
       }
     end
 
-=== Output option (Undies)
+=== Data hash
 
-Xmlss uses Undies (https://github.com/kelredd/undies) to render the XML output.  The :output Workbook option is used to create Undies::Ouput objects.  See their docs for usage details (https://github.com/kelredd/undies/blob/master/README.rdoc).
+Xmlss evals the build proc in the scope of the workbook instance.  This means that the build has access to only the data it is given or the DSL itself.  Data is given in the form of a Hash.  The string form of the hash keys are exposed as local workbook methods that return their corresponding values.
 
-    Xmlss::Workbook.new(Xmlss::Writer.new(:pp => 2)) do
+    Xmlss::Workbook.new(Xmlss::Writer.new, :sheet_name => 'A cool sheet') do
       worksheet(sheet_name) {
         ...
       }
@@ -155,7 +156,9 @@ Now just interact with the Workbook API directly.
 
 == Disclaimer
 
-Be aware this library only provides the basic, raw API for constructing spreadsheets using this spec and utilities to convert those objects to string xml data representing them.  It does not provide any macro logic to aid in constructing the sheets.  If you want a more convenient API for your use case, I suggest subclassing the objects and tailoring them to your needs.
+Be aware this library only provides the basic, raw API for constructing spreadsheets using this spec and utilities to convert those objects to string xml data representing them.  It does not provide any macro logic to aid in constructing the sheets.  If you want a more convenient API for your use case, I suggest extending the objects and tailoring them to your needs.
+
+You may also be interested in osheet-xmlss (https://github.com/kellyredding/osheet-xmlss).  I wrote this to use the more convenient Osheet workbook syntax to generate Xmlss workbooks.
 
 The XML Spreadsheet spec and format are legacy and may have limited support depending on your version of MS Excel.  For a more modern spreadsheet generation method, I suggest looking into Office Open XML Workbook format (http://en.wikipedia.org/wiki/Office_Open_XML).
 
