@@ -20,5 +20,11 @@ module Xmlss::Element
       @height = value && value < 0 ? nil : value
     end
 
+    def autofit;         self.auto_fit_height;         end
+    def autofit=(value); self.auto_fit_height = value; end
+
+    def autofit?; !!self.autofit; end
+    def hidden?;  !!self.hidden;  end
+
   end
 end

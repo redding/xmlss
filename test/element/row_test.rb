@@ -10,7 +10,9 @@ module Xmlss::Element
 
     should be_styled
     should have_class_method :writer
-    should have_accessors :height, :auto_fit_height, :hidden
+    should have_accessors :height, :auto_fit_height, :autofit, :hidden
+    should have_readers   :autofit?, :hidden?
+
 
     should "know its writer hook" do
       assert_equal :row, subject.class.writer

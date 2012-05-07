@@ -16,11 +16,11 @@ module Xmlss::Worbook
 
     should have_instance_methods :worksheet, :column, :row, :cell
 
-    should have_instance_methods :data, :type
-    should have_instance_methods :index, :style_id, :formula, :href
-    should have_instance_methods :merge_across, :merge_down, :height
-    should have_instance_methods :auto_fit_height, :hidden, :width
-    should have_instance_methods :auto_fit_width, :name
+    should have_instance_methods :data, :index, :style_id, :formula, :href, :name
+    should have_instance_methods :merge_across, :merge_down, :height, :width
+    should have_instance_methods :hidden, :hidden?
+    should have_instance_methods :autofit, :autofit?
+    should have_instance_methods :auto_fit_height, :auto_fit_width
 
     should "return element objs when calling its element methods" do
       assert_kind_of Xmlss::Element::Worksheet, subject.worksheet('test')
