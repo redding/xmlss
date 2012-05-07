@@ -101,33 +101,6 @@ module Xmlss
 
     # Workbook element attributes API
 
-    def style_id(value)  # cell, row, column
-      # check to make sure there is a current on this one
-      if (c = self.class.worksheets_stack(self).current)
-        c.style_id = value
-      end
-    end
-
-    def data(value)  # cell
-      self.class.worksheets_stack(self).current.data = value
-    end
-
-    def type(value)  # cell
-      self.class.worksheets_stack(self).current.type = value
-    end
-
-    def index(value)  # cell
-      self.class.worksheets_stack(self).current.index = value
-    end
-
-    def formula(value)  # cell
-      self.class.worksheets_stack(self).current.formula = value
-    end
-
-    def href(value)  # cell
-      self.class.worksheets_stack(self).current.href = value
-    end
-
     def merge_across(value)  # cell
       self.class.worksheets_stack(self).current.merge_across = value
     end
@@ -136,28 +109,57 @@ module Xmlss
       self.class.worksheets_stack(self).current.merge_down = value
     end
 
-    def height(value)  # row
-      self.class.worksheets_stack(self).current.height = value
+    def name(value)  # worksheet
+      self.class.worksheets_stack(self).current.name = value
     end
 
-    def auto_fit_height(value)  # row
-      self.class.worksheets_stack(self).current.auto_fit_height = value
-    end
-
-    def hidden(value)  # row, column
-      self.class.worksheets_stack(self).current.hidden = value
+    def style_id(value)  # cell, row, column
+      # check to make sure there is a current on this one
+      if (c = self.class.worksheets_stack(self).current)
+        c.style_id = value
+      end
     end
 
     def width(value)  # column
       self.class.worksheets_stack(self).current.width = value
     end
 
-    def auto_fit_width(value)  # column
-      self.class.worksheets_stack(self).current.auto_fit_width = value
+    def height(value)  # row
+      self.class.worksheets_stack(self).current.height = value
     end
 
-    def name(value)  # worksheet
-      self.class.worksheets_stack(self).current.name = value
+    def autofit(value)  # column, row
+      self.class.worksheets_stack(self).current.autofit = value
+    end
+    alias_method :auto_fit_width,  :autofit
+    alias_method :auto_fit_height, :autofit
+
+    def autofit?
+      self.class.worksheets_stack(self).current.autofit?
+    end
+
+    def hidden(value)  # row, column
+      self.class.worksheets_stack(self).current.hidden = value
+    end
+
+    def hidden?
+      self.class.worksheets_stack(self).current.hidden?
+    end
+
+    def data(value)  # cell
+      self.class.worksheets_stack(self).current.data = value
+    end
+
+    def href(value)  # cell
+      self.class.worksheets_stack(self).current.href = value
+    end
+
+    def formula(value)  # cell
+      self.class.worksheets_stack(self).current.formula = value
+    end
+
+    def index(value)  # cell
+      self.class.worksheets_stack(self).current.index = value
     end
 
     # overriding to make less noisy
