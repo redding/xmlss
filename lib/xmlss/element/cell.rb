@@ -1,4 +1,5 @@
 require 'enumeration'
+require 'date'
 
 module Xmlss; end
 module Xmlss::Element
@@ -44,6 +45,10 @@ module Xmlss::Element
       case self.data
       when ::Date, ::Time, ::DateTime
         self.data.strftime("%Y-%m-%dT%H:%M:%S")
+      when ::TrueClass
+        1
+      when ::FalseClass
+        0
       else
         self.data.to_s
       end

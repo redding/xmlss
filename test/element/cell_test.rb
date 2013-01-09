@@ -90,6 +90,8 @@ module Xmlss::Element
       assert_equal "2011-03-01T00:00:00", Cell.new(Date.parse('2011/03/01')).data_xml_value
       time = Time.now
       assert_equal time.strftime("%Y-%m-%dT%H:%M:%S"), Cell.new(time).data_xml_value
+      assert_equal 1, Cell.new(true).data_xml_value
+      assert_equal 0, Cell.new(false).data_xml_value
     end
 
   end
