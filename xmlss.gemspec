@@ -1,24 +1,26 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "xmlss/version"
 
-Gem::Specification.new do |s|
-  s.name        = "xmlss"
-  s.version     = Xmlss::VERSION
-  s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Kelly Redding"]
-  s.email       = ["kelly@kelredd.com"]
-  s.homepage    = "http://github.com/kelredd/xmlss"
-  s.summary     = %q{Generate spreadsheet docs for MS Excel using XML Spreedsheet}
-  s.description = %q{This gem provides an api for constructing spreadsheet data and then uses that data to generate xml that can be interpreted by MS Excel.  The xml conforms to the XML Spreadsheet spec (http://msdn.microsoft.com/en-us/library/aa140066(office.10).aspx).}
+Gem::Specification.new do |gem|
+  gem.name        = "xmlss"
+  gem.version     = Xmlss::VERSION
+  gem.authors     = ["Kelly Redding"]
+  gem.email       = ["kelly@kellyredding.com"]
+  gem.summary     = %q{Generate spreadsheet docs for MS Excel using XML Spreedsheet}
+  gem.description = %q{Generate spreadsheet docs for MS Excel using XML Spreedsheet}
+  gem.homepage    = "http://github.com/kelredd/xmlss"
+  gem.license     = 'MIT'
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  gem.files         = `git ls-files`.split($/)
+  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
+  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.require_paths = ["lib"]
 
-  s.add_development_dependency("assert", ["~> 0.7.3"])
-  s.add_development_dependency("assert-view", ["~> 0.6"])
-  s.add_dependency("undies", ["~> 3.0.0.rc.3"])
-  s.add_dependency("enumeration", ["~> 1.3"])
+  gem.add_development_dependency("assert", ["~> 2.0"])
+
+  gem.add_dependency("undies",      ["~> 3.0"])
+  gem.add_dependency("enumeration", ["~> 1.3"])
+
 end
