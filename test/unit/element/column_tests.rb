@@ -1,11 +1,11 @@
 require "assert"
-
 require 'xmlss/element/column'
 
-module Xmlss::Element
-  class ColumnTest < Assert::Context
-    desc "Xmlss::Column"
-    before { @c = Column.new }
+class Xmlss::Element::Column
+
+  class UnitTests < Assert::Context
+    desc "Xmlss::Element::Column"
+    before { @c = Xmlss::Element::Column.new }
     subject { @c }
 
     should be_styled
@@ -25,21 +25,23 @@ module Xmlss::Element
 
     should "bark when setting non Numeric width" do
       assert_raises ArgumentError do
-        Column.new({:width => "do it"})
+        Xmlss::Element::Column.new({:width => "do it"})
       end
+
       assert_nothing_raised do
-        Column.new({:width => 2})
+        Xmlss::Element::Column.new({:width => 2})
       end
+
       assert_nothing_raised do
-        Column.new({:width => 3.5})
+        Xmlss::Element::Column.new({:width => 3.5})
       end
     end
 
     should "nil out height values that are < 0" do
-      assert_equal nil, Column.new({:width => -1.2}).width
-      assert_equal nil, Column.new({:width => -1}).width
-      assert_equal 0, Column.new({:width => 0}).width
-      assert_equal 1.2, Column.new({:width => 1.2}).width
+      assert_equal nil, Xmlss::Element::Column.new({:width => -1.2}).width
+      assert_equal nil, Xmlss::Element::Column.new({:width => -1}).width
+      assert_equal 0,   Xmlss::Element::Column.new({:width => 0}).width
+      assert_equal 1.2, Xmlss::Element::Column.new({:width => 1.2}).width
     end
 
   end

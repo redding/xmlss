@@ -1,15 +1,15 @@
 require "assert"
-require 'enumeration/assert_macros'
-
 require 'xmlss/style/interior'
 
-module Xmlss::Style
+require 'enumeration/assert_macros'
 
-  class InteriorTest < Assert::Context
+class Xmlss::Style::Interior
+
+  class UnitTests < Assert::Context
     include Enumeration::AssertMacros
 
     desc "Xmlss::Style::Interior"
-    before { @i = Interior.new }
+    before { @i = Xmlss::Style::Interior.new }
     subject { @i }
 
     should have_enum :pattern, {
@@ -48,7 +48,7 @@ module Xmlss::Style
     end
 
     should "set attributes at init" do
-      i = Interior.new({
+      i = Xmlss::Style::Interior.new({
         :color => "#000000",
         :pattern => :solid,
         :pattern_color => "#FF0000"

@@ -1,10 +1,9 @@
 require "assert"
-
 require 'xmlss/style/protection'
 
-module Xmlss::Style
+class Xmlss::Style::Protection
 
-  class ProtectionTest < Assert::Context
+  class UnitTests < Assert::Context
     desc "Xmlss::Style::Protection"
     before { @sp = Xmlss::Style::Protection.new }
     subject { @sp }
