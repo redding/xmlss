@@ -34,5 +34,6 @@ module Xmlss::Element
       # worksheet name cannot contain: /, \, :, ;, * or start with '['
       name.to_s.gsub(/[\/|\\|:|;|\*]/, '').gsub(/^\[/, '')
     end
+
   end
 end

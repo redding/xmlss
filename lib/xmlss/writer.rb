@@ -4,9 +4,6 @@ require 'stringio'
 module Xmlss
   class Writer
 
-    class Markup; end
-    class AttrsHash; end
-
     # Xmlss uses Undies to stream its xml markup
     # The Undies writer is responsible for driving the Undies API to generate
     # the xmlss xml markup for the workbook.
@@ -192,79 +189,75 @@ module Xmlss
       worksheets_markup.element("Table", nil, {})
     end
 
-  end
+    # utility classes
 
+    class AttrsHash
+      attr_reader :raw
 
-
-  class Writer::AttrsHash
-
-    attr_reader :raw
-
-    def initialize
-      @raw = Hash.new
-    end
-
-    def value(k, v)
-      # ignore any nil-value or empty string attrs
-      @raw["#{Xmlss::Writer::SHEET_NS}:#{k}"] = v if v && v != ''
-      self
-    end
-
-    def bool(k, v)
-      # write truthy values as '1', otherwise ignore
-      @raw["#{Xmlss::Writer::SHEET_NS}:#{k}"] = 1 if v
-      self
-    end
-
-  end
-
-  class Writer::Markup
-
-    attr_reader :template, :push_count, :pop_count
-
-    def initialize(opts={})
-      @markup = ""
-      @template = Undies::Template.new(Undies::IO.new(@markup, opts))
-      @push_count = 0
-      @pop_count  = 0
-    end
-
-    def raw(markup)
-      @template.raw(
-        Undies::Template.escape_html(markup).gsub(/(\r|\n)+/, Xmlss::Writer::LB)
-      )
-    end
-
-    def element(name, data, attrs)
-      @template.__open_element(name, data, attrs)
-    end
-
-    def inline_element(name, attrs)
-      @template.__closed_element(name, attrs)
-    end
-
-    def push
-      @push_count += 1
-      @template.__push
-    end
-
-    def pop
-      @pop_count += 1
-      @template.__pop
-    end
-
-    def flush
-      while @push_count > @pop_count
-        pop
+      def initialize
+        @raw = Hash.new
       end
-      @template.__flush
-      self
+
+      def value(k, v)
+        # ignore any nil-value or empty string attrs
+        @raw["#{Xmlss::Writer::SHEET_NS}:#{k}"] = v if v && v != ''
+        self
+      end
+
+      def bool(k, v)
+        # write truthy values as '1', otherwise ignore
+        @raw["#{Xmlss::Writer::SHEET_NS}:#{k}"] = 1 if v
+        self
+      end
     end
 
-    def empty?; @markup.empty?; end
+    class Markup
+      attr_reader :template, :push_count, :pop_count
 
-    def to_s
-      @markup.to_s
+      def initialize(opts={})
+        @markup = ""
+        @template = Undies::Template.new(Undies::IO.new(@markup, opts))
+        @push_count = 0
+        @pop_count  = 0
+      end
+
+      def raw(markup)
+        @template.raw(
+          Undies::Template.escape_html(markup).gsub(/(\r|\n)+/, Xmlss::Writer::LB)
+        )
+      end
+
+      def element(name, data, attrs)
+        @template.__open_element(name, data, attrs)
+      end
+
+      def inline_element(name, attrs)
+        @template.__closed_element(name, attrs)
+      end
+
+      def push
+        @push_count += 1
+        @template.__push
+      end
+
+      def pop
+        @pop_count += 1
+        @template.__pop
+      end
+
+      def flush
+        while @push_count > @pop_count
+          pop
+        end
+        @template.__flush
+        self
+      end
+
+      def empty?; @markup.empty?; end
+
+      def to_s
+        @markup.to_s
+      end
     end
 
   end
