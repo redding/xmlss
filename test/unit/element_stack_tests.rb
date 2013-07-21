@@ -1,12 +1,10 @@
 require 'assert'
-
 require 'xmlss/element_stack'
+
 require 'xmlss/element/cell'
 require 'xmlss/writer'
 
-module Xmlss
-
-
+class Xmlss::ElementStack
 
   class ElementStackTests < Assert::Context
 
@@ -19,9 +17,9 @@ module Xmlss
 
     desc "an element stack"
     before do
-      @cell1 = Element::Cell.new("1")
-      @cell2 = Element::Cell.new("2")
-      @es = ElementStack.new(TestWriter.new(@test_io = ''), 'tests')
+      @cell1 = Xmlss::Element::Cell.new("1")
+      @cell2 = Xmlss::Element::Cell.new("2")
+      @es    = Xmlss::ElementStack.new(TestWriter.new(@test_io = ''), 'tests')
     end
     subject { @es }
 
@@ -38,8 +36,6 @@ module Xmlss
     end
 
   end
-
-
 
   class StackTests < ElementStackTests
 
@@ -77,8 +73,6 @@ module Xmlss
 
   end
 
-
-
   class WriterTests < ElementStackTests
     should "open the current element element when a new element is pushed" do
       expected =  "|written: Xmlss::Element::Cell #{@cell1.object_id}"
@@ -111,7 +105,5 @@ module Xmlss
     end
 
   end
-
-
 
 end
