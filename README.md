@@ -174,7 +174,7 @@ The XML Spreadsheet spec and format are legacy and may have limited support depe
 
 Add this line to your application's Gemfile:
 
-    gem 'whysoslow'
+    gem 'xmlss'
 
 And then execute:
 
@@ -182,7 +182,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install whysoslow
+    $ gem install xmlss
 
 ## Contributing
 
