@@ -3,7 +3,7 @@ require 'xmlss/workbook'
 
 module Xmlss::Worbook
 
-  class BasicTests < Assert::Context
+  class UnitTests < Assert::Context
     desc "Xmlss::Workbook"
     before { @wkbk = Xmlss::Workbook.new(Xmlss::Writer.new) }
     subject { @wkbk }
@@ -83,7 +83,7 @@ module Xmlss::Worbook
 
   end
 
-  class DataTests < BasicTests
+  class DataTests < UnitTests
 
     should "bork if non hash-like data is provided" do
       assert_raises NoMethodError do

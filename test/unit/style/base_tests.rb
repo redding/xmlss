@@ -1,11 +1,11 @@
 require "assert"
 require 'xmlss/style/base'
 
-module Xmlss::Style
+class Xmlss::Style::Base
 
-  class BaseTest < Assert::Context
+  class UnitTests < Assert::Context
     desc "Xmlss::Style::Base"
-    before { @bs = Base.new(:test) }
+    before { @bs = Xmlss::Style::Base.new(:test) }
     subject { @bs }
 
     should have_class_method :writer
@@ -17,14 +17,14 @@ module Xmlss::Style
 
     should "bark if you don't init with an id" do
       assert_raises ArgumentError do
-        Base.new(nil)
+        Xmlss::Style::Base.new(nil)
       end
     end
 
     should "force string ids" do
-      assert_equal 'string', Base.new('string').id
-      assert_equal 'symbol', Base.new(:symbol).id
-      assert_equal '123', Base.new(123).id
+      assert_equal 'string', Xmlss::Style::Base.new('string').id
+      assert_equal 'symbol', Xmlss::Style::Base.new(:symbol).id
+      assert_equal '123',    Xmlss::Style::Base.new(123).id
     end
 
     should "set it's defaults" do

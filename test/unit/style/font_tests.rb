@@ -1,14 +1,15 @@
 require "assert"
-require 'enumeration/assert_macros'
-
 require 'xmlss/style/font'
 
-module Xmlss::Style
-  class FontTest < Assert::Context
+require 'enumeration/assert_macros'
+
+class Xmlss::Style::Font
+
+  class UnitTests < Assert::Context
     include Enumeration::AssertMacros
 
     desc "Xmlss::Style::Font"
-    before { @f = Font.new }
+    before { @f = Xmlss::Style::Font.new }
     subject { @f }
 
     should have_enum :underline, {
@@ -55,13 +56,13 @@ module Xmlss::Style
         :alignment => :superscript,
         :name => 'Verdana'
       }
-      font = Font.new(attrs)
+      font = Xmlss::Style::Font.new(attrs)
 
       attrs.reject{|a, v| [:underline, :alignment].include?(a)}.each do |a,v|
         assert_equal v, font.send(a)
       end
-      assert_equal Font.underline(:single), font.underline
-      assert_equal Font.alignment(:superscript), font.alignment
+      assert_equal Xmlss::Style::Font.underline(:single), font.underline
+      assert_equal Xmlss::Style::Font.alignment(:superscript), font.alignment
     end
 
   end
