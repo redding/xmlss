@@ -1,14 +1,15 @@
 require "assert"
-require 'enumeration/assert_macros'
-
 require 'xmlss/style/alignment'
 
-module Xmlss::Style
-  class AlignmentTest < Assert::Context
+require 'enumeration/assert_macros'
+
+class Xmlss::Style::Alignment
+
+  class UnitTests < Assert::Context
     include Enumeration::AssertMacros
 
     desc "Xmlss::Style::Alignment"
-    before { @a = Alignment.new }
+    before { @a = Xmlss::Style::Alignment.new }
     subject { @a }
 
     should have_enum :horizontal, {
@@ -41,15 +42,15 @@ module Xmlss::Style
     end
 
     should "reject invalid rotate alignments" do
-      assert_equal nil, Alignment.new({:rotate => 100}).rotate
-      assert_equal 90,  Alignment.new({:rotate => 90}).rotate
-      assert_equal 0,   Alignment.new({:rotate => 0}).rotate
-      assert_equal -90, Alignment.new({:rotate => -90}).rotate
-      assert_equal nil, Alignment.new({:rotate => -100}).rotate
-      assert_equal 0,   Alignment.new({:rotate => 0.2}).rotate
-      assert_equal 1,   Alignment.new({:rotate => 0.5}).rotate
-      assert_equal nil, Alignment.new({:rotate => "poo"}).rotate
-      assert_equal nil, Alignment.new({:rotate => :poo}).rotate
+      assert_equal nil, Xmlss::Style::Alignment.new({:rotate => 100}).rotate
+      assert_equal 90,  Xmlss::Style::Alignment.new({:rotate => 90}).rotate
+      assert_equal 0,   Xmlss::Style::Alignment.new({:rotate => 0}).rotate
+      assert_equal -90, Xmlss::Style::Alignment.new({:rotate => -90}).rotate
+      assert_equal nil, Xmlss::Style::Alignment.new({:rotate => -100}).rotate
+      assert_equal 0,   Xmlss::Style::Alignment.new({:rotate => 0.2}).rotate
+      assert_equal 1,   Xmlss::Style::Alignment.new({:rotate => 0.5}).rotate
+      assert_equal nil, Xmlss::Style::Alignment.new({:rotate => "poo"}).rotate
+      assert_equal nil, Xmlss::Style::Alignment.new({:rotate => :poo}).rotate
     end
 
     should "set build with values correctly" do
@@ -59,13 +60,13 @@ module Xmlss::Style
         :vertical => :bottom,
         :rotate => 90
       }
-      alignment = Alignment.new(attrs)
+      alignment = Xmlss::Style::Alignment.new(attrs)
 
       attrs.reject{|a, v| [:horizontal, :vertical].include?(a)}.each do |a,v|
         assert_equal v, alignment.send(a)
       end
-      assert_equal Alignment.horizontal(:center), alignment.horizontal
-      assert_equal Alignment.vertical(:bottom), alignment.vertical
+      assert_equal Xmlss::Style::Alignment.horizontal(:center), alignment.horizontal
+      assert_equal Xmlss::Style::Alignment.vertical(:bottom), alignment.vertical
     end
 
   end
