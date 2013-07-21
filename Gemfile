@@ -1,7 +1,8 @@
-source "http://rubygems.org"
+source "https://rubygems.org"
 
-# Specify your gem's dependencies in xmlss.gemspec
 gemspec
 
-gem 'rake', '~>0.9.2'
+gem 'rake'
+gem 'pry'
+gem "whysoslow"
 gem 'ruby-prof'

@@ -1,20 +1,17 @@
 require 'assert'
-
 require 'xmlss/writer'
+
 require 'xmlss/workbook'
 
-module Xmlss
+class Xmlss::Writer
 
-
-
-  class BasicTests < Assert::Context
-    desc "UndiesWriter"
+  class UnitTests < Assert::Context
+    desc "Xmlss::Writer"
     setup do
-      @w = Writer.new
+      @writer = Xmlss::Writer.new
     end
-    subject { @w }
+    subject { @writer }
 
-    should have_class_methods :attributes, :classify, :coerce
     should have_readers :styles_markup, :worksheets_markup
     should have_instance_methods :write, :push, :pop, :flush, :workbook
 
@@ -34,53 +31,40 @@ module Xmlss
 
   end
 
+  class AttrsHashTests < UnitTests
+    desc "AttrsHash"
+    before do
+      @attrs = Xmlss::Writer::AttrsHash.new
+    end
+    subject { @attrs }
 
+    should have_reader :raw
+    should have_instance_methods :value, :bool
 
-  class HelpersTests < BasicTests
-
-    should "coerce certain values for xml output" do
-      assert_equal 1, Writer.coerce(true)
-      assert_nil   Writer.coerce(false)
-      assert_nil   Writer.coerce("")
-      assert_equal "hi", Writer.coerce("hi")
-      assert_equal 1, Writer.coerce(1)
+    should "by default have an empty raw hash" do
+      assert_equal({}, subject.raw)
     end
 
-    should "classify underscored string" do
-      assert_equal "Hi", Writer.classify("Hi")
-      assert_equal "Hi", Writer.classify("hi")
-      assert_equal "Hithere", Writer.classify("HiThere")
-      assert_equal "Hithere", Writer.classify("hithere")
-      assert_equal "HiThere", Writer.classify("Hi_There")
-      assert_equal "HiThere", Writer.classify("Hi_there")
-      assert_equal "HiThere", Writer.classify("hi_there")
+    should "apply values to a raw hash with the writer namespace" do
+      assert_equal({"#{Xmlss::Writer::SHEET_NS}:a" => 'b'}, subject.value('a', 'b').raw)
     end
 
-    should "convert a list of attributes for xml output" do
-      class Thing
-        def keys; [:thing, :other, 'some', 'hi', :hi_there]; end
+    should "ignore nil values" do
+      assert_equal({}, subject.value('a', nil).raw)
+    end
 
-        def thing;    true;   end
-        def other;    false;  end
-        def some;     "";     end
-        def hi;       :there; end
-        def hi_there; "you";  end
-      end
-      thing = Thing.new
-      exp = {
-        "ss:Hi" => "there",
-        "ss:HiThere" => "you",
-        "ss:Thing" => "1"
-      }
+    should "ignore empty string values" do
+      assert_equal({}, subject.value('a', '').raw)
+    end
 
-      assert_equal exp, Writer.attributes(thing, thing.keys)
+    should "apply booleans as '1' and otherwise ignore" do
+      assert_equal({}, subject.bool('a', false).raw)
+      assert_equal({"#{Xmlss::Writer::SHEET_NS}:a" => 1}, subject.bool('a', true).raw)
     end
 
   end
 
-
-
-  class StyleWritingTests < BasicTests
+  class StyleWritingTests < UnitTests
 
     should "write alignment markup" do
       subject.write(Xmlss::Style::Alignment.new({
@@ -218,9 +202,7 @@ module Xmlss
 
   end
 
-
-
-  class WorksheetWritingTests < BasicTests
+  class WorksheetWritingTests < UnitTests
     desc "writing worksheet markup"
 
     should "write cell data markup" do
@@ -237,28 +219,28 @@ module Xmlss
       subject.write(Xmlss::Element::Cell.new("line\nbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Xmlss::Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
     end
 
     should "write cell data markup w/ \\r line breaks" do
       subject.write(Xmlss::Element::Cell.new("line\rbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Xmlss::Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
     end
 
     should "write cell data markup w/ \\r\\n line breaks" do
       subject.write(Xmlss::Element::Cell.new("line\r\nbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Xmlss::Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
     end
 
     should "write cell data markup w/ \\n\\r line breaks" do
       subject.write(Xmlss::Element::Cell.new("line\n\rbreak", :type => :string))
       subject.flush
 
-      assert_equal "<Cell><Data ss:Type=\"String\">line#{Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
+      assert_equal "<Cell><Data ss:Type=\"String\">line#{Xmlss::Writer::LB}break</Data></Cell>", subject.worksheets_markup.to_s
     end
 
     should "write cell data markup w/ line breaks and leading space" do
@@ -269,7 +251,7 @@ Should
       subject.flush
 
       assert_equal(
-        "<Cell><Data ss:Type=\"String\">#{Writer::LB}Should#{Writer::LB}  honor#{Writer::LB}    this</Data></Cell>",
+        "<Cell><Data ss:Type=\"String\">#{Xmlss::Writer::LB}Should#{Xmlss::Writer::LB}  honor#{Xmlss::Writer::LB}    this</Data></Cell>",
         subject.worksheets_markup.to_s
       )
     end
@@ -355,9 +337,7 @@ Should
 
   end
 
-
-
-  class WorkbookWritingTests < BasicTests
+  class WorkbookWritingTests < UnitTests
 
     def build_workbook(writer)
       writer.write(Xmlss::Style::Base.new(:some_font))
@@ -392,21 +372,19 @@ Should
     should "return workbook markup" do
       build_workbook(subject)
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test1\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet><Worksheet ss:Name=\"test2\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"some_font\"><Font ss:Bold=\"1\" /></Style><Style ss:ID=\"some_numformat\"><NumberFormat ss:Format=\"General\" /></Style></Styles><Worksheet ss:Name=\"test1\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet><Worksheet ss:Name=\"test2\"><Table><Row ss:Hidden=\"1\"><Cell ss:Index=\"2\"><Data ss:Type=\"String\">some data</Data></Cell></Row></Table></Worksheet></Workbook>",
         subject.workbook
       )
     end
 
     should "return pretty workbook markup" do
-      writer = Writer.new(:pp => 2)
+      writer = Xmlss::Writer.new(:pp => 2)
       build_workbook(writer)
       assert_equal(
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\">\n  <Styles>\n    <Style ss:ID=\"some_font\">\n      <Font ss:Bold=\"1\" />\n    </Style>\n    <Style ss:ID=\"some_numformat\">\n      <NumberFormat ss:Format=\"General\" />\n    </Style>\n  </Styles>\n  <Worksheet ss:Name=\"test1\">\n    <Table>\n      <Row ss:Hidden=\"1\">\n        <Cell ss:Index=\"2\">\n          <Data ss:Type=\"String\">some data</Data>\n        </Cell>\n      </Row>\n    </Table>\n  </Worksheet>\n  <Worksheet ss:Name=\"test2\">\n    <Table>\n      <Row ss:Hidden=\"1\">\n        <Cell ss:Index=\"2\">\n          <Data ss:Type=\"String\">some data</Data>\n        </Cell>\n      </Row>\n    </Table>\n  </Worksheet>\n</Workbook>",
         writer.workbook
       )
     end
-
-
 
   end
 
