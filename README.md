@@ -1,37 +1,35 @@
-= Xmlss
+# Xmlss
 A ruby DSL for generating spreadsheets in the XML Spreadsheet format.  It provides an api for constructing spreadsheet data and then uses that data to generate xml that can be interpreted by MS Excel.
 
 ** Note: this gem only generates XML according to a subset of the August 2001 XML Spreadsheet spec (http://msdn.microsoft.com/en-us/library/aa140066(office.10).aspx).  It does not generate the more modern open office spreadsheet spec (xlsx) and may have limited support in modern spreadsheet applications.
 
-== Installation
+## Simple Usage Example
 
-    gem install xmlss
+```ruby
+require 'xmlss'
 
-== Simple Example
+workbook = Xmlss::Workbook.new(Xmlss::Writer.new) do
 
-    require 'xmlss'
-
-    workbook = Xmlss::Workbook.new(Xmlss::Writer.new) do
-
-      worksheet("5 columns, 1 row") {
-        5.times do
-          column
-        end
-
-          row {
-            # put data into the row (infer type)
-            [1, "text", 123.45, "0001267", "$45.23"].each do |data_value|
-              cell { data data_value }
-            end
-          }
-        end
-      }
-
+  worksheet("5 columns, 1 row") {
+    5.times do
+      column
     end
 
-    workbook.to_s    # => "..." (XML Spreadsheet xml string)
+      row {
+        # put data into the row (infer type)
+        [1, "text", 123.45, "0001267", "$45.23"].each do |data_value|
+          cell { data data_value }
+        end
+      }
+    end
+  }
 
-== DSL / API
+end
+
+workbook.to_s    # => "..." (XML Spreadsheet xml string)
+```
+
+## DSL / API
 
 Use these directives to create workbook markup elements.
 
@@ -104,84 +102,92 @@ number_format(value):
 protection(value):
 * value: bool, default: false
 
-== Usage
+## Usage
 
-To generate a spreadsheet, create an Xmlss::Workbook instance and build the workbook using the above DSL.  Workbook takes two optional parameters:
-* opts: hash: :data, :output
-* &build: proc containing DSL directives
+To generate a spreadsheet, create an Xmlss::Workbook instance and build the workbook using the above DSL.  Workbook takes three parameters:
+* Xmlss::Writer instance
+* data hash: (optional) key value data to bind to the workbook scope
+* build block: (optional) block containing DSL directives
 
-=== Data option
+### Writer (Undies)
+
+The Xmlss::Writer uses Undies (https://github.com/kellyredding/undies) to write the XML output.  The writer takes Undies::IO options.  See the Undies README for usage details.
+
+```ruby
+Xmlss::Workbook.new(Xmlss::Writer.new(:pp => 2)) do
+  worksheet('A cool sheet') {
+    ...
+  }
+end
+```
+
+### Data hash
 
 Xmlss evals the build proc in the scope of the workbook instance.  This means that the build has access to only the data it is given or the DSL itself.  Data is given in the form of a Hash.  The string form of the hash keys are exposed as local workbook methods that return their corresponding values.
 
-    Xmlss::Workbook.new(Xmlss::Writer.new, :sheet_name => 'A cool sheet') do
-      worksheet(sheet_name) {
-        ...
-      }
-    end
+```ruby
+Xmlss::Workbook.new(Xmlss::Writer.new, :sheet_name => 'A cool sheet') do
+  worksheet(sheet_name) {
+    ...
+  }
+end
+```
 
-=== Output option (Undies)
-
-Xmlss uses Undies (https://github.com/kelredd/undies) to render the XML output.  The :output Workbook option is used to create Undies::Ouput objects.  See their docs for usage details (https://github.com/kelredd/undies/blob/master/README.rdoc).
-
-    Xmlss::Workbook.new(Xmlss::Writer.new(:pp => 2)) do
-      worksheet(sheet_name) {
-        ...
-      }
-    end
-
-=== Builder approach
+### Builder approach
 
 The above examples all pass in a build proc that is eval'd in the scope of the workbook instance.  This works great when you know your build at the same time you create your Workbook object.  However, in some cases, the build may not be known upfront or you may want to use a more declarative style to specify your spreadsheet content.  Workbook builds can be specified programmatically using the "builder" approach.
 
 To render using this approach, create a Workbook instance passing it data and output info as above.  However, don't pass any build proc and save off the created workbook:
 
-    # choosing not to use any local data or output options
-    workbook = Xmlss::Workbook.new(Xmlss::Writer.new)
+```ruby
+# choosing not to use any local data or output options
+workbook = Xmlss::Workbook.new(Xmlss::Writer.new)
+```
 
 Now just interact with the Workbook API directly.
 
-    # notice that it becomes less important to bind any local data to the Workbook using this approach
-    something = "Some Thing!"
-    workbook.worksheet(something) {
-      workbook.column
+```ruby
+# notice that it becomes less important to bind any local data to the Workbook using this approach
+something = "Some Thing!"
+workbook.worksheet(something) {
+  workbook.column
 
-      workbook.row {
-        workbook.cell {
-          workbook.data "hi hi something hi"
-        }
-      }
+  workbook.row {
+    workbook.cell {
+      workbook.data "hi hi something hi"
     }
+  }
+}
+```
 
-== Disclaimer
+# Disclaimer
 
-Be aware this library only provides the basic, raw API for constructing spreadsheets using this spec and utilities to convert those objects to string xml data representing them.  It does not provide any macro logic to aid in constructing the sheets.  If you want a more convenient API for your use case, I suggest subclassing the objects and tailoring them to your needs.
+Be aware this library only provides the basic, raw API for constructing spreadsheets using this spec and utilities to convert those objects to string xml data representing them.  It does not provide any macro logic to aid in constructing the sheets.  If you want a more convenient API for your use case, I suggest extending the objects and tailoring them to your needs.
+
+You may also be interested in osheet-xmlss (https://github.com/kellyredding/osheet-xmlss).  I wrote this to use the more convenient Osheet workbook syntax to generate Xmlss workbooks.
 
 The XML Spreadsheet spec and format are legacy and may have limited support depending on your version of MS Excel.  For a more modern spreadsheet generation method, I suggest looking into Office Open XML Workbook format (http://en.wikipedia.org/wiki/Office_Open_XML).
 
 * Full XML Spreadsheet spec: http://msdn.microsoft.com/en-us/library/aa140066(office.10).aspx
 
-== License
+## Installation
 
-Copyright (c) 2011-Present, Kelly D. Redding
+Add this line to your application's Gemfile:
 
-Permission is hereby granted, free of charge, to any person
-obtaining a copy of this software and associated documentation
-files (the "Software"), to deal in the Software without
-restriction, including without limitation the rights to use,
-copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following
-conditions:
+    gem 'whysoslow'
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+And then execute:
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install whysoslow
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request

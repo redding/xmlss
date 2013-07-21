@@ -1,13 +1,11 @@
 require "assert"
-require 'enumeration/assert_macros'
-
 require 'xmlss/style/border'
 
-module Xmlss::Style
+require 'enumeration/assert_macros'
 
+class Xmlss::Style::Border
 
-
-  class BorderTests < Assert::Context
+  class UnitTests < Assert::Context
     include Enumeration::AssertMacros
 
     desc "Xmlss::Style::Border"
@@ -49,8 +47,8 @@ module Xmlss::Style
     should "set it's defaults" do
       assert_equal nil, subject.color
       assert_equal nil, subject.position
-      assert_equal Border.weight(:thin), subject.weight
-      assert_equal Border.line_style(:continuous), subject.line_style
+      assert_equal Xmlss::Style::Border.weight(:thin), subject.weight
+      assert_equal Xmlss::Style::Border.line_style(:continuous), subject.line_style
     end
 
     should "set attrs at init" do
@@ -60,14 +58,14 @@ module Xmlss::Style
         :weight => :thick,
         :line_style => :dot
       }
-      border = Border.new(attrs)
+      border = Xmlss::Style::Border.new(attrs)
 
       attrs.reject{|a, v| [:position, :weight, :line_style].include?(a)}.each do |a,v|
         assert_equal v, border.send(a)
       end
-      assert_equal Border.position(:top), border.position
-      assert_equal Border.weight(:thick), border.weight
-      assert_equal Border.line_style(:dot), border.line_style
+      assert_equal Xmlss::Style::Border.position(:top), border.position
+      assert_equal Xmlss::Style::Border.weight(:thick), border.weight
+      assert_equal Xmlss::Style::Border.line_style(:dot), border.line_style
     end
 
     should "set attrs by key" do
@@ -75,24 +73,22 @@ module Xmlss::Style
       subject.weight = :medium
       subject.line_style = :dash_dot
 
-      assert_equal Border.position(:bottom), subject.position
-      assert_equal Border.weight(:medium), subject.weight
-      assert_equal Border.line_style(:dash_dot), subject.line_style
+      assert_equal Xmlss::Style::Border.position(:bottom), subject.position
+      assert_equal Xmlss::Style::Border.weight(:medium), subject.weight
+      assert_equal Xmlss::Style::Border.line_style(:dash_dot), subject.line_style
     end
 
     should "set attrs by value" do
-      subject.position = Border.position(:bottom)
-      subject.weight = Border.weight(:medium)
-      subject.line_style = Border.line_style(:dash_dot)
+      subject.position   = Xmlss::Style::Border.position(:bottom)
+      subject.weight     = Xmlss::Style::Border.weight(:medium)
+      subject.line_style = Xmlss::Style::Border.line_style(:dash_dot)
 
-      assert_equal Border.position(:bottom), subject.position
-      assert_equal Border.weight(:medium), subject.weight
-      assert_equal Border.line_style(:dash_dot), subject.line_style
+      assert_equal Xmlss::Style::Border.position(:bottom), subject.position
+      assert_equal Xmlss::Style::Border.weight(:medium), subject.weight
+      assert_equal Xmlss::Style::Border.line_style(:dash_dot), subject.line_style
     end
 
   end
-
-
 
   class BordersTests < Assert::Context
     desc "Xmlss::Style::Borders"
@@ -106,7 +102,5 @@ module Xmlss::Style
     end
 
   end
-
-
 
 end

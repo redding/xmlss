@@ -5,7 +5,6 @@ module Xmlss::Element
     def self.writer; :row; end
 
     attr_accessor :style_id, :height, :auto_fit_height, :hidden
-    alias_method :style_i_d, :style_id
 
     def initialize(attrs={})
       self.style_id = attrs[:style_id]
@@ -20,6 +19,12 @@ module Xmlss::Element
       end
       @height = value && value < 0 ? nil : value
     end
+
+    def autofit;         self.auto_fit_height;         end
+    def autofit=(value); self.auto_fit_height = value; end
+
+    def autofit?; !!self.autofit; end
+    def hidden?;  !!self.hidden;  end
 
   end
 end

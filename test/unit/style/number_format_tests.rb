@@ -1,14 +1,15 @@
 require "assert"
-require 'enumeration/assert_macros'
-
 require 'xmlss/style/number_format'
 
-module Xmlss::Style
-  class NumberFormatTest < Assert::Context
+require 'enumeration/assert_macros'
+
+class Xmlss::Style::NumberFormat
+
+  class UnitTests < Assert::Context
     include Enumeration::AssertMacros
 
     desc "Xmlss::Style::NumberFormat"
-    before { @nf = NumberFormat.new }
+    before { @nf = Xmlss::Style::NumberFormat.new }
     subject { @nf }
 
     should have_class_method :writer
@@ -19,7 +20,7 @@ module Xmlss::Style
     end
 
     should "set attributes at init" do
-      nf = NumberFormat.new("General")
+      nf = Xmlss::Style::NumberFormat.new("General")
       assert_equal "General", nf.format
     end
 

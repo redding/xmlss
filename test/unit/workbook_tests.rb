@@ -3,7 +3,7 @@ require 'xmlss/workbook'
 
 module Xmlss::Worbook
 
-  class BasicTests < Assert::Context
+  class UnitTests < Assert::Context
     desc "Xmlss::Workbook"
     before { @wkbk = Xmlss::Workbook.new(Xmlss::Writer.new) }
     subject { @wkbk }
@@ -16,11 +16,11 @@ module Xmlss::Worbook
 
     should have_instance_methods :worksheet, :column, :row, :cell
 
-    should have_instance_methods :data, :type
-    should have_instance_methods :index, :style_id, :formula, :href
-    should have_instance_methods :merge_across, :merge_down, :height
-    should have_instance_methods :auto_fit_height, :hidden, :width
-    should have_instance_methods :auto_fit_width, :name
+    should have_instance_methods :data, :index, :style_id, :formula, :href, :name
+    should have_instance_methods :merge_across, :merge_down, :height, :width
+    should have_instance_methods :hidden, :hidden?
+    should have_instance_methods :autofit, :autofit?
+    should have_instance_methods :auto_fit_height, :auto_fit_width
 
     should "return element objs when calling its element methods" do
       assert_kind_of Xmlss::Element::Worksheet, subject.worksheet('test')
@@ -37,13 +37,6 @@ module Xmlss::Worbook
       assert_kind_of Xmlss::Style::Interior, subject.interior
       assert_kind_of Xmlss::Style::NumberFormat, subject.number_format
       assert_kind_of Xmlss::Style::Protection, subject.protection
-    end
-
-    should "not complain if setting an attribute when there's no current element" do
-      # it should just do nothing and go on
-      assert_nothing_raised do
-        subject.index(1)
-      end
     end
 
     should "return workbook markup string" do
@@ -83,14 +76,14 @@ module Xmlss::Worbook
       end
 
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"test\"><Alignment /><Borders><Border ss:LineStyle=\"Continuous\" ss:Weight=\"1\" /></Borders><Font /><Interior /><NumberFormat /><Protection /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Column /><Row><Cell><Data ss:Type=\"Number\">#{wkbk.object_id}</Data></Cell></Row></Table></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles><Style ss:ID=\"test\"><Alignment /><Borders><Border ss:LineStyle=\"Continuous\" ss:Weight=\"1\" /></Borders><Font /><Interior /><NumberFormat /><Protection /></Style></Styles><Worksheet ss:Name=\"test\"><Table><Column /><Row><Cell><Data ss:Type=\"Number\">#{wkbk.object_id}</Data></Cell></Row></Table></Worksheet></Workbook>",
         wkbk.to_s
       )
     end
 
   end
 
-  class DataTests < BasicTests
+  class DataTests < UnitTests
 
     should "bork if non hash-like data is provided" do
       assert_raises NoMethodError do
@@ -118,7 +111,7 @@ module Xmlss::Worbook
         worksheet worksheet_name
       end
       assert_equal(
-        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles></Styles><Worksheet ss:Name=\"awesome\"><Table /></Worksheet></Workbook>",
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Workbook xmlns=\"urn:schemas-microsoft-com:office:spreadsheet\" xmlns:ss=\"urn:schemas-microsoft-com:office:spreadsheet\"><Styles></Styles><Worksheet ss:Name=\"awesome\"><Table></Table></Worksheet></Workbook>",
         wkbk.to_s
       )
     end
