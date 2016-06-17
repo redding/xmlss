@@ -6,11 +6,11 @@ require "xmlss/version"
 Gem::Specification.new do |gem|
   gem.name        = "xmlss"
   gem.version     = Xmlss::VERSION
-  gem.authors     = ["Kelly Redding"]
-  gem.email       = ["kelly@kellyredding.com"]
+  gem.authors     = ["Kelly Redding", "Collin Redding"]
+  gem.email       = ["kelly@kellyredding.com", "collin.redding@me.com"]
   gem.summary     = %q{Generate spreadsheet docs for MS Excel using XML Spreedsheet}
   gem.description = %q{Generate spreadsheet docs for MS Excel using XML Spreedsheet}
-  gem.homepage    = "http://github.com/kelredd/xmlss"
+  gem.homepage    = "http://github.com/redding/xmlss"
   gem.license     = 'MIT'
 
   gem.files         = `git ls-files`.split($/)
@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_development_dependency("assert", ["~> 2.0"])
+  gem.add_development_dependency("assert", ["~> 2.16.1"])
 
   gem.add_dependency("undies",      ["~> 3.0"])
   gem.add_dependency("enumeration", ["~> 1.3"])
