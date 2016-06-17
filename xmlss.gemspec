@@ -20,7 +20,7 @@ Gem::Specification.new do |gem|
 
   gem.add_development_dependency("assert", ["~> 2.16.1"])
 
-  gem.add_dependency("undies",      ["~> 3.0"])
-  gem.add_dependency("enumeration", ["~> 1.3"])
+  gem.add_dependency("undies",      ["~> 3.1.0"])
+  gem.add_dependency("enumeration", ["~> 1.3.2"])
 
 end
