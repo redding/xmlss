@@ -1,3 +1,5 @@
+=== **This has been archived and is not maintained.** ===
+
 # Xmlss
 A ruby DSL for generating spreadsheets in the XML Spreadsheet format.  It provides an api for constructing spreadsheet data and then uses that data to generate xml that can be interpreted by MS Excel.
 
